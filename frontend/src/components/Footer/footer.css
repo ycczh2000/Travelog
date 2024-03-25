@@ -1,0 +1,16 @@
+.footer {
+  display: flex;
+  justify-content: space-around;
+  background-color: white;
+  color: black;
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  height: 5vh;
+  width: 100%;
+  border: 0.1rem solid black;
+}
+
+.upload-btn {
+  border: 1px solid black;
+}
