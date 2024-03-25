@@ -1,0 +1,32 @@
+/* src/components/WaterfallLayout.css */
+
+.waterfall-layout {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: auto;
+    position:static;
+    margin-right: 0;
+}
+
+.waterfall-item {
+    width: calc(50% - 10px); /* 让每个项目占据容器宽度的50%，减去间隔 */
+    margin-right: 0%;
+    margin-bottom: 5px;
+    padding: 0; 
+}
+
+
+.waterfall-item:nth-child(odd) {
+    margin-right: 5px;
+    margin-left: 5px;
+    padding-right: 0;
+    /* background-color: #fff0f0;  */
+    /* border: 1px solid red;  */
+}
+
+.waterfall-item:nth-child(even) {
+    margin-left: 5px; 
+    margin-right: 5px; 
+    position:static;
+}
