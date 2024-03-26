@@ -1,0 +1,21 @@
+.myTravelogItem {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+
+  background-color: #f9f9f9;
+
+  .MyTravelogItemInfo {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* align-items: center; */
+    margin-left: 10px;
+    height: 100px;
+  }
+}
