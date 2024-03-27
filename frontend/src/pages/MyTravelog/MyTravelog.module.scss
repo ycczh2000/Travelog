@@ -1,0 +1,15 @@
+.totop {
+  position: fixed;
+  right: 1.3rem;
+  bottom: 4rem;
+  border-radius: 50%;
+  background-color: #fff;
+  box-shadow: 0 0 2px #999;
+  width: 2.8rem;
+  height: 2.8rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+}

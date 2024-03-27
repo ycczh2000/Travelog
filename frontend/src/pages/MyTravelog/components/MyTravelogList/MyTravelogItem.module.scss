@@ -25,7 +25,6 @@
       align-items: left;
       margin-left: 1rem;
       overflow: hidden;
-
       .MyTravelogTitle {
         display: -webkit-box;
         -webkit-box-orient: vertical;
@@ -46,14 +45,27 @@
         font-size: 0.8rem;
         color: #777;
         margin-top: auto;
+        text-align: end;
       }
     }
   }
   .bottom {
     display: flex;
-    justify-content: start;
+    justify-content: space-between;
     align-items: center;
     padding: 0.3rem;
     width: 100%;
+    .auditResult {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      padding: 0.3rem;
+      width: 9rem;
+    }
+    .operate {
+      display: flex;
+      justify-content: space-between;
+      width: 7.5rem;
+    }
   }
 }

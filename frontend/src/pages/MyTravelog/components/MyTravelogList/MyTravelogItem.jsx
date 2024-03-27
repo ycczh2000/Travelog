@@ -1,17 +1,25 @@
 import React from "react"
-import { Image, Space, Tag } from "antd-mobile"
+import { Image, Button, Tag } from "antd-mobile"
 import styles from "./MyTravelogItem.module.scss"
+import { ExclamationCircleOutline, HeartFill } from "antd-mobile-icons"
 // import "./MyTravelogItem.scss"
-const i = {
-  id: 6,
-  title: "Title 3",
-  imageUrl: "https://img1.baidu.com/it/u=3443199485,2034708398&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=888",
-  examine: 0,
+
+const statusStyles = {
+  0: { color: "primary", fill: "outline" },
+  1: { color: "#87d068", fill: "outline" },
+  "-1": { color: "#ff6430", fill: "outline" },
+}
+
+const statusTexts = {
+  0: "审核中",
+  1: "已通过",
+  "-1": "未通过",
 }
 //上传时间 审核结束时间 排序
 export default function MyTravelogItem(props) {
   const { item } = props
   console.log(item)
+  const audit = item.examine
   return (
     <div className={styles.myTravelogItem}>
       <div className={styles.top}>
@@ -21,25 +29,33 @@ export default function MyTravelogItem(props) {
           <div className={styles.MyTravelogDescription}>
             详情详情详情详情详情详情详情详情详情详情详情详情详情详情详情
           </div>
-          <div className={styles.MyTravelogDate}>日期</div>
+          <div className="inf-card-likes">
+            {item.likes ? <HeartFill fontSize="18px" color="#FF0000" /> : null}
+            {item.likes}
+          </div>
+          <div className={styles.MyTravelogDate}>提交日期</div>
         </div>
       </div>
       <div className={styles.bottom}>
-        {item.examine === 0 ? (
-          <Tag color="primary" fill="outline">
-            审核中
+        <div className={styles.auditResult}>
+          <Tag style={{ fontSize: "1rem", padding: "0.3rem" }} {...statusStyles[audit]}>
+            {statusTexts[audit]}
           </Tag>
-        ) : null}
-        {item.examine === 1 ? (
-          <Tag color="#87d068" fill="outline">
-            已通过
-          </Tag>
-        ) : null}
-        {item.examine === -1 ? (
-          <Tag color="#ff6430" fill="outline">
-            未通过
-          </Tag>
-        ) : null}
+          {audit === -1 ? (
+            <div>
+              <ExclamationCircleOutline />
+              查看原因
+            </div>
+          ) : null}
+        </div>
+        <div className={styles.operate}>
+          <Button color="success" fill="outline" size="small">
+            编辑
+          </Button>
+          <Button color="success" fill="outline" size="small">
+            删除
+          </Button>
+        </div>
       </div>
     </div>
   )
