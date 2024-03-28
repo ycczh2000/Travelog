@@ -4,6 +4,8 @@ import { BrowserRouter } from "react-router-dom"
 import Home from "./pages/Home/Home"
 import MyTravelog from "./pages/MyTravelog/MyTravelog"
 import Footer from "./components/Footer/Footer"
+import Login from "./pages/Login/Login"
+import Register from "./pages/Register/Register"
 function App() {
   return (
     <BrowserRouter>
@@ -14,8 +16,8 @@ function App() {
           <Route path="/mytravelog" element={<MyTravelog />}></Route>
           <Route path="/mytravelog/:id" element={<div />}></Route>
           <Route path="/publish" element={<div />}></Route>
-          <Route path="/login" element={<div />}></Route>
-          <Route path="/register" element={<div />}></Route>
+          <Route path="/login" element={<Login />}></Route>
+          <Route path="/register" element={<Register />}></Route>
         </Routes>
       </div>
       <Footer />

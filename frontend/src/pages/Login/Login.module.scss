@@ -1,0 +1,50 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+}
+
+.input {
+  width: 15rem;
+  background-color: #f7f7f7;
+  color: #000;
+  height: 2rem;
+  border-radius: 1rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  margin: 1rem;
+
+  --color: #000;
+  --placeholder-color: #bbb;
+  --font-size: 0.9rem;
+  --text-align: left;
+}
+
+.icon {
+  margin-top: 20vh;
+  font-size: 5rem;
+  color: #000;
+  background-color: #ffd510;
+  padding: 1rem;
+  border-radius: 25%;
+}
+
+.loginButton {
+  width: 15rem;
+  background-color: #ffd510;
+  color: #000;
+  height: 2rem;
+  border-radius: 1rem;
+  margin: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+// --color	文字颜色	var(--adm-color-text)
+// --font-size	字号	17px
+// --placeholder-color	placeholder 文字颜色	var(--adm-color-light)
+// --text-align	文字对齐方式	left
