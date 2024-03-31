@@ -1,10 +1,7 @@
-//fs读取multer存储的buffer
-
 const fs = require("fs")
-//获取当前路径
 const sharp = require("sharp")
 console.log(__dirname)
-//拼接路径
+
 const path = require("path")
 const filePath = path.join(__dirname, "uploads/99963d12bccf33bbfc37016a38fa8006")
 
