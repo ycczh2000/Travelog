@@ -113,7 +113,7 @@ const Editing = () => {
                     <Dropdown.Item
                         key='tripNum'
                         title={`出游人数：${tripNum}`}
-                        arrow={<ArrowDownCircleOutline />}
+                        arrow={<DownOutline />}
                         style={{ color: tripNum ? 'blue' : 'inherit' }}
                     >
                         <div style={{ padding: 12 }}>
