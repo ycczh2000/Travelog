@@ -2,38 +2,56 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-03-24 17:45:58
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-03-25 21:11:37
+ * @LastEditTime: 2024-03-31 21:43:48
  * @FilePath: \ultrawork\src\components\LocalRecommendation\LocalRecommendation.css
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 /* src/components/LocalRecommendation.css */
-
+@font-face {
+    font-family: LinHai;
+    src: url('../../../public/fonts/LinHaiLiShu-Regular_V1.002.ttf');
+}
 .local-recommendation-card {
     background-color: #fff;
-    border-radius: 10px;
+    border-radius: 10px 10px 0 0;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     padding: 10px;
     margin-top: 10px;
 }
 
 .recommendation-header {
-    font-family: 'Arial Black', sans-serif; /* 使用艺术字体，待完善 */
+    font-family: LinHai; /* 使用艺术字体，待完善 */
     font-size: 24px;
     padding-bottom: 0px;
-    margin-bottom: 15px;
+    margin-bottom: 0px;
 }
 
 .recommendation-images {
     display: flex;
     flex-wrap: nowrap;
-    overflow-x: auto;
+    overflow-x: auto;/*hidden; */
+    overflow-y: hidden; /* 禁用纵向滚动条 */
     margin-left: -10px;
 }
+/* .recommendation-images {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: scroll;
+    overflow-y: hidden; 
+    margin-left: -10px;
+    scrollbar-width: none; 
+    -ms-overflow-style: none; 
+}
 
+.recommendation-images::-webkit-scrollbar {
+    display: none; 
+}
+ */
 .recommendation-image-wrapper {
     width: calc(100% / 3); /* 每个推荐项目占约三分之一 */
     flex: 0 0 auto;
-    margin-right: 15px;
+    margin-left: 5px;
+    margin-right: 10px;
     position: relative;
 }
 
@@ -53,29 +71,37 @@
 
 .recommendation-label {
     position: absolute;
-    top: 10px;
-    left: 10px;
-    background-color: rgba(0, 0, 0, 0.5); /* 半透明的暗色背景，待完善 */
+    top: 5px; /* 调整标签靠图片上方位置 */
+    left: 5px; /* 调整标签靠图片左侧位置 */
+    background-color: #FFA500; /* 橘红色背景 */
     color: #fff;
-    padding: 5px;
-    border-radius: 5px;
-    font-size: 12px;
+    padding: 3px; /* 缩小标签的内边距 */
+    border-radius: 3px; /* 缩小标签的圆角 */
+    font-size: 12px; /* 缩小标签字体大小 */
+    font-weight: bold; /* 加粗标签字体 */
+    font-family: Arial, sans-serif; /* 优化字体 */
     z-index: 1;
 }
 
 .recommendation-title {
     position: absolute;
-    bottom: 10px;
+    bottom: 0; /* 调整标题底部位置 */
     left: 0;
     right: 0;
+    background-color: rgba(0, 0, 0, 0.7); /* 半透明的深灰色底部 */
+    padding: 5px;
     text-align: center;
-    font-size: 16px;
+    font-size: 18px; /* 放大标题字体大小 */
     font-weight: bold;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    color: #fff; /* 更改标题字体颜色 */
+    border-radius: 0 0 10px 10px; /* 底部左右两个角是圆角的 */
     z-index: 1;
 }
+
+
 
 .end-of-scroll {
     width: 100%;
