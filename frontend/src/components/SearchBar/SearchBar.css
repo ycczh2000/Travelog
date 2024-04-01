@@ -4,10 +4,10 @@
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    padding-bottom: 5px;
-    padding-left: 1px;
-    padding-right: 1px;
+    padding: 10px;
+    padding-bottom: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
 }
 
 .search-bar-header {
@@ -49,6 +49,7 @@
     margin-bottom: 0;
     display: inline-block; 
     vertical-align: middle;
+    color: white;
 }
 
 .hot-searches-tags {
