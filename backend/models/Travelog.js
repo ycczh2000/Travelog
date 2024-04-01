@@ -5,15 +5,27 @@ const ObjectId = mongoose.Schema.Types.ObjectId
 
 const travelogSchema = new mongoose.Schema({
   authorId: { type: ObjectId, ref: "User", required: true },
-  createDate: { type: Date, default: Date.now },
-  tags: [String],
-  images: [String],
   title: { type: String, required: true },
   content: { type: String, required: true },
-  deleted: { type: Boolean, default: false }, //逻辑删除
-  audit: { type: Number, default: 0 }, //0:未审核 1:审核通过 -1:审核未通过
-  auditDate: { type: Date },
+  images: [String],
+  tags: [String],
   Location: { type: String, default: "" }, //地点 待细化
+
+  createDate: { type: Date, default: Date.now },
+  uploadDate: { type: Date },
+  auditDate: { type: Date },
+  auditorName: { type: String },
+
+  deleted: { type: Boolean, default: false }, //逻辑删除
+  status: {
+    type: String,
+    enum: ["editing", "draft", "pending", "approved", "rejected"],
+    default: "approved",
+  },
+  rejectReason: {
+    type: String,
+    default: "",
+  },
 
   likesCount: { type: Number, default: 0 },
   viewsCount: { type: Number, default: 0 },
@@ -31,6 +43,9 @@ const travelogSchema = new mongoose.Schema({
   ],
 })
 
+const selfSelectFields = " -deleted" //访问自己的游记列表 排除的字段
+const publicSelectFields = "-status -auditDate -deleted" //访问他人的的游记列表 排除状态信息
+
 travelogSchema.statics.createTravelog = async function (authorId, log) {
   try {
     await this.create({ authorId, ...log })
@@ -44,7 +59,7 @@ travelogSchema.statics.createTravelog = async function (authorId, log) {
 //获取我的游记列表
 travelogSchema.statics.getMyTravelogs = async function (authorId) {
   try {
-    const travelogs = await this.find({ authorId, deleted: false })
+    const travelogs = await this.find({ authorId, deleted: false }).select(selfSelectFields).exec()
     return { success: true, data: travelogs }
   } catch (err) {
     console.log("DB ERROR travelogSchema.statics.getTravelogs:", err)
@@ -55,8 +70,8 @@ travelogSchema.statics.getMyTravelogs = async function (authorId) {
 //获取单个游记
 travelogSchema.statics.getTravelogById = async function (travelogId) {
   try {
-    const travelog = await await this.findOne({ _id: travelogId, deleted: false })
-      .select("-audit -auditDate -delete")
+    const travelog = await await this.findOne({ _id: travelogId, deleted: false, status: "approved" })
+      .select(publicSelectFields)
       .exec()
     if (!travelog) {
       return { success: false, message: "游记不存在" }
@@ -75,7 +90,7 @@ travelogSchema.statics.getTravelogsByUsername = async function (username) {
     if (!user) {
       return { success: false, message: "用户不存在" }
     }
-    const travelogs = await this.find({ authorId: user._id, deleted: false }).select("-audit -auditDate -delete").exec()
+    const travelogs = await this.find({ authorId: user._id, deleted: false }).select(publicSelectFields).exec()
     return { success: true, data: travelogs }
   } catch (err) {
     console.log("DB ERROR travelogSchema.statics.getTravelogsByUserId:", err)
