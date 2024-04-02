@@ -45,6 +45,22 @@ userSchema.statics.login = async function (username, password) {
   }
 }
 
+userSchema.statics.loginByToken = async function (userID) {
+  try {
+    const user = await this.findById(userID)
+    if (user) {
+      user.lastLoginDate = Date.now()
+      await user.save()
+      return { success: true, message: "token登录成功", data: { userId: user._id, username: user.username } }
+    } else {
+      return { success: false, message: "无效的token" }
+    }
+  } catch (err) {
+    console.log("DB ERROR userSchema.statics.loginByToken:", err)
+    return { success: false, message: "登陆失败" }
+  }
+}
+
 //关注
 userSchema.statics.follow = async function (username, followName) {
   const session = await mongoose.startSession()

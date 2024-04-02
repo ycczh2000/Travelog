@@ -1,15 +1,20 @@
 import React from "react"
 import styles from "./Register.module.scss"
-import { Form, Input, Button, Dialog, Toast } from "antd-mobile"
+import { Form, Input, Button, Toast } from "antd-mobile"
 import { CalendarOutline } from "antd-mobile-icons"
+import { $register } from "../../api/userApi"
+
 export default function Register() {
   const [form] = Form.useForm()
-  const onSubmit = () => {
+  const onFinishHandle = async () => {
     const values = form.getFieldsValue()
-    Toast.show("登录成功")
-    Dialog.alert({
-      content: <pre>{JSON.stringify(values, null, 2)}</pre>,
-    })
+    const result = await $register(values)
+    Toast.show(result.message)
+    if (result.success) {
+      setTimeout(() => {
+        window.location.href = "/login"
+      }, 2000)
+    }
   }
   return (
     <>
@@ -19,6 +24,7 @@ export default function Register() {
       <Form
         form={form}
         layout="horizontal"
+        onFinish={onFinishHandle}
         onFinishFailed={e =>
           Toast.show({
             content: e.errorFields[0].errors[0],
@@ -26,7 +32,7 @@ export default function Register() {
           })
         }
         footer={
-          <Button className={styles.registerButton} block type="submit" onClick={onSubmit}>
+          <Button className={styles.registerButton} block type="submit">
             注册
           </Button>
         }>
@@ -41,7 +47,7 @@ export default function Register() {
             { required: true, message: "请输入用户名" },
             { pattern: /^[a-zA-Z0-9_@\u4e00-\u9fa5]+$/, message: "用户名只能包含中文、英文、数字、@和下划线" },
           ]}>
-          <Input className={styles.input} onChange={console.log} placeholder="请输入用户名" />
+          <Input className={styles.input} placeholder="请输入用户名" />
         </Form.Item>
         <Form.Item
           noStyle

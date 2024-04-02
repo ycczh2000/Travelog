@@ -1,18 +1,35 @@
-import React from "react"
+import React, { useEffect } from "react"
 import styles from "./Login.module.scss"
-import { Form, Input, Button, Dialog, Toast } from "antd-mobile"
+import { Form, Input, Button, Toast } from "antd-mobile"
 import { CalendarOutline } from "antd-mobile-icons"
 import { Link } from "react-router-dom"
+import { $login } from "../../api/userApi"
 
 export default function Login() {
   const [form] = Form.useForm()
-  const onSubmit = () => {
+  const onFinishHandle = async () => {
     const values = form.getFieldsValue()
-    Toast.show("登录成功")
-    Dialog.alert({
-      content: <pre>{JSON.stringify(values, null, 2)}</pre>,
-    })
+    const result = await $login(values)
+    console.log(result)
+    if (result.success) {
+      result.data.token && localStorage.setItem("token", result.data.token)
+      Toast.show(result.message)
+    } else {
+      Toast.show(result.message)
+    }
   }
+  useEffect(() => {
+    const checkAutoLogin = async () => {
+      if (localStorage.getItem("token")) {
+        const result = await $login()
+        if (result.success) {
+          Toast.show("自动登录成功")
+        }
+      }
+    }
+    checkAutoLogin()
+  }, [])
+
   return (
     <>
       <CalendarOutline className={styles.icon} />
@@ -21,6 +38,7 @@ export default function Login() {
       <Form
         form={form}
         layout="horizontal"
+        onFinish={onFinishHandle}
         onFinishFailed={e =>
           Toast.show({
             content: e.errorFields[0].errors[0],
@@ -30,7 +48,7 @@ export default function Login() {
         footer={
           // <Button block type="submit" onClick={onSubmit} color="primary" size="large">
           <>
-            <Button className={styles.loginButton} block type="submit" onClick={onSubmit}>
+            <Button className={styles.loginButton} block type="submit">
               登录
             </Button>
             <Link to="/register">注册</Link>
@@ -47,7 +65,7 @@ export default function Login() {
             { required: true, message: "请输入用户名" },
             { pattern: /^[a-zA-Z0-9_@\u4e00-\u9fa5]+$/, message: "用户名只能包含中文、英文、数字、@和下划线" },
           ]}>
-          <Input className={styles.input} onChange={console.log} placeholder="请输入用户名" />
+          <Input className={styles.input} placeholder="请输入用户名" />
         </Form.Item>
         <Form.Item
           noStyle
