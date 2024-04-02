@@ -24,4 +24,7 @@ const imgStorage = multer.diskStorage({
 })
 const imgUpload = multer({ storage: imgStorage })
 
-module.exports = imgUpload
+const avatarMemoryStorage = multer.memoryStorage()
+const avatarImgUpload = multer({ storage: avatarMemoryStorage })
+
+module.exports = { imgUpload, avatarImgUpload }

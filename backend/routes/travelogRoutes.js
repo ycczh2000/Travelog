@@ -1,7 +1,7 @@
 const express = require("express")
 const router = express.Router()
 const Travelog = require("../models/Travelog")
-const imgUpload = require("../middleware/imgUpload")
+const { imgUpload } = require("../middleware/imgUpload")
 
 //获取某篇游记
 router.get("/travelogs/:id", async (req, res) => {

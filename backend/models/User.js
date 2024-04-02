@@ -5,7 +5,8 @@ const ObjectId = mongoose.Schema.Types.ObjectId
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true, index: true },
   password: { type: String, required: true },
-  avatar: { type: String, default: "" },
+  avatar: Buffer,
+  avatarType: String,
   lastLoginDate: { type: Date, default: Date.now },
   following: [{ type: ObjectId, ref: "User" }],
   followers: [{ type: ObjectId, ref: "User" }],
@@ -45,6 +46,7 @@ userSchema.statics.login = async function (username, password) {
   }
 }
 
+//token登录
 userSchema.statics.loginByToken = async function (userID) {
   try {
     const user = await this.findById(userID)
@@ -58,6 +60,28 @@ userSchema.statics.loginByToken = async function (userID) {
   } catch (err) {
     console.log("DB ERROR userSchema.statics.loginByToken:", err)
     return { success: false, message: "登陆失败" }
+  }
+}
+
+//上传头像 avatar为Buffer
+userSchema.statics.uploadAvatar = async function (userId, buffer, mimetype) {
+  try {
+    await this.findByIdAndUpdate(userId, { avatar: buffer, avatarType: mimetype })
+    return { success: true, message: "上传成功" }
+  } catch (err) {
+    console.log("DB ERROR userSchema.statics.uploadAvatar:", err)
+    return { success: false, message: "上传失败" }
+  }
+}
+
+//获取用户头像
+userSchema.statics.getAvatar = async function (username) {
+  try {
+    const user = await this.findOne({ username: username })
+    return { success: true, data: { avatar: user.avatar, type: user.avatarType } }
+  } catch (err) {
+    console.log("DB ERROR userSchema.statics.getAvatar:", err)
+    return { success: false, message: `获取${username}头像失败` }
   }
 }
 

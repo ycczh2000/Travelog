@@ -6,6 +6,7 @@ import MyTravelog from "./pages/MyTravelog/MyTravelog"
 import Footer from "./components/Footer/Footer"
 import Login from "./pages/Login/Login"
 import Register from "./pages/Register/Register"
+import AvatarUpload from "./pages/AvatarUpload/AvatarUpload"
 function App() {
   return (
     <BrowserRouter>
@@ -16,6 +17,7 @@ function App() {
           <Route path="/mytravelog" element={<MyTravelog />}></Route>
           <Route path="/mytravelog/:id" element={<div />}></Route>
           <Route path="/publish" element={<div />}></Route>
+          <Route path="/avatarupload" element={<AvatarUpload />}></Route>
           <Route path="/login" element={<Login />}></Route>
           <Route path="/register" element={<Register />}></Route>
         </Routes>
