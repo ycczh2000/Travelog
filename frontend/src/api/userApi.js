@@ -25,3 +25,30 @@ export const $getAvatar = async username => {
   let { data } = await axios.get("/getAvatar", { params: { username } })
   return data
 }
+
+export const sendTraveLogToServer = async (fileList,imgInfo, editingData) => {
+    const data = {
+        fileList: fileList,
+        imgInfo: imgInfo,
+        editingData: editingData
+    };
+    axios.interceptors.request.use(config => {
+        console.log('发送的请求:', config);
+        return config;
+    }, error => {
+        console.error('请求错误:', error);
+        return Promise.reject(error);
+    });
+
+    try {
+      console.log("发送游记",data)
+        const response = await axios.post("/travelogs", data,{
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        return response.data;
+    } catch (error) {
+        throw new Error('向服务器发送请求失败: ' + error.message);
+    }
+};

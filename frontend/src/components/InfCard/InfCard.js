@@ -13,7 +13,7 @@ const InfCard = ({ imageUrl, title, username, likes, liked }) => {
             <div className="inf-card-user">
                 <div className="inf-card-avatar">{username.substring(0, 6)}...</div>
                 <div className="inf-card-likes">
-                    {liked ? <HeartFill fontSize="18px" color="#FF0000" /> : <HeartOutline fontSize="18px" />}
+                    {liked ? <HeartFill fontSize="18px" color="#FF0000" /> : <HeartOutline color='var(--adm-color-danger)' fontSize="18px" />}
                     {likes}
                 </div>
             </div>

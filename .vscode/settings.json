@@ -1,0 +1,6 @@
+{
+    "Codegeex.Chat.LanguagePreference": "中文",
+    "Codegeex.Comment.LanguagePreference": "中文",
+    "Codegeex.CompletionDelay": 0.25,
+    "Codegeex.CompletionModel": "CodeGeeX Lite"
+}

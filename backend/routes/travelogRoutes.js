@@ -1,3 +1,11 @@
+/*
+ * @Author: Sueyuki 2574397962@qq.com
+ * @Date: 2024-04-02 19:17:09
+ * @LastEditors: Sueyuki 2574397962@qq.com
+ * @LastEditTime: 2024-04-03 20:52:26
+ * @FilePath: \backend\routes\travelogRoutes.js
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 const express = require("express")
 const router = express.Router()
 const Travelog = require("../models/Travelog")
@@ -27,20 +35,32 @@ router.get("/mytravelogs", async (req, res) => {
 //游记上传 待优化
 router.post("/travelogs", imgUpload.array("image"), async (req, res, next) => {
   const userId = req.userId
-
-  const { title, content, tags } = req.body
-  const imgInfo = JSON.parse(req.body.imgInfo)
+  console.log("req.body", req.body)
+  const { title, content, tripWay, tripNum, tripDate, tripBudget, city, rate } = req.body.editingData
+  console.log("editingData", title, content, tripWay, tripNum, tripDate, tripBudget, city, rate)
+  // 访问文件列表中的每个文件对象
+  // console.log(req.body.imgInfo)
+  const imgInfo = req.body.imgInfo
   const files = req.files
-  const orderedImgName = imgInfo.order.map(originalname => {
+  const imgInfoValue = JSON.parse(imgInfo.value)
+  const orderedImgName = imgInfoValue.map(originalname => {
     return files.find(f => f.originalname === originalname)?.filename
   })
+
   const result = await Travelog.createTravelog(userId, {
-    title: title,
-    content: content,
-    tags: JSON.parse(tags),
+    title: title || "这是一个标题",
+    content: content || "\u200B",
+    Location: city || "\u200B", // 地点，todo
+    tripWay: tripWay || "\u200B",
+    tripNum: tripNum || "\u200B",
+    tripDate: tripDate || "\u200B",
+    tripBudget: tripBudget || "\u200B",
+    rate: rate || 5,
+    // tags: JSON.parse(tags),
     images: orderedImgName,
     status: "approved",
   })
+  console.log("successfully created a new travelog?", result)
   res.json(result)
 })
 
