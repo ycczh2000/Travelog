@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-03 13:11:29
+ * @LastEditTime: 2024-04-03 20:31:49
  * @FilePath: \backend\routes\travelogRoutes.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -35,12 +35,28 @@ router.get("/mytravelogs", async (req, res) => {
 //游记上传 待优化
 router.post("/travelogs", imgUpload.array("image"), async (req, res, next) => {
   const userId = req.userId
-  const { title, content,tripWay,tripNum,tripDate,tripBudget,city,rate } = req.body
-  const imgInfo = JSON.parse(req.body.imgInfo)
+  console.log("req.body",req.body)
+  const { title, content, tripWay, tripNum, tripDate, tripBudget, city, rate } = req.body.editingData
+  console.log("editingData",title, content, tripWay, tripNum, tripDate, tripBudget, city, rate)
+  // const imgInfo = JSON.parse(req.body.fileList.imgInfo)
+  // 访问文件列表中的每个文件对象
+  // console.log(req.body.imgInfo)
+  const fileList = req.body.fileList;
+  const imgInfo = req.body.imgInfo;
+  // fileList.forEach(file => {
+  //   console.log("key:", file.key);
+  //   console.log("type:", file.type);
+  //   console.log("src:", file.src);
+  // });
+
   const files = req.files
-  const orderedImgName = imgInfo.order.map(originalname => {
-    return files.find(f => f.originalname === originalname)?.filename
-  })
+  // console.log(imgInfo.value)
+  const imgInfoValue = JSON.parse(imgInfo.value); // 解析JSON字符串成JavaScript对象
+
+  const orderedImgName = imgInfoValue.map(originalname => {
+    return files.find(f => f.originalname === originalname)?.filename;
+  });
+
   const result = await Travelog.createTravelog(userId, {
     title: title,
     content: content,
@@ -54,6 +70,7 @@ router.post("/travelogs", imgUpload.array("image"), async (req, res, next) => {
     images: orderedImgName,
     status: "approved",
   })
+  console.log("successfully created a new travelog?",result)
   res.json(result)
 })
 

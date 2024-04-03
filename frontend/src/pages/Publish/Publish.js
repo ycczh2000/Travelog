@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-03-27 18:42:58
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-03 13:09:31
+ * @LastEditTime: 2024-04-03 20:24:27
  * @FilePath: \frontend\src\pages\Publish\Publish.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -22,30 +22,42 @@ const Publish = () => {
   const [editingData, setEditingData] = useState({});
   const imageUploadRef = useRef(null);
   const editingRef = useRef(null);
-  const handlePublishClick = () => {
+  const handlePublishClick = async() => {
     const imageUploadInstance = imageUploadRef.current;
-    const fileList = imageUploadInstance.getFileList();
+    const fileList =await imageUploadInstance.getFileList();
+    console.log(fileList);
+  
     const editingData = editingRef.current.getEditingData();
-    // 处理 fileList，转换为指定格式
-    const processedFileList = fileList.map((file, index) => ({
-        key: 'image',
-        type: 'file',
-        src: file.url
-    }));
-    // 将 imgInfo 添加到处理后的 fileList 中
-    const imgInfo = {
-        key: 'imgInfo',
-        value: JSON.stringify({ order: fileList.map(file => file.name) }), // 获取文件名列表并转为 JSON 字符串
-        type: 'text'
-    };
-    processedFileList.push(imgInfo);
-    console.log(processedFileList, editingData);
+    const convertedFiles = fileList.map((file, index) => {
+      return {
+          key: "image" + (index + 1), // 使用索引来生成唯一的key，如image1, image2, ...
+          type: "file",
+          src: file.url // 假设File对象有一个"url"属性表示文件路径
+      };
+  });
+  
+  const imgInfo = {
+      key: "imgInfo",
+      value: JSON.stringify(convertedFiles.map(file => file.key)), // 将key值列表转换为JSON字符串
+      type: "text"
+  };
+  
+  // 输出转换后的文件列表
+  // console.log(convertedFiles);
+    // for (const key in fileList) {
+    //   if (Object.hasOwnProperty.call(fileList, key)) {
+    //     console.log(`${key}:`, fileList[key]);
+    //   }
+    // }
+    
+    // console.log(fileList, editingData);
     // // 将处理后的数据传输到服务端
-    // sendTraveLogToServer(processedFileList, editingData);
+    console.log('Publish clicked!',convertedFiles,imgInfo, editingData);
+    sendTraveLogToServer(convertedFiles, imgInfo,editingData);
     // 发布游记后，销毁本地存储中的草稿数据
     localStorage.removeItem('draftData');
 };
-  
+
   const handleSaveDraftClick = () => {
     const fileList = imageUploadRef.current.getFileList();
     const editingData = editingRef.current.getEditingData();

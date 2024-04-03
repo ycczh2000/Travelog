@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-03 00:59:08
+ * @LastEditTime: 2024-04-03 19:32:40
  * @FilePath: \Travelog\frontend\src\components\ImageUpload\ImageUpload.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -27,10 +27,25 @@ const ImageUpload: FC =  forwardRef((props, ref) => {
     }
   }
   useImperativeHandle(ref, () => ({
+    // async getFileList() {
+    //   const imageFiles = await fetchImages(fileList);
+      // console.log(imageFiles)
+      // return imageFiles;
     getFileList() {
       return fileList;
     }
   }));
+
+  async function fetchImages(urls: { url: string }[]): Promise<Array<File>> {
+    const imagePromises = urls.map(async (file) => {
+      const response = await fetch(file.url);
+      const blob = await response.blob();
+      const fileName = file.url.substring(file.url.lastIndexOf('/') + 1); // 从 URL 中提取文件名
+      const imageFile = new File([blob], fileName, { type: blob.type });
+      return imageFile;
+    });
+    return Promise.all(imagePromises);
+  }
   return (
       <ImageUploader
         columns={4}

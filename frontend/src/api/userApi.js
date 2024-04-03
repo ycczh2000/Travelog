@@ -26,9 +26,10 @@ export const $getAvatar = async username => {
   return data
 }
 
-export const sendTraveLogToServer = async (fileList, editingData) => {
+export const sendTraveLogToServer = async (fileList,imgInfo, editingData) => {
     const data = {
         fileList: fileList,
+        imgInfo: imgInfo,
         editingData: editingData
     };
     axios.interceptors.request.use(config => {
@@ -40,7 +41,12 @@ export const sendTraveLogToServer = async (fileList, editingData) => {
     });
 
     try {
-        const response = await axios.post("/travelogs", data);
+      console.log("发送游记",data)
+        const response = await axios.post("/travelogs", data,{
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
         return response.data;
     } catch (error) {
         throw new Error('向服务器发送请求失败: ' + error.message);

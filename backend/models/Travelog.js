@@ -15,8 +15,8 @@ const travelogSchema = new mongoose.Schema({
   tripDate: { type: String, default: "" },
   tripBudget: { type: String, default: "" },
   isPublic:{type: Boolean, default: true},
-  rate,
-  
+  rate:{type: Number, default: 5},
+
   createDate: { type: Date, default: Date.now },
   uploadDate: { type: Date },
   auditDate: { type: Date },
