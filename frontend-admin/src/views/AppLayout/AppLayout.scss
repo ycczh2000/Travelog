@@ -1,0 +1,31 @@
+.Layout {
+  width: 100vw;
+  height: 100vh;
+  .logo {
+    width: auto;
+    height: 32px;
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.3);
+    font-size: 18px;
+    text-align: center;
+    line-height: 30px;
+    margin: 10px;
+  }
+  .header {
+    padding: 0;
+    background: #001529;
+    display: flex;
+    justify-content: space-between;
+    .trigger {
+      color: white;
+    }
+    .menu {
+      padding: 0 10px;
+    }
+  }
+  .content {
+    padding: 5px;
+    padding: 24;
+    background: rgb(245, 245, 245);
+  }
+}
