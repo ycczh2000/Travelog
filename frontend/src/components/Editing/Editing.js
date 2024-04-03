@@ -1,20 +1,48 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect , forwardRef, useImperativeHandle} from 'react';
 import './Editing.css';
 import { Card, Dropdown, Toast, Button, Radio, Space, Tag, Checkbox } from 'antd-mobile';
 import { ArrowDownCircleOutline, DownOutline } from 'antd-mobile-icons';
 
-const Editing = () => {
-    const [title, setTitle] = useState(''); // 标题内容
-    const [content, setContent] = useState(''); // 正文内容
-    const textareaRef = useRef(null);
-    const [tripWay, setTripWay] = useState(''); // 出游方式
-    const [tripNum, setTripNum] = useState(''); // 出游人数
-    const [tripDate, setTripDate] = useState(''); // 出游时间
-    const [tripBudget, setTripBudget] = useState(''); // 预算
-    const [isPublic, setIsPublic] = useState(false); // 用于追踪内容是否公开发布的状态
+const Editing  = forwardRef((props, ref) => {
+    console.log('Editing:',props);
+    console.log(props.editingData.title)
+    console.log(props.editingData.content)
+    const [title, setTitle] = useState(props.editingData.title ? props.editingData.title : ''); // 标题内容
+    const [content, setContent] = useState(props.editingData.content? props.editingData.content : ''); // 正文内容
+    const [tripWay, setTripWay] = useState(props.tripWay? props.tripWay : ''); // 出游方式
+    const [tripNum, setTripNum] = useState(props.editingData.tripNum? props.editingData.tripNum : ''); // 出游人数
+    const [tripDate, setTripDate] = useState(props.editingData.tripDate? props.editingData.tripDate : ''); // 出游时间
+    const [tripBudget, setTripBudget] = useState(props.editingData.tripBudget? props.editingData.tripBudget : ''); // 预算
+    const [isPublic, setIsPublic] = useState(props.editingData.isPublic ? props.editingData.isPublic : true); // 用于追踪内容是否公开发布的状态
     const maxTitleLength = 20; // 标题最大长度
     const maxContentLength = 2000; // 正文最大长度
+    useEffect(() => {
+        if (props.editingData) {
+            const { title, content, tripWay, tripNum, tripDate, tripBudget, isPublic } = props.editingData;
+            setTitle(title || '');
+            setContent(content || '');
+            setTripWay(tripWay || '');
+            setTripNum(tripNum || '');
+            setTripDate(tripDate || '');
+            setTripBudget(tripBudget || '');
+            setIsPublic(isPublic || true);
+        }
+    }, [props.editingData]);
 
+    useImperativeHandle(ref, () => ({
+        getEditingData() {
+            return {
+                title,
+                content,
+                tripWay,
+                tripNum,
+                tripDate,
+                tripBudget,
+                isPublic
+            };
+        }
+    }));
+    const textareaRef = useRef(null);
     // 标题输入变化处理函数
     const handleTitleChange = (event) => {
         const newTitle = event.target.value.slice(0, maxTitleLength); // 限制标题长度
@@ -28,8 +56,8 @@ const Editing = () => {
     };
     useEffect(() => {
         if (textareaRef.current) {
-          textareaRef.current.style.height = 'auto'; // 先将高度设置为自动以便获取内容高度
-          const newHeight = `${Math.min(textareaRef.current.scrollHeight, 0.4 * window.innerHeight)}px`; // 获取实际高度，并确保不超过60%的窗口高度
+          textareaRef.current.style.height = 'auto';
+          const newHeight = `${Math.min(textareaRef.current.scrollHeight, 0.4 * window.innerHeight)}px`; // 获取实际高度，并确保不超过40%的窗口高度
           textareaRef.current.style.height = newHeight; // 设置高度
         }
       }, [content]);
@@ -90,7 +118,7 @@ const Editing = () => {
             <hr style={{ borderTop: '1px solid lightgray' }} />
             <Card>
                 <Dropdown arrow={<DownOutline />}>
-                    <Dropdown.Item key='tripWay' title={`出游方式：${tripWay}`} style={{ color: tripWay ? 'blue' : 'inherit' }}>
+                    <Dropdown.Item key='tripWay' title={tripWay ? tripWay : '出游方式'}  style={{  width: '100px',color: tripWay ? 'blue' : 'inherit' }}>
                         <div style={{ padding: 12 }}>
                             <Radio.Group defaultValue={tripWay} onChange={handleTripWayChange}>
                                 <Space direction='vertical' block>
@@ -112,9 +140,9 @@ const Editing = () => {
                     </Dropdown.Item>
                     <Dropdown.Item
                         key='tripNum'
-                        title={`出游人数：${tripNum}`}
+                        title={tripNum?tripNum:'出游人数'}
                         arrow={<DownOutline />}
-                        style={{ color: tripNum ? 'blue' : 'inherit' }}
+                        style={{width: '100px', color: tripNum ? 'blue' : 'inherit' }}
                     >
                         <div style={{ padding: 12 }}>
                             <Radio.Group defaultValue={tripNum} onChange={handleTripNumChange}>
@@ -132,7 +160,7 @@ const Editing = () => {
                             </Radio.Group>
                         </div>
                     </Dropdown.Item>
-                    <Dropdown.Item key='tripDate' title={`出游时间：${tripDate}`} style={{ color: tripDate ? 'blue' : 'inherit' }}>
+                    <Dropdown.Item key='tripDate' title={tripDate?tripDate:'出游时间'} style={{width: '100px', color: tripDate ? 'blue' : 'inherit' }}>
                         <div style={{ padding: 12 }}>
                             <Radio.Group defaultValue={tripDate} onChange={handleTripDateChange} >
                                 <Space direction='vertical' block>
@@ -158,8 +186,8 @@ const Editing = () => {
                             </Radio.Group>
                         </div>
                     </Dropdown.Item>
-                    <Dropdown.Item key='tripBudget' title={`预算：${tripBudget}`} style={{ color: tripBudget ? 'blue' : 'inherit' }}>
-                        <div style={{ padding: 25 }}>
+                    <Dropdown.Item key='tripBudget' title={tripBudget?tripBudget:'旅行花费'} style={{ width: '100px',color: tripBudget ? 'blue' : 'inherit' }}>
+                        <div style={{ padding: 12 }}>
                             <Radio.Group defaultValue={tripBudget} onChange={handleTripBudgetChange}>
                                 <Space direction='vertical' block>
                                     <Radio block value='100元以下'>
@@ -228,6 +256,6 @@ const Editing = () => {
             </div>
         </div>
     );
-};
+});
 
 export default Editing;
