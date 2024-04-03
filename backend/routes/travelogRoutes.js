@@ -1,3 +1,11 @@
+/*
+ * @Author: Sueyuki 2574397962@qq.com
+ * @Date: 2024-04-02 19:17:09
+ * @LastEditors: Sueyuki 2574397962@qq.com
+ * @LastEditTime: 2024-04-03 13:11:29
+ * @FilePath: \backend\routes\travelogRoutes.js
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 const express = require("express")
 const router = express.Router()
 const Travelog = require("../models/Travelog")
@@ -27,7 +35,7 @@ router.get("/mytravelogs", async (req, res) => {
 //游记上传 待优化
 router.post("/travelogs", imgUpload.array("image"), async (req, res, next) => {
   const userId = req.userId
-  const { title, content, tags } = req.body
+  const { title, content,tripWay,tripNum,tripDate,tripBudget,city,rate } = req.body
   const imgInfo = JSON.parse(req.body.imgInfo)
   const files = req.files
   const orderedImgName = imgInfo.order.map(originalname => {
@@ -36,7 +44,13 @@ router.post("/travelogs", imgUpload.array("image"), async (req, res, next) => {
   const result = await Travelog.createTravelog(userId, {
     title: title,
     content: content,
-    tags: JSON.parse(tags),
+    Location: city, //地点 待细化
+    tripWay: tripWay,
+    tripNum: tripNum,
+    tripDate: tripDate,
+    tripBudget: tripBudget,
+    rate: rate,
+    // tags: JSON.parse(tags),
     images: orderedImgName,
     status: "approved",
   })

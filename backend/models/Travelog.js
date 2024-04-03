@@ -9,8 +9,14 @@ const travelogSchema = new mongoose.Schema({
   content: { type: String, required: true },
   images: [String],
   tags: [String],
-  Location: { type: String, default: "" }, //地点 待细化
-
+  Location: { type: Object, default: "" }, //地点 待细化
+  tripWay: { type: String, default: "" },
+  tripNum: { type: String, default: "" },
+  tripDate: { type: String, default: "" },
+  tripBudget: { type: String, default: "" },
+  isPublic:{type: Boolean, default: true},
+  rate,
+  
   createDate: { type: Date, default: Date.now },
   uploadDate: { type: Date },
   auditDate: { type: Date },
