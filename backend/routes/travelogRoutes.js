@@ -27,6 +27,7 @@ router.get("/mytravelogs", async (req, res) => {
 //游记上传 待优化
 router.post("/travelogs", imgUpload.array("image"), async (req, res, next) => {
   const userId = req.userId
+
   const { title, content, tags } = req.body
   const imgInfo = JSON.parse(req.body.imgInfo)
   const files = req.files
