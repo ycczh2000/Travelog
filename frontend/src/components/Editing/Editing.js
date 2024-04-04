@@ -109,7 +109,7 @@ const Editing = forwardRef((props, ref) => {
         // textarea.focus();
         // textarea.setSelectionRange(content.length + 1, content.length + 1);
     };
-    // 勾选项变化处理函数
+    // 勾选是否公开函数
     const handlePublicChange = () => {
         setIsPublic(!isPublic); // 切换状态
     };
