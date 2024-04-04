@@ -45,19 +45,70 @@ router.put("/travelogs/:id", async (req, res) => {
 
 //查询query
 router.get("/travelogs", async (req, res) => {
-  console.log("/travelogs/")
-  // const result = await Travelog.find()
+  console.log("req.query", req.query)
+  const { title, auditorUsername, authorUsername } = req.query
+  console.log(title, auditorUsername, authorUsername)
+  const query = {}
+  const authorQuery = {}
+  const auditorQuery = {}
+
+  if (auditorUsername) {
+    auditorQuery["auditorInfo.username"] = auditorUsername
+  }
+  if (authorUsername) {
+    authorQuery["authorInfo.username"] = authorUsername
+  }
+  if (title) {
+    const titleReg = new RegExp(title)
+    query.title = { $regex: titleReg }
+  }
+  console.log("query", query)
   const result = await Travelog.aggregate([
+    //管理员过滤
     {
       $lookup: {
-        from: "users",
-        let: { authorId: "$authorId" },
-        pipeline: [{ $match: { $expr: { $eq: ["$_id", "$$authorId"] } } }, { $project: { username: 1, _id: 0 } }],
-        as: "user",
+        from: "adminusers",
+        localField: "auditorId",
+        foreignField: "_id",
+        as: "auditorInfo",
       },
     },
     {
-      $unwind: "$user",
+      $unwind: { path: "$auditorInfo", preserveNullAndEmptyArrays: true }, // 设置为true，否则auditorInfo为空时，不会返回数据
+    },
+    {
+      $match: auditorQuery,
+    },
+    //用户过滤
+    {
+      $lookup: {
+        from: "users",
+        localField: "authorId",
+        foreignField: "_id",
+        as: "authorInfo",
+      },
+    },
+    {
+      $unwind: { path: "$authorInfo", preserveNullAndEmptyArrays: true },
+    },
+    { $match: authorQuery },
+    //游记内容过滤
+    {
+      $match: query,
+    },
+    {
+      $project: {
+        _id: 1,
+        title: 1,
+        content: 1,
+        tags: 1,
+        images: 1,
+        status: 1,
+        auditDate: 1,
+        createDate: 1,
+        authorUsername: "$authorInfo.username",
+        auditorUsername: "$auditorInfo.username",
+      },
     },
   ])
 

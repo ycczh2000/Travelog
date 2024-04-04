@@ -12,8 +12,9 @@ export const $register = async params => {
   return data
 }
 
+//传query
 export const $travelogs = async params => {
-  const { data } = await axios.get("admin/travelogs", params)
+  const { data } = await axios.get("admin/travelogs", { params })
   return data
 }
 

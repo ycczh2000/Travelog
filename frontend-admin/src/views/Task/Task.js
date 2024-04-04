@@ -9,8 +9,8 @@ const { Option } = Select
 const columns = [
   { title: "标题", dataIndex: "title" },
   { title: "创建时间", dataIndex: "createDate" },
-  { title: "发布人", dataIndex: "authorName" },
-  { title: "审核人", dataIndex: "auditorId" },
+  { title: "发布人", dataIndex: "authorUsername" },
+  { title: "审核人", dataIndex: "auditorUsername" },
   {
     title: "审核状态",
     dataIndex: "status",
@@ -75,7 +75,6 @@ export default function Task() {
   const loadTravelogs = async () => {
     const data = await $travelogs()
     data.forEach(element => {
-      element.authorName = element.user.username
       element.key = element._id
     })
     console.log(data)
@@ -94,8 +93,8 @@ export default function Task() {
     { title: "标题", dataIndex: "title" },
     { title: "创建时间", dataIndex: "createDate" },
     { title: "审核状态", dataIndex: "status" },
-    { title: "发布人", dataIndex: "authorName" },
-    { title: "审核人", dataIndex: "auditorId" },
+    { title: "发布人", dataIndex: "authorUsername" },
+    { title: "审核人", dataIndex: "auditorUsername" },
   ]
 
   const handleModalOk = () => {
@@ -120,25 +119,36 @@ export default function Task() {
     setNotiMsg({ type: "success", description: "添加成功" })
   }
 
+  const queryFinish = async value => {
+    console.log(value)
+    const data = await $travelogs(value)
+    console.log("queryFinish", data)
+  }
+
   return (
     <>
       {userinfo ? (
         <>
           <div className="card">
-            <Form layout={"inline"} form={form}>
+            <Form layout={"inline"} form={form} onFinish={queryFinish}>
               {filterInputItem.map(item => (
                 <Form.Item
                   {...formItemLayout}
                   key={item.dataIndex}
                   style={{ width: "30%", marginTop: "10px" }}
                   label={item.title}
-                  name={item.d}>
+                  name={item.dataIndex}>
                   <Input />
                 </Form.Item>
               ))}
             </Form>
             <div className="button-area">
-              <Button className="btn" type="primary">
+              <Button
+                className="btn"
+                type="primary"
+                onClick={() => {
+                  form.submit()
+                }}>
                 查询
               </Button>
               <Button className="btn">重置</Button>
