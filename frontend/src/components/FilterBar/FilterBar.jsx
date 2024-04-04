@@ -2,30 +2,40 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-04 18:32:02
+ * @LastEditTime: 2024-04-04 20:48:55
  * @FilePath: \frontend\src\components\FilterBar\FilterBar.jsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import React, { useState, useRef } from 'react';
+import React, {  useContext,useState, useRef } from 'react';
 import './FilterBar.css';
 import { Dropdown, Radio, Space, CascaderView,Popup } from 'antd-mobile'
 import { ArrowDownCircleOutline, DownOutline } from 'antd-mobile-icons'
+import {HomeContext} from "../../Context/HomeContext"
+
 // import { DropdownRef } from 'antd-mobile/es/components/dropdown'
 import { options, Sorters } from './data'
 import FilterData from '../FilterData/FilterData';
+
+
 const FilterBar = () => {
-    const [sorter, setSorter] = useState('0');
+    const { sorter, setSorter, city, setCity, selectedFilters, setSelectedFilters } = useContext(HomeContext);
+    // const [sorter, setSorter] = useState('0');
+    // const [city, setCity] = useState()
+    // const [selectedFilters, setSelectedFilters] = useState({
+    //     tripWay: null,
+    //     tripNum: null,
+    //     tripDate: null,
+    //     tripBudget: null,
+    //     tripRate: 0,
+    // });
     const [visible, setVisible] = useState(false)
-    const [city, setCity] = useState()
     const ref = useRef(null)
-    const mockContent = (
-        <div style={{ padding: 20 }}></div>
-      )
     return (
         <div>
             <Popup
               visible={visible}
               onMaskClick={() => {
+                console.log(selectedFilters)
                 setVisible(false)
               }}
               position='right'
@@ -96,15 +106,8 @@ const FilterBar = () => {
                     ref.current?.close()
                     setVisible(true)
                 }}>
-                    {/* <div style={{ padding: 12 }}>
-                        更多筛选内容
-                        <br />
-                        更多筛选内容
-                        <br />
-                    </div> */}
                 </Dropdown.Item>
             </Dropdown>
-            {/* </DemoBlock> */}
         </div>
     );
 };

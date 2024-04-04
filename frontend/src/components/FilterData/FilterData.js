@@ -1,16 +1,18 @@
-import React, { useState } from 'react';
+import React, { useContext,useState } from 'react';
 import { Selector, Rate } from 'antd-mobile';
 import { tripWays, tripNums, tripDates, tripBudgets } from './filterOptions';
+import {HomeContext} from "../../Context/HomeContext"
 
 const FilterData = () => {
+    const {  sorter, setSorter, city, setCity, selectedFilters, setSelectedFilters } = useContext(HomeContext);
     // const [resetKey, setResetKey] = useState(0); // 用于触发组件重新渲染的状态
-    const [selectedFilters, setSelectedFilters] = useState({
-        tripWay: null,
-        tripNum: null,
-        tripDate: null,
-        tripBudget: null,
-        tripRate: 0,
-    });
+    // const [selectedFilters, setSelectedFilters] = useState({
+    //     tripWay: null,
+    //     tripNum: null,
+    //     tripDate: null,
+    //     tripBudget: null,
+    //     tripRate: 0,
+    // });
 
     const handleReset = () => {
         console.log('重置按钮点击');
@@ -24,8 +26,8 @@ const FilterData = () => {
         // setResetKey(prevKey => prevKey + 1); // 触发组件重新渲染
     };
 
-    const handleApply = () => {
-        console.log('确定按钮点击', selectedFilters);
+    const handleConfirm = () => {
+        console.log('确定按钮点击',sorter,  city, selectedFilters);
         // todo 关闭弹出栏方法
     };
 
@@ -150,7 +152,7 @@ const FilterData = () => {
                 <div style={{ flex: '1', marginLeft: '0px' }}>
                     <div
                         style={{ width: '100%', height: '30px', borderRadius: '0 15px 15px 0', background: 'red', textAlign: 'center', lineHeight: '30px', color: 'white', cursor: 'pointer', border: '1px solid #ccc' }}
-                    // onClick={handleConfirm}
+                    onClick={handleConfirm}
                     >
                         确定
                     </div>
