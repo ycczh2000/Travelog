@@ -49,11 +49,19 @@ export default function AppLayout() {
     {
       key: "1",
       icon: <UserOutlined />,
+<<<<<<< HEAD
       label: "账户管理",
       children: [
         {
           key: "admin",
           label: "用户管理",
+=======
+      label: "游记管理",
+      children: [
+        {
+          key: "admin",
+          label: "游记审核",
+>>>>>>> feature/admin
         },
       ],
     },
@@ -79,7 +87,11 @@ export default function AppLayout() {
         })
         break
       case "admin": {
+<<<<<<< HEAD
         navigate("/layout/task")
+=======
+        navigate("/layout/travelog")
+>>>>>>> feature/admin
         break
       }
     }

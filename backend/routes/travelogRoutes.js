@@ -35,12 +35,18 @@ router.get("/mytravelogs", async (req, res) => {
 //游记上传 待优化
 router.post("/travelogs", imgUpload.array("image"), async (req, res, next) => {
   const userId = req.userId
+<<<<<<< HEAD
   console.log("req.body", req.body)
   const { title, content, tripWay, tripNum, tripDate, tripBudget, city, rate } = req.body.editingData
   console.log("editingData", title, content, tripWay, tripNum, tripDate, tripBudget, city, rate)
   // 访问文件列表中的每个文件对象
   // console.log(req.body.imgInfo)
   const imgInfo = req.body.imgInfo
+=======
+
+  const { title, content, tags } = req.body
+  const imgInfo = JSON.parse(req.body.imgInfo)
+>>>>>>> feature/admin
   const files = req.files
   const imgInfoValue = JSON.parse(imgInfo.value)
   const orderedImgName = imgInfoValue.map(originalname => {

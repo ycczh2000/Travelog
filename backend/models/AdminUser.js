@@ -18,7 +18,7 @@ adminUserSchema.statics.createUser = async function (username, password, role) {
     }
     const salt = await bcrypt.genSalt(10)
     const hash = await bcrypt.hash(password, salt)
-    await this.create({ username, password: hash, role })
+    await this.create({ username, password: hash, role: role })
     return { success: true, message: "创建成功" }
   } catch (err) {
     console.log("DB ERROR adminUserSchema.statics.createUser:", err)
@@ -68,21 +68,16 @@ adminUserSchema.statics.loginByToken = async function (userID) {
   }
 }
 
-adminUserSchema.statics.audit = async function (userId, travelogId, auditStatus) {
+adminUserSchema.statics.audit = async function (userId, travelogId, auditStatus, reason = "") {
   try {
-    const user = await this.findById(userId)
-    if (!user) {
-      return { success: false, message: "用户不存在" }
-    }
     const travelog = await Travelog.findById(travelogId)
     if (!travelog) {
       return { success: false, message: "游记不存在" }
     }
-    const { status, reason } = auditStatus
     // 修改游记状态
     travelog.auditDate = Date.now()
     travelog.auditorId = userId
-    switch (status) {
+    switch (auditStatus) {
       case "approved":
         travelog.status = "approved"
         break
@@ -102,14 +97,11 @@ adminUserSchema.statics.audit = async function (userId, travelogId, auditStatus)
 
 adminUserSchema.statics.delete = async function (userId, travelogId) {
   try {
-    const user = await this.findById(userId)
-    if (!user) {
-      return { success: false, message: "用户不存在" }
-    }
     const travelog = await Travelog.findById(travelogId)
     if (!travelog) {
       return { success: false, message: "游记不存在" }
     }
+    travelog.auditorId = userId
     travelog.deleted = true
     await travelog.save()
     return { success: true, message: "删除成功" }
@@ -119,5 +111,5 @@ adminUserSchema.statics.delete = async function (userId, travelogId) {
   }
 }
 
-const AdminUser = mongoose.model("adminUser", adminUserSchema)
+const AdminUser = mongoose.model("AdminUser", adminUserSchema)
 module.exports = AdminUser

@@ -1,0 +1,83 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 80vw;
+  max-width: 1000px;
+
+  .travelog {
+    width: 80vw;
+    max-width: 1000px;
+    height: 80vh;
+    overflow: auto;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+    .title {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    .tags {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 15px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      .tag {
+        background-color: #eee;
+        padding: 5px 15px;
+        border-radius: 5px;
+      }
+    }
+    .imgArea {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+      img {
+        width: 100px;
+        height: 100px;
+      }
+    }
+    .content {
+      margin-bottom: 20px;
+      font-family: Arial, sans-serif;
+    }
+  }
+
+  .buttonArea {
+    display: flex;
+    justify-content: space-between;
+    width: 80vw;
+    max-width: 1000px;
+    margin-bottom: 20px;
+    .auditButtonArea {
+      width: 30vw;
+    }
+    .auditButtonArea {
+      width: 30vw;
+    }
+    .btn {
+      margin: 0 5px;
+      border-radius: 5px;
+    }
+  }
+}
+
+.modelHeader {
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-bottom: 1px solid rgba(130, 130, 130, 0.4);
+  padding-bottom: 20px;
+  margin-bottom: 30px;
+  font-size: large;
+}
+.card {
+  margin-bottom: 10px;
+  border-radius: 10px;
+}
