@@ -8,7 +8,7 @@ const Instance = axios.create({
 Instance.interceptors.request.use(
   function (config) {
     if (localStorage.getItem("admintoken")) {
-      config.headers.Authorization = "Bearer " + localStorage.getItem("token")
+      config.headers.Authorization = "Bearer " + localStorage.getItem("admintoken")
     }
     return config
   },
@@ -23,6 +23,9 @@ Instance.interceptors.response.use(
     return response
   },
   function (error) {
+    // if (error.code === "ECONNABORTED" || error.message.includes("timeout")) {
+    //   return Promise.reject({ data: { success: false, description: "请求超时，请稍后再试" } })
+
     return Promise.reject(error)
   }
 )

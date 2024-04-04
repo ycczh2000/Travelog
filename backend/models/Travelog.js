@@ -1,6 +1,5 @@
 const mongoose = require("mongoose")
 const User = require("./User")
-const AdminUser = require("./AdminUser")
 const ObjectId = mongoose.Schema.Types.ObjectId
 
 const travelogSchema = new mongoose.Schema({
@@ -14,8 +13,8 @@ const travelogSchema = new mongoose.Schema({
   tripNum: { type: String, default: "" },
   tripDate: { type: String, default: "" },
   tripBudget: { type: String, default: "" },
-  isPublic:{type: Boolean, default: true},
-  rate:{type: Number, default: 5},
+  isPublic: { type: Boolean, default: true },
+  rate: { type: Number, default: 5 },
 
   createDate: { type: Date, default: Date.now },
   uploadDate: { type: Date },
