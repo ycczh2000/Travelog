@@ -1,7 +1,5 @@
 import axios from "axios"
-
-const baseURL = "http://localhost:8000/"
-
+export const baseURL = "http://localhost:8000/"
 const Instance = axios.create({
   baseURL: baseURL,
   timeout: 2000,
@@ -9,7 +7,7 @@ const Instance = axios.create({
 
 Instance.interceptors.request.use(
   function (config) {
-    if (localStorage.getItem("token")) {
+    if (localStorage.getItem("admintoken")) {
       config.headers.Authorization = "Bearer " + localStorage.getItem("token")
     }
     return config

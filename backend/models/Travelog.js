@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 const User = require("./User")
-
+const AdminUser = require("./AdminUser")
 const ObjectId = mongoose.Schema.Types.ObjectId
 
 const travelogSchema = new mongoose.Schema({
@@ -20,7 +20,7 @@ const travelogSchema = new mongoose.Schema({
   createDate: { type: Date, default: Date.now },
   uploadDate: { type: Date },
   auditDate: { type: Date },
-  auditorName: { type: String },
+  auditorId: { type: ObjectId, ref: "AdminUser" },
 
   deleted: { type: Boolean, default: false }, //逻辑删除
   status: {

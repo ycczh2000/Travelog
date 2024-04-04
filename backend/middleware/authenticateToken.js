@@ -9,10 +9,15 @@ console.log("out:  ", out)
 
 function authenticateToken(req, res, next) {
   const token = req.header("Authorization")?.split(" ")[1]
-  if (token === null) return next()
+  if (token === undefined) return next()
   jwt.verify(token, secret, (err, code) => {
-    if (err) return next()
+    if (err) {
+      return next()
+    }
     req.userId = code._id
+    if (code.role) {
+      req.role = code.role
+    }
     next()
   })
 }

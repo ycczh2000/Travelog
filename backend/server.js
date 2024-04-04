@@ -7,6 +7,7 @@ const authenticateToken = require("./middleware/authenticateToken")
 const errorHandler = require("./middleware/errorHandler")
 const travelogRoutes = require("./routes/travelogRoutes")
 const userRoutes = require("./routes/userRoutes")
+const adminUserRouter = require("./routes/adminUserRouters")
 
 const mongoose = require("mongoose")
 const User = require("./models/User")
@@ -24,6 +25,7 @@ app.use(authenticateToken)
 
 app.use(travelogRoutes)
 app.use(userRoutes)
+app.use("/admin", adminUserRouter)
 app.use("/images", express.static(path.join(__dirname, "uploads")))
 
 app.use(errorHandler)
