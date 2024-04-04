@@ -14,14 +14,14 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   if (req.userId) {
-    let result = await User.loginByToken(req.userId)
+    let result = await AdminUser.loginByToken(req.userId)
     res.json(result)
   } else {
-    const { username, password, role } = req.body
+    const { username, password } = req.body
     console.log(req.body)
-    let result = await AdminUser.login(username, password, role)
+    let result = await AdminUser.login(username, password)
     if (result.success) {
-      const admintoken = jwt.sign({ _id: result.data.userId, role: role }, secret, { expiresIn: "30h" })
+      const admintoken = jwt.sign({ _id: result.data.userId, role: result.data.role }, secret, { expiresIn: "30h" })
       result.data.admintoken = admintoken
     }
     res.json(result)
@@ -32,39 +32,76 @@ router.delete("/travelogs/:id", async (req, res) => {
   if (req.role !== "admin") {
     return res.status(403).send("无权限")
   }
+  console.log("delete travelog")
+  console.log(req.params)
   const travelogId = req.params.id
-  AdminUser.delete(req.userId, travelogId)
+  const result = await AdminUser.delete(req.userId, travelogId)
   res.json(result)
 })
 
 router.put("/travelogs/:id", async (req, res) => {
-  const { auditStatus } = req.body
-  const result = AdminUser.audit(req.userId, req.params.id, auditStatus)
+  const { auditStatus, reason } = req.body
+  console.log("auditStatus", auditStatus)
+  console.log(reason)
+  const result = await AdminUser.audit(req.userId, req.params.id, auditStatus, reason)
   res.json(result)
 })
 
-//查询query
+//查询游记   title 作者 authorUsername  审核人 auditorUsername
 router.get("/travelogs", async (req, res) => {
-  console.log("req.query", req.query)
-  const { title, auditorUsername, authorUsername } = req.query
+  // console.log("admin/travelogs")
+  // console.log("req.query", req.query)
+  // console.log("req.role", req.role)
+  const { title, auditorUsername, authorUsername, status } = req.query
   console.log(title, auditorUsername, authorUsername)
-  const query = {}
-  const authorQuery = {}
-  const auditorQuery = {}
+  const query = { deleted: false }
+  if (authorUsername) {
+    const author = await User.findOne({ username: authorUsername }, "_id")
+    if (!author) {
+      return res.json([])
+    }
+    query.authorId = author._id
+  }
 
   if (auditorUsername) {
-    auditorQuery["auditorInfo.username"] = auditorUsername
+    const auditor = await AdminUser.findOne({ username: auditorUsername }, "_id")
+    if (!auditor) {
+      return res.json([])
+    }
+    query.auditorId = auditor._id
   }
-  if (authorUsername) {
-    authorQuery["authorInfo.username"] = authorUsername
-  }
+
   if (title) {
     const titleReg = new RegExp(title)
     query.title = { $regex: titleReg }
   }
+  if (status) {
+    query.status = status
+  }
+
   console.log("query", query)
   const result = await Travelog.aggregate([
-    //管理员过滤
+    {
+      $match: query,
+    },
+    //填充作者username
+    {
+      $lookup: {
+        from: "users",
+        localField: "authorId",
+        foreignField: "_id",
+        as: "authorInfo", //
+      },
+    },
+    {
+      $unwind: "$authorInfo",
+    },
+    {
+      $addFields: {
+        authorUsername: "$authorInfo.username",
+      },
+    },
+    //填充审核人username
     {
       $lookup: {
         from: "adminusers",
@@ -74,41 +111,25 @@ router.get("/travelogs", async (req, res) => {
       },
     },
     {
-      $unwind: { path: "$auditorInfo", preserveNullAndEmptyArrays: true }, // 设置为true，否则auditorInfo为空时，不会返回数据
+      $unwind: { path: "$auditorInfo", preserveNullAndEmptyArrays: true }, // 设置为true，否则auditorInfo为空时不会返回数据
     },
     {
-      $match: auditorQuery,
-    },
-    //用户过滤
-    {
-      $lookup: {
-        from: "users",
-        localField: "authorId",
-        foreignField: "_id",
-        as: "authorInfo",
+      $addFields: {
+        auditorUsername: "$auditorInfo.username",
       },
-    },
-    {
-      $unwind: { path: "$authorInfo", preserveNullAndEmptyArrays: true },
-    },
-    { $match: authorQuery },
-    //游记内容过滤
-    {
-      $match: query,
     },
     {
       $project: {
         _id: 1,
         title: 1,
-        content: 1,
-        tags: 1,
-        images: 1,
-        status: 1,
-        auditDate: 1,
         createDate: 1,
-        authorUsername: "$authorInfo.username",
-        auditorUsername: "$auditorInfo.username",
+        status: 1,
+        authorUsername: 1,
+        auditorUsername: 1,
       },
+    },
+    {
+      $sort: { createDate: -1 },
     },
   ])
 
@@ -117,11 +138,13 @@ router.get("/travelogs", async (req, res) => {
 
 router.get("/travelogs/:id", async (req, res) => {
   console.log("/travelogs/:id")
-  const result = await Travelog.findById(req.params.id)
+  const result = await Travelog.findById(req.params.id).catch(err => {
+    res.status(404).send("游记不存在")
+  })
   if (!result) {
     return res.status(404).send("游记不存在")
   } else {
-    res.json({ success: true, ...result })
+    res.json({ success: true, data: result })
   }
 })
 

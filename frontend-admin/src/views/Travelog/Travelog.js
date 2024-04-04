@@ -1,38 +1,15 @@
 import React, { useState, useRef, useEffect } from "react"
 import { Table, Button, Form, Input, Modal, Select, Tag, Space } from "antd"
-import { useLocation, Navigate } from "react-router-dom"
-import MyNotification from "../../conponents/MyNotification/MyNotification"
-import { $travelogs } from "../../api/adminApi"
-import "./Task.scss"
+import { useLocation, Navigate, useNavigate } from "react-router-dom"
+import MyNotification from "../../components/MyNotification/MyNotification"
+import { ExclamationCircleFilled } from "@ant-design/icons"
+import { $travelogs, $deleteTravelog } from "../../api/adminApi"
+import styles from "./Travelog.module.scss"
+import { DatePicker } from "antd"
+import dayjs from "dayjs"
+const { RangePicker } = DatePicker
 const { Option } = Select
-
-const columns = [
-  { title: "标题", dataIndex: "title" },
-  { title: "创建时间", dataIndex: "createDate" },
-  { title: "发布人", dataIndex: "authorUsername" },
-  { title: "审核人", dataIndex: "auditorUsername" },
-  {
-    title: "审核状态",
-    dataIndex: "status",
-    render: (_, { status }) => {
-      return <Tag color="geekblue">{status}</Tag>
-    },
-  },
-  {
-    title: "操作",
-    dataIndex: "operate",
-    render: (e, { _id }) => {
-      console.log(e)
-      return (
-        <Space size="middle">
-          <a onClick={() => console.log(_id)}>审核</a>
-          <a>删除</a>
-        </Space>
-      )
-    },
-  },
-]
-
+const { confirm } = Modal
 const formItemLayout = {
   labelCol: {
     span: 8,
@@ -61,16 +38,37 @@ const modelFormItemLayout = {
 export default function Task() {
   const [tableData, setTableData] = useState([])
   const [modalOpen, setModalOpen] = useState(false)
-  const [selectedRowKeys, setSelectedRowKeys] = useState([])
   const [notiMsg, setNotiMsg] = useState({ type: "", description: "" })
   const [form] = Form.useForm()
   const [addform] = Form.useForm()
-
+  const navigate = useNavigate()
   const userinfo = 123
   useEffect(() => {
     loadTravelogs()
-    console.log("123")
   }, [])
+
+  const handleOperateClick = (id, operate) => {
+    console.log(id)
+    switch (operate) {
+      case "audit":
+        navigate(`${id}`)
+        break
+      case "delete":
+        confirm({
+          title: "系统提示",
+          icon: <ExclamationCircleFilled />,
+          content: "确定要删除吗",
+          okText: "确定",
+          cancelText: "取消",
+          onOk: async () => {
+            const result = await $deleteTravelog(id).then(loadTravelogs)
+            console.log("sad", id)
+          },
+        })
+        break
+      default:
+    }
+  }
 
   const loadTravelogs = async () => {
     const data = await $travelogs()
@@ -81,18 +79,10 @@ export default function Task() {
     setTableData(data)
   }
 
-  const onSelectChange = newSelectedRowKeys => {
-    setSelectedRowKeys(newSelectedRowKeys)
-  }
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  }
-
   const filterInputItem = [
     { title: "标题", dataIndex: "title" },
-    { title: "创建时间", dataIndex: "createDate" },
-    { title: "审核状态", dataIndex: "status" },
+    // { title: "创建时间", dataIndex: "createDate" },
+    // { title: "审核状态", dataIndex: "status" },
     { title: "发布人", dataIndex: "authorUsername" },
     { title: "审核人", dataIndex: "auditorUsername" },
   ]
@@ -119,17 +109,74 @@ export default function Task() {
     setNotiMsg({ type: "success", description: "添加成功" })
   }
 
+  const resetFileds = () => {
+    form.resetFields()
+    form.submit()
+  }
+
   const queryFinish = async value => {
     console.log(value)
     const data = await $travelogs(value)
-    console.log("queryFinish", data)
+    data.forEach(element => {
+      element.key = element._id
+    })
+    setTableData(data)
   }
+
+  const columns = [
+    {
+      title: "标题",
+      dataIndex: "title",
+      ellipsis: true,
+      width: 500,
+      render: (_, { title, _id }) => <a onClick={() => navigate(`${_id}`)}>{title}</a>,
+    },
+    {
+      title: "创建时间",
+      dataIndex: "createDate",
+      ellipsis: true,
+      render: (_, { createDate }) => createDate.slice(0, 10),
+    },
+    { title: "发布人", dataIndex: "authorUsername", ellipsis: true },
+    { title: "审核人", dataIndex: "auditorUsername", ellipsis: true },
+    {
+      title: "审核状态",
+      dataIndex: "status",
+      ellipsis: true,
+      render: (_, { status }) => {
+        switch (status) {
+          case "pending":
+            return <Tag color="#2db7f5">待审核</Tag>
+          case "approved":
+            return <Tag color="#87d068">已通过</Tag>
+          case "rejected":
+            return <Tag color="#f50">未通过</Tag>
+          default:
+            return <Tag>数据错误!</Tag>
+        }
+      },
+    },
+    {
+      title: "操作",
+      dataIndex: "operate",
+      width: 150,
+      render: (e, { _id }) => {
+        console.log(e)
+        return (
+          <Space size="middle">
+            <a onClick={() => handleOperateClick(_id, "audit")}>审核</a>
+            <a onClick={() => handleOperateClick(_id, "delete")}>删除</a>
+          </Space>
+        )
+      },
+    },
+  ]
 
   return (
     <>
       {userinfo ? (
         <>
-          <div className="card">
+          <div className={styles.card}>
             <Form layout={"inline"} form={form} onFinish={queryFinish}>
               {filterInputItem.map(item => (
                 <Form.Item
@@ -141,8 +188,34 @@ export default function Task() {
                   <Input />
                 </Form.Item>
               ))}
+              <Form.Item
+                key="status"
+                name="status"
+                label="审核状态"
+                {...formItemLayout}
+                style={{ width: "30%", marginTop: "10px" }}>
+                <Select allowClear>
+                  <Option value="pending">待审核</Option>
+                  <Option value="approved">已通过</Option>
+                  <Option value="rejected">未通过</Option>
+                </Select>
+              </Form.Item>
+              <Form.Item
+                {...formItemLayout}
+                style={{ width: "30%", marginTop: "10px" }}
+                label={"创建时间"}
+                name={"createDate"}>
+                <RangePicker
+                  presets={[
+                    {
+                      label: "两天内",
+                      value: dayjs().add(-2, "d"),
+                    },
+                  ]}
+                />
+              </Form.Item>
             </Form>
-            <div className="button-area">
+            <div className={styles.buttonArea}>
               <Button
                 className="btn"
                 type="primary"
@@ -151,7 +224,9 @@ export default function Task() {
                 }}>
                 查询
               </Button>
-              <Button className="btn">重置</Button>
+              <Button className="btn" onClick={resetFileds}>
+                重置
+              </Button>
               {userinfo.authority === "admin" && (
                 <Button className="btn" onClick={() => setModalOpen(true)} type="primary">
                   + 新建
@@ -159,10 +234,10 @@ export default function Task() {
               )}
             </div>
           </div>
-          <Table rowSelection={rowSelection} columns={columns} dataSource={tableData} />
+          <Table columns={columns} dataSource={tableData} />
           <Modal {...modalSetting} forceRender open={modalOpen} onOk={handleModalOk} onCancel={handleModalCancel}>
-            <header className="modal-header">基本信息</header>
-            <div className="card">
+            <header className={styles.modelHeader}>基本信息</header>
+            <div className={styles.card}>
               <Form layout={"horizontal"} form={addform} onFinish={handleAddFinish}>
                 <Form.Item
                   {...modelFormItemLayout}

@@ -3,19 +3,19 @@ import { useNavigate, Link } from "react-router-dom"
 import "./Login.scss"
 import { Button, Form, Input, Select } from "antd"
 import { $login } from "../../api/adminApi"
-import MyNotification from "../../conponents/MyNotification/MyNotification"
+import MyNotification from "../../components/MyNotification/MyNotification"
 export default function Login() {
   let navigate = useNavigate()
   let [notiMsg, setNotiMsg] = useState({ type: "", description: "" })
   const [form] = Form.useForm()
   const onFinish = async values => {
     try {
-      let data = await $login(values)
-      const { message, success, resdata } = data
-      if (success) {
-        navigate("/layout/task", { state: { userinfo: resdata } })
+      let result = await $login(values)
+      if (result.success) {
+        navigate("/layout/travelog")
+        result.data?.admintoken && localStorage.setItem("admintoken", result.data.admintoken)
       } else {
-        setNotiMsg({ type: "error", description: message })
+        setNotiMsg({ type: "error", description: result.message })
       }
     } catch (e) {
       setNotiMsg({ type: "error", description: e.message })
@@ -60,22 +60,6 @@ export default function Login() {
                 },
               ]}>
               <Input.Password />
-            </Form.Item>
-
-            <Form.Item label="角色" name="role">
-              <Select
-                defaultValue="审核员"
-                options={[
-                  {
-                    value: "admin",
-                    label: "审核员",
-                  },
-                  {
-                    value: "auditor",
-                    label: "管理员",
-                  },
-                ]}
-              />
             </Form.Item>
 
             <Form.Item

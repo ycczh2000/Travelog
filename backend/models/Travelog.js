@@ -1,6 +1,5 @@
 const mongoose = require("mongoose")
 const User = require("./User")
-const AdminUser = require("./AdminUser")
 const ObjectId = mongoose.Schema.Types.ObjectId
 
 const travelogSchema = new mongoose.Schema({

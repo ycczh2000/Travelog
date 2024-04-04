@@ -7,6 +7,11 @@ console.log("测试用token与out")
 console.log("token:  ", token)
 console.log("out:  ", out)
 
+const admintoken = jwt.sign({ _id: "660e40ba875ec601b613615c", role: "admin" }, secret, { expiresIn: "500h" })
+const admintokenout = jwt.verify(admintoken, secret)
+console.log("测试用admintoken")
+console.log("admintoken:  ", admintoken)
+
 function authenticateToken(req, res, next) {
   const token = req.header("Authorization")?.split(" ")[1]
   if (token === undefined) return next()
@@ -18,6 +23,7 @@ function authenticateToken(req, res, next) {
     if (code.role) {
       req.role = code.role
     }
+    console.log("req.userId:  ", req.userId, "req.role:  ", req.role)
     next()
   })
 }

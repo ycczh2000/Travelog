@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom"
 import "./Register.scss"
 import { Button, Form, Input, Select } from "antd"
 import { $register } from "../../api/adminApi"
-import MyNotification from "../../conponents/MyNotification/MyNotification"
+import MyNotification from "../../components/MyNotification/MyNotification"
 export default function Register() {
   let navigate = useNavigate()
   let [notiMsg, setNotiMsg] = useState({ type: "", description: "" })
@@ -14,7 +14,10 @@ export default function Register() {
       const { message, success, resdata } = data
       console.log(data)
       if (success) {
-        navigate("/layout/task", { state: { userinfo: resdata } })
+        setNotiMsg({ type: "success", description: message + "，两秒后跳转到登录页" })
+        setTimeout(() => {
+          navigate("/login", { state: { userinfo: resdata } })
+        }, 2000)
       } else {
         setNotiMsg({ type: "error", description: message })
       }
@@ -39,7 +42,7 @@ export default function Register() {
     <div className="login-page">
       <div className="login">
         <div className="card">
-          <h2>Hi,欢迎登录</h2>
+          <h2>Hi,欢迎注册</h2>
           <Form
             name="basic"
             form={form}
@@ -80,11 +83,11 @@ export default function Register() {
                 defaultValue="审核员"
                 options={[
                   {
-                    value: "admin",
+                    value: "auditor",
                     label: "审核员",
                   },
                   {
-                    value: "auditor",
+                    value: "admin",
                     label: "管理员",
                   },
                 ]}
@@ -98,12 +101,8 @@ export default function Register() {
                 span: 18,
               }}>
               <Button type="primary" htmlType="submit" className="login-form-button">
-                登录
+                注册
               </Button>
-              <br />
-              <p className="register-link">
-                没有账号？<Link to="/login">点击注册</Link>
-              </p>
             </Form.Item>
           </Form>
         </div>
