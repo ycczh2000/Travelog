@@ -19,7 +19,7 @@ function App() {
           <Route path="/" element={<Home />}></Route>
           <Route path="/travelogs/:id" element={<div />}></Route>
           <Route path="/space/:username" element={<UserSpace />}>
-            <Route path="travelog" element={<UserTravelogs />}></Route>
+          <Route path="travelog" element={<UserTravelogs />}></Route>
           </Route>
           <Route path="/mytravelog" element={<MyTravelog />}></Route>
           <Route path="/publish" element={<Publish />}></Route>
