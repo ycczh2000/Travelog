@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-05 16:02:45
+ * @LastEditTime: 2024-04-05 16:10:24
  * @FilePath: \frontend\src\components\WaterfallLayout\WaterfallLayout.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -17,21 +17,21 @@ const WaterfallLayout = () => {
     const { sorter, city, selectedFilters, searchTerm } = useContext(HomeContext);
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false); // 新增 loading 状态
-    const [oldData, setOldData] = useState([]);
+    // const [oldData, setOldData] = useState([]);
     useEffect(() => {
-        if (searchTerm == null) {
-            setData(oldData);//将旧数据重新放到首页
-        }
-        else {
-            setOldData(data); // 保存旧数据
-            const newData = [];
+        // if (searchTerm == null) {
+        //     setData(oldData);//将旧数据重新放到首页
+        // }
+        // else {
+        //     setOldData(data); // 保存旧数据
+            let newData = [];
             setData(newData); // 清空数据
             fetchData(sorter, city, selectedFilters, searchTerm);//重新获取数据
-        }
+        // }
     }, [searchTerm])
 
     useEffect(() => {
-        fetchData(sorter, city, selectedFilters);
+        fetchData(sorter, city, selectedFilters,searchTerm);
     }, []); // 在组件加载时发送请求获取数据
 
     const fetchData = (sorter, city, selectedFilters,searchTerm='') => {
@@ -69,13 +69,13 @@ const WaterfallLayout = () => {
         const handleScroll = () => {
             // 当滚动到页面底部时，并且当前不处于加载数据状态时，触发 fetchData 函数获取更多数据
             if (!loading && window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-                fetchData(sorter, city, selectedFilters);
+                fetchData(sorter, city, selectedFilters, searchTerm);
             }
         };
 
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [sorter, city, selectedFilters, loading]); // 依赖项中添加了 sorter、city、selectedFilters 和 loading
+    }, [sorter, city, selectedFilters, loading,searchTerm]);
     // 在组件加载时添加滚动事件监听器，并在组件卸载时移除监听器
     const masonryRef = useRef(null);
 

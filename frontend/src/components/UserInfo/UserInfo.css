@@ -1,0 +1,18 @@
+.contain1 {  
+    padding: 20px;  
+    background: #f5f5f5;  
+  }  
+    
+  .title {  
+
+    /* 可以增加标题的样式，比如字体大小、颜色等 */  
+    font-size: 18px; /* 或者更大，根据你的需求调整 */  
+    font-weight: bold; /* 加粗标题 */  
+  }  
+    
+  .userInfo {  
+ 
+    /* 可以为相关信息添加样式，比如字体颜色、行高等 */  
+    color: #333; /* 字体颜色 */  
+    line-height: 1.5; /* 行高，使文本更易读 */  
+  }
