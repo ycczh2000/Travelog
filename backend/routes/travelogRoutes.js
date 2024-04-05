@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-03 20:52:26
+ * @LastEditTime: 2024-04-05 14:45:19
  * @FilePath: \backend\routes\travelogRoutes.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -35,18 +35,12 @@ router.get("/mytravelogs", async (req, res) => {
 //游记上传 待优化
 router.post("/travelogs", imgUpload.array("image"), async (req, res, next) => {
   const userId = req.userId
-<<<<<<< HEAD
   console.log("req.body", req.body)
   const { title, content, tripWay, tripNum, tripDate, tripBudget, city, rate } = req.body.editingData
   console.log("editingData", title, content, tripWay, tripNum, tripDate, tripBudget, city, rate)
   // 访问文件列表中的每个文件对象
   // console.log(req.body.imgInfo)
   const imgInfo = req.body.imgInfo
-=======
-
-  const { title, content, tags } = req.body
-  const imgInfo = JSON.parse(req.body.imgInfo)
->>>>>>> feature/admin
   const files = req.files
   const imgInfoValue = JSON.parse(imgInfo.value)
   const orderedImgName = imgInfoValue.map(originalname => {
