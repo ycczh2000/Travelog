@@ -2,14 +2,19 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-05 14:45:19
+ * @LastEditTime: 2024-04-05 23:42:06
  * @FilePath: \backend\routes\travelogRoutes.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 const express = require("express")
 const router = express.Router()
 const Travelog = require("../models/Travelog")
-const { imgUpload } = require("../middleware/imgUpload")
+const EditTravelog = require("../models/EditTravelog")
+const { imgUpload, travelogImgUpload } = require("../middleware/imgUpload")
+const fs = require("fs")
+const path = require("path")
+const mongoose = require("mongoose")
+const ObjectId = mongoose.Types.ObjectId
 
 //获取某篇游记
 router.get("/travelogs/:id", async (req, res) => {
@@ -32,15 +37,12 @@ router.get("/mytravelogs", async (req, res) => {
   res.json(result)
 })
 
-//游记上传 待优化
+//游记上传v1 待优化
 router.post("/travelogs", imgUpload.array("image"), async (req, res, next) => {
   const userId = req.userId
-  console.log("req.body", req.body)
-  const { title, content, tripWay, tripNum, tripDate, tripBudget, city, rate } = req.body.editingData
-  console.log("editingData", title, content, tripWay, tripNum, tripDate, tripBudget, city, rate)
-  // 访问文件列表中的每个文件对象
-  // console.log(req.body.imgInfo)
-  const imgInfo = req.body.imgInfo
+
+  const { title, content, tags } = req.body
+  const imgInfo = JSON.parse(req.body.imgInfo)
   const files = req.files
   const imgInfoValue = JSON.parse(imgInfo.value)
   const orderedImgName = imgInfoValue.map(originalname => {
@@ -61,6 +63,79 @@ router.post("/travelogs", imgUpload.array("image"), async (req, res, next) => {
     status: "approved",
   })
   console.log("successfully created a new travelog?", result)
+  res.json(result)
+})
+
+//游记上传v2 逐张上传
+//1.创建编辑状态的游记
+router.post("/travelogs/edit", async (req, res) => {
+  const targetTravelogId = req.body.targetTravelogId || null
+  console.log("targetTravelogId", targetTravelogId)
+  const userId = req.userId
+  const result = await EditTravelog.createEditTravelog(userId, targetTravelogId)
+  res.json(result)
+})
+
+//2.更新当前编辑的游记
+router.put("/travelogs/edit", async (req, res) => {
+  const userId = req.userId
+  const editId = req.body.editId
+  const editData = req.body.editData
+  const result = await EditTravelog.updataEditTravelog(userId, editId, editData)
+  res.json(result)
+})
+
+//3.1 发布新游记-不存在原游记
+router.post("/travelogs/edit/publish", async (req, res) => {
+  const userId = req.userId
+  const editId = req.body.editId
+  const result = await EditTravelog.publishEditTravelog(userId, editId)
+  res.json(result)
+})
+
+//3.2 更新游记-原游记存在
+router.put("/travelogs/edit/update", async (req, res) => {
+  const userId = req.userId
+  const editId = req.body.editId
+  const result = await EditTravelog.updateEditTravelog(userId, editId)
+  res.json(result)
+})
+
+//4.上传或更新图片
+//存储到某个目录./uploads下 返回值为文件名
+router.post("/travelogs/edit/uploadimg", travelogImgUpload.single("image"), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: "没有图片上传" })
+  }
+  const userId = req.userId
+  const { editId, index } = req.body
+  const fileName = new mongoose.Types.ObjectId().toString()
+  const fileExtension = path.extname(req.file.originalname)
+  const imgName = `${fileName}${fileExtension}`
+  // console.log("req.file", imgName)
+  const filePath = path.join(__dirname, "../uploads", imgName)
+  try {
+    fs.writeFileSync(filePath, req.file.buffer)
+    const result = await EditTravelog.uploadImage(userId, editId, imgName, index)
+    return res.status(200).json(result)
+  } catch (err) {
+    return res.status(500).json({ message: "保存失败" })
+  }
+})
+
+//5.删除第i张图片
+router.delete("/travelogs/edit/deleteimg", async (req, res) => {
+  const userId = req.userId
+  const { editId, index } = req.body
+  const result = await EditTravelog.deleteImage(userId, editId, index)
+  res.json(result)
+})
+
+//6.存到草稿箱
+router.put("/travelogs/edit/savedraft", async (req, res) => {
+  const userId = req.userId
+  const { editId } = req.body
+  const result = await EditTravelog.saveDraftTravelog(userId, editId)
   res.json(result)
 })
 

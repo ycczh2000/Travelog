@@ -4,6 +4,7 @@ const ObjectId = mongoose.Schema.Types.ObjectId
 
 const travelogSchema = new mongoose.Schema({
   authorId: { type: ObjectId, ref: "User", required: true },
+
   title: { type: String, required: true },
   content: { type: String, required: true },
   images: [String],
