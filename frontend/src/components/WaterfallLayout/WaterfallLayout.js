@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-05 16:10:24
+ * @LastEditTime: 2024-04-06 00:15:56
  * @FilePath: \frontend\src\components\WaterfallLayout\WaterfallLayout.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -19,6 +19,7 @@ const WaterfallLayout = () => {
     const [loading, setLoading] = useState(false); // 新增 loading 状态
     // const [oldData, setOldData] = useState([]);
     useEffect(() => {
+        //todo:搜索前保存旧数据，取消搜索后直接调用旧数据
         // if (searchTerm == null) {
         //     setData(oldData);//将旧数据重新放到首页
         // }
@@ -191,7 +192,7 @@ const WaterfallLayout = () => {
     // 当筛选条件改变时进行数据筛选
     useEffect(() => {
         fetchData(sorter, city, selectedFilters);
-    }, [city, selectedFilters]); // 监听 city 的变化，执行 fetchData
+    }, [city, selectedFilters]); // 监听 city和selectedFilters 的变化，执行 fetchData
 
     return (
         <div ref={masonryRef} className="waterfall-layout">

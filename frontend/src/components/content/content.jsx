@@ -11,6 +11,7 @@ import { Rate, Space, Toast } from 'antd-mobile'
 import './content.css'; 
   
 const Content = ({tripInfo}) => { 
+  console.log("content:",tripInfo)
   // const tripInfo ={
   //   tripWay: null,
   //   tripNum: null,
@@ -27,10 +28,10 @@ const Content = ({tripInfo}) => {
         <div className="cell">出行人数</div>
       </div>
       <div className="dataRow">
-        <div className="cell">{tripInfo && tripInfo.tripDays && tripInfo.tripDays.length > 0 ? tripInfo.tripDays : '-'}</div>
-        <div className="cell">{tripInfo && tripInfo.tripCost && tripInfo.tripCost.length > 0 ? tripInfo.tripCost : '-'}</div>
-        <div className="cell">{tripInfo && tripInfo.tripMode && tripInfo.tripMode.length > 0 ? tripInfo.tripMode : '-'}</div>
-        <div className="cell">{tripInfo && tripInfo.tripPersons && tripInfo.tripPersons.length > 0 ? tripInfo.tripPersons : '-'}</div>
+        <div className="cell">{tripInfo && tripInfo.tripDate && tripInfo.tripDate.length > 0 ? tripInfo.tripDate : '-'}</div>
+        <div className="cell">{tripInfo && tripInfo.tripBudget && tripInfo.tripBudget.length > 0 ? tripInfo.tripBudget : '-'}</div>
+        <div className="cell">{tripInfo && tripInfo.tripWay && tripInfo.tripWay.length > 0 ? tripInfo.tripWay : '-'}</div>
+        <div className="cell">{tripInfo && tripInfo.tripNum && tripInfo.tripNum.length > 0 ? tripInfo.tripNum : '-'}</div>
       </div>
       <h4>旅行体验</h4>
       <div style={{ display: 'flex', justifyContent: 'center' }}>

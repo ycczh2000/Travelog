@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-03-27 18:42:58
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-03 20:45:43
+ * @LastEditTime: 2024-04-06 01:09:39
  * @FilePath: \frontend\src\pages\Publish\Publish.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -16,6 +16,7 @@ import { LeftOutline } from 'antd-mobile-icons';
 import { Button } from 'antd-mobile';
 import { DownlandOutline, EyeOutline } from 'antd-mobile-icons'
 import { sendTraveLogToServer } from '../../api/userApi';
+import { useNavigate } from 'react-router-dom';
 
 const Publish = () => {
   const [fileList, setFileList] = useState([]);
@@ -79,12 +80,41 @@ const Publish = () => {
       console.log(fileList, editingData);
     }
   }, []);
+
+  const navigate = useNavigate();
+  const handlePreviewLog = () => {
+    // 进行路由跳转，并传递参数
+    let title = editingData.title;
+    let content=editingData.content;
+    let city = editingData.city;
+    let tripInfo = {
+      tripWay:editingData.tripWay,
+      tripNum:editingData.tripNum,
+      tripDate:editingData.tripDate,
+      tripBudget:editingData.tripBudget,
+      tripRate:editingData.rate,
+    };
+    const logID=''
+    const cityString = city ? city.join(',') : '';// 将城市数组转换为逗号分隔的字符串
+    const queryString = new URLSearchParams({
+      logID: logID,
+      title: title,
+      content: content,
+      city: cityString, 
+      tempTripInfo: JSON.stringify(tripInfo) // 将tempTripInfo对象转换为JSON字符串
+    }).toString();
+    // navigate(`/travelogs`);
+    navigate(`/travelogs?${queryString}`);
+  };
+  const handleGoBack = () => {
+    window.history.go(-1); // 返回上一页面
+  };
   return (
-    <div style={{ margin: '10px' }}> {/* 添加外边距 */}
+    <div style={{ margin: '10px' }}>
       <div>
         <Button
           style={{ background: 'transparent', border: 'none' }}
-          onClick={() => { /* 透明按钮的点击事件 */ }}
+          onClick={handleGoBack} /* 返回按钮的点击事件 */ 
         >
           <LeftOutline />
         </Button>
@@ -98,7 +128,7 @@ const Publish = () => {
           <Button onClick={handleSaveDraftClick} style={{ background: 'transparent', border: 'none' }}>
             <DownlandOutline /> 存草稿
           </Button>
-          <Button style={{ background: 'transparent', border: 'none' }}>
+          <Button style={{ background: 'transparent', border: 'none' }} onClick={handlePreviewLog}>
             <EyeOutline /> 预览
           </Button>
           <Button onClick={handlePublishClick} style={{ backgroundColor: 'red', color: 'white', borderRadius: '20px', flex: '1', marginLeft: '10px' }}>

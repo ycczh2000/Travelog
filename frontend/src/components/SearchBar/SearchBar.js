@@ -1,3 +1,11 @@
+/*
+ * @Author: Sueyuki 2574397962@qq.com
+ * @Date: 2024-04-02 19:17:09
+ * @LastEditors: Sueyuki 2574397962@qq.com
+ * @LastEditTime: 2024-04-06 00:27:50
+ * @FilePath: \frontend\src\components\SearchBar\SearchBar.js
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 // src/components/SearchBar.js
 import React, { useContext, useState } from 'react';
 import { SearchBar, Tag } from 'antd-mobile';
@@ -21,7 +29,6 @@ const SearchBarComponent = () => {
             // filter: 'blur(5px) brightness(0.7)', /* 添加毛玻璃特效 */
         }}>
             <div className="search-bar-header">
-
                 <button className="transparent-button left-button" style={{
                     fontSize: '1.2rem',
                     fontWeight: 'bold',

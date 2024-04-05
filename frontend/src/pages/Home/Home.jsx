@@ -24,7 +24,7 @@ const Home = () => {
       behavior: 'smooth' // 平滑滚动
     });
   };
-  // const [sorter, setSorter] = useState('0');
+  // const [sorter, setSorter] = useState('0');//首页相关使用到的数据，已改为使用上下文实现
   // const [city, setCity] = useState()
   // const [selectedFilters, setSelectedFilters] = useState({
   //   tripWay: null,
