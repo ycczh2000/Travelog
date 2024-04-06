@@ -16,37 +16,37 @@ const path = require("path")
 const mongoose = require("mongoose")
 const ObjectId = mongoose.Types.ObjectId
 
-//游记上传v1 待优化
-router.post("/travelogs", imgUpload.array("image"), async (req, res, next) => {
-  const userId = req.userId
+//游记上传v1 废弃
+// router.post("/travelogs", imgUpload.array("image"), async (req, res, next) => {
+//   const userId = req.userId
 
-  const { title, content, tags } = req.body
-  const imgInfo = JSON.parse(req.body.imgInfo)
-  const files = req.files
-  const imgInfoValue = JSON.parse(imgInfo.value)
-  const orderedImgName = imgInfoValue.map(originalname => {
-    return files.find(f => f.originalname === originalname)?.filename
-  })
+//   const { title, content, tags } = req.body
+//   const imgInfo = JSON.parse(req.body.imgInfo)
+//   const files = req.files
+//   const imgInfoValue = JSON.parse(imgInfo.value)
+//   const orderedImgName = imgInfoValue.map(originalname => {
+//     return files.find(f => f.originalname === originalname)?.filename
+//   })
 
-  const result = await Travelog.createTravelog(userId, {
-    title: title || "这是一个标题",
-    content: content || "\u200B",
-    Location: city || [], // 地点，todo
-    tripWay: tripWay || "\u200B",
-    tripNum: tripNum || "\u200B",
-    tripDate: tripDate || "\u200B",
-    tripBudget: tripBudget || "\u200B",
-    rate: rate || 5,
-    // tags: JSON.parse(tags),
-    images: orderedImgName,
-    status: "approved",
-  })
-  console.log("successfully created a new travelog?", result)
-  res.json(result)
-})
-
+//   const result = await Travelog.createTravelog(userId, {
+//     title: title || "这是一个标题",
+//     content: content || "\u200B",
+//     Location: city || [], // 地点，todo
+//     tripWay: tripWay || "\u200B",
+//     tripNum: tripNum || "\u200B",
+//     tripDate: tripDate || "\u200B",
+//     tripBudget: tripBudget || "\u200B",
+//     rate: rate || 5,
+//     // tags: JSON.parse(tags),
+//     images: orderedImgName,
+//     status: "approved",
+//   })
+//   console.log("successfully created a new travelog?", result)
+//   res.json(result)
+// })
+//###################游记上传相关###################
 //游记上传v2 逐张上传
-//1.创建编辑状态的游记
+//1.创建编辑状态的游记 userId->editId
 router.post("/travelogs/edit", async (req, res) => {
   const userId = req.userId
   const targetTravelogId = req.body.targetTravelogId || null
@@ -89,7 +89,7 @@ router.get("/travelogs/edit/images", async (req, res) => {
   res.json(result)
 })
 
-//4.上传或更新图片
+//4.上传或更新第i张图片
 //存储到某个目录./uploads下 返回值为文件名
 router.post("/travelogs/edit/uploadimg", travelogImgUpload.single("image"), async (req, res) => {
   if (!req.file) {
@@ -134,11 +134,73 @@ router.get("/travelogs/edit", async (req, res) => {
   res.json(result)
 })
 
-//6.存到草稿箱
+//8.存到草稿箱
 router.put("/travelogs/edit/savedraft", async (req, res) => {
   const userId = req.userId
   const { editId } = req.body
   const result = await EditTravelog.saveDraftTravelog(userId, editId)
+  res.json(result)
+})
+
+//###################获取游记相关#####################
+//1.查询所有游记
+router.get("/travelogs", async (req, res) => {
+  const { title } = req.query
+  const query = {}
+  if (title) {
+    const titleReg = new RegExp(title)
+    query.title = { $regex: titleReg }
+  }
+  query.deleted = false
+  query.status = "approved"
+  console.log("req.query", req.query)
+
+  const result = await Travelog.aggregate([
+    { $match: query },
+    {
+      $lookup: {
+        from: "users",
+        let: { authorId: "$authorId" },
+        pipeline: [
+          { $match: { $expr: { $eq: ["$_id", "$$authorId"] } } }, //匹配users集合的_id和travelogs的authorId}}
+          { $project: { username: 1, _id: 0 } },
+        ],
+        as: "user_info", //user_info -> user_info.username
+      },
+    },
+    { $unwind: "$user_info" },
+    {
+      $addFields: {
+        username: "$user_info.username",
+        likesCount: { $size: "$likes" },
+        image: { $arrayElemAt: ["$images", 0] },
+        images: { $slice: ["$images", 3] },
+      },
+    },
+    // // 添加分页 分页参数
+    // { $skip: skip },
+    // { $limit: parseInt(pageSize) },
+    {
+      $project: {
+        id: "$_id",
+        _id: 0,
+        username: 1,
+        avatar: 1, //需要url路径
+        title: 1,
+        images: 1,
+        image: 1,
+        // likes:0,
+        likesCount: 1,
+        rate: 1,
+        title: 1,
+        tripBudget: 1,
+        tripNum: 1,
+        tripWay: 1,
+        tripDate: 1,
+        Location: 1,
+      },
+    },
+  ])
   res.json(result)
 })
 

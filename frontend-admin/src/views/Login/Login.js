@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useContext } from "react"
+import { AuthContext } from "../../context/AuthProvider"
 import { useNavigate, Link } from "react-router-dom"
 import "./Login.scss"
 import { Button, Form, Input, Select } from "antd"
@@ -6,11 +7,14 @@ import { $login } from "../../api/adminApi"
 import MyNotification from "../../components/MyNotification/MyNotification"
 export default function Login() {
   let navigate = useNavigate()
+  const role = useContext(AuthContext)
+  console.log(role)
   let [notiMsg, setNotiMsg] = useState({ type: "", description: "" })
   const [form] = Form.useForm()
   const onFinish = async values => {
     try {
       let result = await $login(values)
+      console.log(result)
       if (result.success) {
         navigate("/layout/travelog")
         result.data?.admintoken && localStorage.setItem("admintoken", result.data.admintoken)
