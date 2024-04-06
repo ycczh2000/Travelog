@@ -7,7 +7,7 @@ const travelogSchema = new mongoose.Schema({
 
   title: { type: String, required: true },
   content: { type: String, required: true },
-  images: [String],
+  images: { type: [String], default: [] },
   tags: [String],
   Location: { type: Object, default: "" }, //地点 待细化
   tripWay: { type: String, default: "" },

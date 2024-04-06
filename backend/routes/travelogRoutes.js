@@ -16,27 +16,6 @@ const path = require("path")
 const mongoose = require("mongoose")
 const ObjectId = mongoose.Types.ObjectId
 
-//获取某篇游记
-router.get("/travelogs/:id", async (req, res) => {
-  const id = req.params?.id
-  const result = await Travelog.getTravelogById(id)
-  res.json(result)
-})
-
-//获取某个用户的所有游记
-router.get("/users/:username/travelogs", async (req, res) => {
-  const username = req.params?.username
-  const result = await Travelog.getTravelogsByUsername(username)
-  res.json(result)
-})
-
-//获取我的游记列表
-router.get("/mytravelogs", async (req, res) => {
-  const userId = req.userId
-  const result = await Travelog.getMyTravelogs(userId)
-  res.json(result)
-})
-
 //游记上传v1 待优化
 router.post("/travelogs", imgUpload.array("image"), async (req, res, next) => {
   const userId = req.userId
@@ -69,9 +48,9 @@ router.post("/travelogs", imgUpload.array("image"), async (req, res, next) => {
 //游记上传v2 逐张上传
 //1.创建编辑状态的游记
 router.post("/travelogs/edit", async (req, res) => {
+  const userId = req.userId
   const targetTravelogId = req.body.targetTravelogId || null
   console.log("targetTravelogId", targetTravelogId)
-  const userId = req.userId
   const result = await EditTravelog.createEditTravelog(userId, targetTravelogId)
   res.json(result)
 })
@@ -79,8 +58,9 @@ router.post("/travelogs/edit", async (req, res) => {
 //2.更新当前编辑的游记
 router.put("/travelogs/edit", async (req, res) => {
   const userId = req.userId
-  const editId = req.body.editId
-  const editData = req.body.editData
+  console.log(req.body)
+  const { editId, editData } = req.body
+  console.log("editId", editId, "userId", userId)
   const result = await EditTravelog.updataEditTravelog(userId, editId, editData)
   res.json(result)
 })
@@ -89,6 +69,7 @@ router.put("/travelogs/edit", async (req, res) => {
 router.post("/travelogs/edit/publish", async (req, res) => {
   const userId = req.userId
   const editId = req.body.editId
+  console.log("editId", editId)
   const result = await EditTravelog.publishEditTravelog(userId, editId)
   res.json(result)
 })
@@ -101,6 +82,13 @@ router.put("/travelogs/edit/update", async (req, res) => {
   res.json(result)
 })
 
+//4.0 获取图片列表 data: ["image1.png", "image2.jpg", ...]
+router.get("/travelogs/edit/images", async (req, res) => {
+  const userId = req.userId
+  const result = await EditTravelog.getImages(userId)
+  res.json(result)
+})
+
 //4.上传或更新图片
 //存储到某个目录./uploads下 返回值为文件名
 router.post("/travelogs/edit/uploadimg", travelogImgUpload.single("image"), async (req, res) => {
@@ -108,7 +96,7 @@ router.post("/travelogs/edit/uploadimg", travelogImgUpload.single("image"), asyn
     return res.status(400).json({ message: "没有图片上传" })
   }
   const userId = req.userId
-  const { editId, index } = req.body
+  const { index } = req.body
   const fileName = new mongoose.Types.ObjectId().toString()
   const fileExtension = path.extname(req.file.originalname)
   const imgName = `${fileName}${fileExtension}`
@@ -116,7 +104,7 @@ router.post("/travelogs/edit/uploadimg", travelogImgUpload.single("image"), asyn
   const filePath = path.join(__dirname, "../uploads", imgName)
   try {
     fs.writeFileSync(filePath, req.file.buffer)
-    const result = await EditTravelog.uploadImage(userId, editId, imgName, index)
+    const result = await EditTravelog.uploadImage(userId, imgName, index)
     return res.status(200).json(result)
   } catch (err) {
     return res.status(500).json({ message: "保存失败" })
@@ -126,8 +114,23 @@ router.post("/travelogs/edit/uploadimg", travelogImgUpload.single("image"), asyn
 //5.删除第i张图片
 router.delete("/travelogs/edit/deleteimg", async (req, res) => {
   const userId = req.userId
-  const { editId, index } = req.body
-  const result = await EditTravelog.deleteImage(userId, editId, index)
+  const { index } = req.query
+  console.log("req.params", index)
+  const result = await EditTravelog.deleteImage(userId, index)
+  res.json(result)
+})
+
+//6.查询是否有正在编辑的游记 返回值为id
+router.get("/travelogs/editid", async (req, res) => {
+  const userId = req.userId
+  const result = await EditTravelog.hasEditTravelog(userId)
+  res.json(result)
+})
+
+//7.获取正在编辑的游记
+router.get("/travelogs/edit", async (req, res) => {
+  const userId = req.userId
+  const result = await EditTravelog.getEditTravelog(userId)
   res.json(result)
 })
 
@@ -136,6 +139,27 @@ router.put("/travelogs/edit/savedraft", async (req, res) => {
   const userId = req.userId
   const { editId } = req.body
   const result = await EditTravelog.saveDraftTravelog(userId, editId)
+  res.json(result)
+})
+
+//获取某篇游记 要放到/travelogs/edit下面
+router.get("/travelogs/:id", async (req, res) => {
+  const id = req.params?.id
+  const result = await Travelog.getTravelogById(id)
+  res.json(result)
+})
+
+//获取某个用户的所有游记
+router.get("/users/:username/travelogs", async (req, res) => {
+  const username = req.params?.username
+  const result = await Travelog.getTravelogsByUsername(username)
+  res.json(result)
+})
+
+//获取我的游记列表
+router.get("/mytravelogs", async (req, res) => {
+  const userId = req.userId
+  const result = await Travelog.getMyTravelogs(userId)
   res.json(result)
 })
 
