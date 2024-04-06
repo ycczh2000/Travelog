@@ -7,10 +7,10 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 // src/components/WaterfallLayout.js
-import React, { useContext, useRef, useEffect, useState } from 'react';
-import Masonry from 'masonry-layout';
-import InfCard from '../InfCard/InfCard';
-import './WaterfallLayout.css';
+import React, { useContext, useRef, useEffect, useState } from "react"
+import Masonry from "masonry-layout"
+import InfCard from "../InfCard/InfCard"
+import "./WaterfallLayout.css"
 import { HomeContext } from "../../Context/HomeContext"
 
 const WaterfallLayout = () => {
@@ -38,23 +38,23 @@ const WaterfallLayout = () => {
         // 如果正在加载数据，则直接返回，避免重复请求
         if (loading) return;
 
-        setLoading(true); // 设置 loading 为 true，表示正在加载数据
+    setLoading(true) // 设置 loading 为 true，表示正在加载数据
 
-        // 发送 GET 请求获取数据
-        fetch(process.env.PUBLIC_URL + '/testHome.json')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(newData => {
-                // 进行城市筛选
-                const filteredNewData = city ? filterByCity(newData, city) : newData;
-                const filteredOldData = city ? filterByCity(data, city) : data;
+    // 发送 GET 请求获取数据
+    fetch(process.env.PUBLIC_URL + "/testHome.json")
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok")
+        }
+        return response.json()
+      })
+      .then(newData => {
+        // 进行城市筛选
+        const filteredNewData = city ? filterByCity(newData, city) : newData
+        const filteredOldData = city ? filterByCity(data, city) : data
 
-                // 进行参数筛选
-                const updatedData = filterByFilters([...filteredOldData, ...filteredNewData], selectedFilters);
+        // 进行参数筛选
+        const updatedData = filterByFilters([...filteredOldData, ...filteredNewData], selectedFilters)
 
                 setData(updatedData); // 更新数据
             })
@@ -144,30 +144,30 @@ const WaterfallLayout = () => {
             randomIndex = Math.floor(Math.random() * currentIndex);
             currentIndex -= 1;
 
-            // 并将其与当前元素交换位置。
-            temporaryValue = array[currentIndex];
-            array[currentIndex] = array[randomIndex];
-            array[randomIndex] = temporaryValue;
-        }
-        return array;
-    };
+      // 并将其与当前元素交换位置。
+      temporaryValue = array[currentIndex]
+      array[currentIndex] = array[randomIndex]
+      array[randomIndex] = temporaryValue
+    }
+    return array
+  }
 
-    // 筛选函数
-    const filterByCity = (data, city) => {
-        return data.filter(item => {
-            // 检查数据的 Location 是否与 city 的前缀匹配
-            const location = item.Location;
-            if (city.length > location.length) {
-                return false; // 如果city的长度比Location的长度长，直接返回false
-            }
-            for (let i = 0; i < city.length; i++) {
-                if (city[i] !== location[i]) {
-                    return false; // 如果任意一个位置上的元素不匹配，返回false
-                }
-            }
-            return true; // 如果所有位置的元素都匹配，返回true
-        });
-    };
+  // 筛选函数
+  const filterByCity = (data, city) => {
+    return data.filter(item => {
+      // 检查数据的 Location 是否与 city 的前缀匹配
+      const location = item.Location
+      if (city.length > location.length) {
+        return false // 如果city的长度比Location的长度长，直接返回false
+      }
+      for (let i = 0; i < city.length; i++) {
+        if (city[i] !== location[i]) {
+          return false // 如果任意一个位置上的元素不匹配，返回false
+        }
+      }
+      return true // 如果所有位置的元素都匹配，返回true
+    })
+  }
 
     const filterByFilters = (data, selectedFilters) => {
         return data.filter(item => {
@@ -203,25 +203,25 @@ const WaterfallLayout = () => {
         });
     };
 
-    return (
-        <div ref={masonryRef} className="waterfall-layout">
-            <div className="waterfall-sizer"></div>
-            <div className="waterfall-gutter"></div>
-            {data.map((item, index) => (
-                <div key={index} className="waterfall-item">
-                    <InfCard
-                        id={item.id}
-                        city={item.Location}
-                        imageUrl={item.imageUrl}
-                        title={item.title}
-                        username={item.username}
-                        avatar={item.avatar}
-                        likes={item.likes}
-                    />
-                </div>
-            ))}
+  return (
+    <div ref={masonryRef} className="waterfall-layout">
+      <div className="waterfall-sizer"></div>
+      <div className="waterfall-gutter"></div>
+      {data.map((item, index) => (
+        <div key={index} className="waterfall-item">
+          <InfCard
+            id={item.id}
+            city={item.Location}
+            imageUrl={item.imageUrl}
+            title={item.title}
+            username={item.username}
+            avatar={item.avatar}
+            likes={item.likes}
+          />
         </div>
-    );
-};
+      ))}
+    </div>
+  )
+}
 
-export default WaterfallLayout;
+export default WaterfallLayout

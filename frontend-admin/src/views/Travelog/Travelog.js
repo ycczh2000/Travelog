@@ -7,6 +7,7 @@ import { $travelogs, $deleteTravelog } from "../../api/adminApi"
 import styles from "./Travelog.module.scss"
 import { DatePicker } from "antd"
 import dayjs from "dayjs"
+import { convertUTCToBeijingTime } from "../../utils/utils"
 const { RangePicker } = DatePicker
 const { Option } = Select
 const { confirm } = Modal
@@ -135,8 +136,9 @@ export default function Task() {
       title: "创建时间",
       dataIndex: "createDate",
       ellipsis: true,
-      render: (_, { createDate }) => createDate.slice(0, 10),
+      render: (_, { createDate }) => convertUTCToBeijingTime(createDate),
     },
+    // .slice(0, 10)
     { title: "发布人", dataIndex: "authorUsername", ellipsis: true },
     { title: "审核人", dataIndex: "auditorUsername", ellipsis: true },
     {

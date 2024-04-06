@@ -25,7 +25,7 @@ function App() {
           {/* <Route path="/travelogs/:id" element={<Detaillog />}></Route> */}
           <Route path="/travelogs" element={<Detaillog />}></Route>
           <Route path="/space/:username" element={<UserSpace />}>
-          <Route path="travelog" element={<UserTravelogs />}></Route>
+            <Route path="travelog" element={<UserTravelogs />}></Route>
           </Route>
           <Route path="/mytravelog" element={<MyTravelog />}></Route>
           <Route path="/publish" element={<Publish />}></Route>
