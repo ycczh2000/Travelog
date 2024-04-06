@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-06 00:15:56
+ * @LastEditTime: 2024-04-06 16:34:19
  * @FilePath: \frontend\src\components\WaterfallLayout\WaterfallLayout.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -14,7 +14,7 @@ import './WaterfallLayout.css';
 import { HomeContext } from "../../Context/HomeContext"
 
 const WaterfallLayout = () => {
-    const { sorter, city, selectedFilters, searchTerm } = useContext(HomeContext);
+    const { sorter, setSorter, city, setCity, selectedFilters, setSelectedFilters,searchTerm, setSearchTerm } = useContext(HomeContext);
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false); // 新增 loading 状态
     // const [oldData, setOldData] = useState([]);
@@ -32,7 +32,22 @@ const WaterfallLayout = () => {
     }, [searchTerm])
 
     useEffect(() => {
-        fetchData(sorter, city, selectedFilters,searchTerm);
+        const combinedData = localStorage.getItem('combinedData');
+        if (combinedData) {
+          // 如果有数据，则设置组件状态
+          const storedCombinedData = JSON.parse(localStorage.getItem('combinedData'));
+          setSorter(storedCombinedData.sorter);
+          setCity(storedCombinedData.city);
+          setSelectedFilters(storedCombinedData.selectedFilters);
+          setSearchTerm(storedCombinedData.searchTerm);
+        //   setData( storedCombinedData.data);
+          console.log('加载缓存数据',storedCombinedData)
+          fetchData(sorter, city, selectedFilters,searchTerm);
+        }
+        else{
+            console.log('没有缓存数据')
+            fetchData(sorter, city, selectedFilters,searchTerm);
+        }
     }, []); // 在组件加载时发送请求获取数据
 
     const fetchData = (sorter, city, selectedFilters,searchTerm='') => {
@@ -63,11 +78,20 @@ const WaterfallLayout = () => {
             .catch(error => console.error('Error fetching data:', error))
             .finally(() => {
                 setLoading(false); // 请求完成后，设置 loading 为 false
+                const combinedData = {
+                    data: data,
+                    sorter: sorter,
+                    city: city,
+                    selectedFilters: selectedFilters,
+                    searchTerm: searchTerm
+                  };
+                  localStorage.setItem('combinedData', JSON.stringify(combinedData));//将当前数据保存到本地
             });
     };
 
     useEffect(() => {
         const handleScroll = () => {
+            // console.log('handleScroll',data)
             // 当滚动到页面底部时，并且当前不处于加载数据状态时，触发 fetchData 函数获取更多数据
             if (!loading && window.innerHeight + window.scrollY >= document.body.offsetHeight) {
                 fetchData(sorter, city, selectedFilters, searchTerm);
@@ -201,6 +225,8 @@ const WaterfallLayout = () => {
             {data.map((item, index) => (
                 <div key={index} className="waterfall-item">
                     <InfCard
+                        id={item.id}
+                        city={item.Location}
                         imageUrl={item.imageUrl}
                         title={item.title}
                         username={item.username}
