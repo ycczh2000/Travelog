@@ -1,10 +1,11 @@
 import React from "react"
-import { useState } from "react"
-
+import { useState,useContext } from "react"
+import { UserSpaceContent } from "../../UserSpaceContent"
 import MyTravelogItem from "./MyTravelogItem"
 import styles from "./MyTravelogList.module.scss"
 
 export default function MyTravelogList(props) {
+  const { filter, setFilter, sorter, setSorter} = useContext(UserSpaceContent)
   const { myTravelogList } = props
 
   return (

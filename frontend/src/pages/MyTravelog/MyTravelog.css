@@ -15,22 +15,22 @@
     height: 100%;
     background-image: url('https://img2.baidu.com/it/u=3984034305,2510110&fm=253&fmt=auto&app=120&f=JPEG?w=800&h=500');
     background-size: cover;
-    opacity: 0.075; /* 半透明 */
+    opacity: 0.075;
   }
   
   .content {
     display: flex;
     align-items: center;
     width: 100%;
-    padding: 0 20px; /* 调整左右内边距根据需要 */
+    padding: 0 20px;
   }
   
   .avatar {
-    width: 60px; /* 调整大小根据需要 */
-    height: 60px; /* 调整大小根据需要 */
-    border-radius: 50%; /* 圆角 */
+    width: 60px;
+    height: 60px;
+    border-radius: 50%; 
     overflow: hidden;
-    margin-right: 20px; /* 调整间距根据需要 */
+    margin-right: 20px; 
   }
   
   .avatar img {
