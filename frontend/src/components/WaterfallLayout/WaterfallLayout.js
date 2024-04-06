@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-04 22:37:01
+ * @LastEditTime: 2024-04-05 16:10:24
  * @FilePath: \frontend\src\components\WaterfallLayout\WaterfallLayout.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -14,13 +14,27 @@ import './WaterfallLayout.css';
 import { HomeContext } from "../../Context/HomeContext"
 
 const WaterfallLayout = () => {
-    const { sorter, city, selectedFilters } = useContext(HomeContext);
+    const { sorter, city, selectedFilters, searchTerm } = useContext(HomeContext);
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false); // 新增 loading 状态
+    // const [oldData, setOldData] = useState([]);
     useEffect(() => {
-        fetchData(sorter, city, selectedFilters);
+        // if (searchTerm == null) {
+        //     setData(oldData);//将旧数据重新放到首页
+        // }
+        // else {
+        //     setOldData(data); // 保存旧数据
+            let newData = [];
+            setData(newData); // 清空数据
+            fetchData(sorter, city, selectedFilters, searchTerm);//重新获取数据
+        // }
+    }, [searchTerm])
+
+    useEffect(() => {
+        fetchData(sorter, city, selectedFilters,searchTerm);
     }, []); // 在组件加载时发送请求获取数据
-    const fetchData = (sorter, city, selectedFilters) => {
+
+    const fetchData = (sorter, city, selectedFilters,searchTerm='') => {
         console.log('fetchData:', sorter, city, selectedFilters);
         // 如果正在加载数据，则直接返回，避免重复请求
         if (loading) return;
@@ -36,28 +50,32 @@ const WaterfallLayout = () => {
                 return response.json();
             })
             .then(newData => {
-                // 对新数据进行城市筛选
-                const filteredData = city ? filterByCity(newData, city) : newData;
-                // 对已有数据也进行城市筛选
-                const updatedData = city ? filterByCity(data, city) : data;
-                setData(prevData => [...updatedData, ...filteredData]); // 将新数据添加到已有数据后面
+                // 进行城市筛选
+                const filteredNewData = city ? filterByCity(newData, city) : newData;
+                const filteredOldData = city ? filterByCity(data, city) : data;
+
+                // 进行参数筛选
+                const updatedData = filterByFilters([...filteredOldData, ...filteredNewData], selectedFilters);
+
+                setData(updatedData); // 更新数据
             })
             .catch(error => console.error('Error fetching data:', error))
             .finally(() => {
                 setLoading(false); // 请求完成后，设置 loading 为 false
             });
     };
+
     useEffect(() => {
         const handleScroll = () => {
             // 当滚动到页面底部时，并且当前不处于加载数据状态时，触发 fetchData 函数获取更多数据
             if (!loading && window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-                fetchData(sorter, city, selectedFilters);
+                fetchData(sorter, city, selectedFilters, searchTerm);
             }
         };
 
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [sorter, city, selectedFilters, loading]); // 依赖项中添加了 sorter、city、selectedFilters 和 loading
+    }, [sorter, city, selectedFilters, loading,searchTerm]);
     // 在组件加载时添加滚动事件监听器，并在组件卸载时移除监听器
     const masonryRef = useRef(null);
 
@@ -102,7 +120,7 @@ const WaterfallLayout = () => {
         console.log('newData:', newData)
     };
 
-    const shuffleArray = (array) => {//随机打乱（推荐顺序）
+    const shuffleArray = (array) => {//随机打乱（默认顺序）
         let currentIndex = array.length, temporaryValue, randomIndex;
         // 当数组中仍有元素待洗牌时...
         while (0 !== currentIndex) {
@@ -135,10 +153,45 @@ const WaterfallLayout = () => {
             return true; // 如果所有位置的元素都匹配，返回true
         });
     };
-    // 当城市改变时进行数据筛选
+
+    const filterByFilters = (data, selectedFilters) => {
+        return data.filter(item => {
+            // 筛选 tripWay
+            if (Array.isArray(selectedFilters.tripWay) && selectedFilters.tripWay.length > 0) {
+                if (!selectedFilters.tripWay.includes(item.tripWay)) {
+                    return false;
+                }
+            }
+            // 筛选 tripNum
+            if (Array.isArray(selectedFilters.tripNum) && selectedFilters.tripNum.length > 0) {
+                if (!selectedFilters.tripNum.includes(item.tripNum)) {
+                    return false;
+                }
+            }
+            // 筛选 tripDate
+            if (Array.isArray(selectedFilters.tripDate) && selectedFilters.tripDate.length > 0) {
+                if (!selectedFilters.tripDate.includes(item.tripDate)) {
+                    return false;
+                }
+            }
+            // 筛选 tripBudget
+            if (Array.isArray(selectedFilters.tripBudget) && selectedFilters.tripBudget.length > 0) {
+                if (!selectedFilters.tripBudget.includes(item.tripBudget)) {
+                    return false;
+                }
+            }
+            // 筛选 tripRate
+            if (selectedFilters.tripRate && item.tripRate < selectedFilters.tripRate - 0.2) {
+                return false;
+            }
+            return true;
+        });
+    };
+
+    // 当筛选条件改变时进行数据筛选
     useEffect(() => {
         fetchData(sorter, city, selectedFilters);
-    }, [city]); // 监听 city 的变化，执行 fetchData
+    }, [city, selectedFilters]); // 监听 city 的变化，执行 fetchData
 
     return (
         <div ref={masonryRef} className="waterfall-layout">

@@ -1,0 +1,22 @@
+.contain2 {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  flex-wrap: wrap;
+  box-sizing: border-box;
+}
+.imager {
+  width: 50px; /* 调整图像的宽度 */
+  height: 50px; /* 调整图像的高度 */
+  border-radius: 50%; /* 将图像设置为圆形 */
+  margin-right: 10px; /* 可选：调整图像与文本之间的间距 */
+}
+.info {
+  flex: 1 1 auto; /* flex-grow, flex-shrink, flex-basis */  
+  margin-right: 10px;
+}
+.button1 {
+  margin-left: 10px;
+
+}

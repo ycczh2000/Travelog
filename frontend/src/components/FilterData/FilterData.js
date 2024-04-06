@@ -77,7 +77,7 @@ const FilterData = () => {
                         // console.log(arr, extend.items);
                         // console.log(selectedFilters);
                     }}
-                // disabled={resetClicked} // 如果重置按钮已点击，则禁用选项组
+                // disabled={resetClicked}
                 />
             </div>
             <div style={{ marginBottom: '20px' }}>
@@ -100,7 +100,7 @@ const FilterData = () => {
                         // console.log(arr, extend.items);
                         // console.log(selectedFilters);
                     }}
-                // disabled={resetClicked} // 如果重置按钮已点击，则禁用选项组
+                // disabled={resetClicked}
                 />
             </div>
             <div style={{ marginBottom: '20px' }}>
@@ -123,7 +123,7 @@ const FilterData = () => {
                         // console.log(arr, extend.items);
                         // console.log(selectedFilters);
                     }}
-                // disabled={resetClicked} // 如果重置按钮已点击，则禁用选项组
+                // disabled={resetClicked}
                 />
             </div>
             <div style={{ marginBottom: '20px' }}>

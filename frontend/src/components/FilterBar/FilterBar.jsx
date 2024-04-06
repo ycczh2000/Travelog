@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-04 20:48:55
+ * @LastEditTime: 2024-04-05 14:54:15
  * @FilePath: \frontend\src\components\FilterBar\FilterBar.jsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -58,16 +58,16 @@ const FilterBar = () => {
                 >
                     <CascaderView
                         options={Sorters}
-                        value={[sorter]} // 将 sorter 包装为数组
+                        value={[sorter]}
                         onChange={(val, extend) => {
-                            setSorter(val[0]); // 更新 sorter 为选中的值
+                            setSorter(val[0]);
                             console.log('onChange', val, extend.items);
                             console.log('onChange', sorter);
                             ref.current?.close();
                         }}
                     />
                 </Dropdown.Item>
-                <Dropdown.Item key='city' title={city ? city : '选择城市'} style={{ width: '100px', color: city ? 'blue' : 'inherit' }}>
+                <Dropdown.Item key='city' title={city&&city.length>0 ? city : '选择城市'} style={{ width: '100px', color: city&&city.length>0  ? 'blue' : 'inherit' }}>
                     <CascaderView
                         options={options}
                         value={city}

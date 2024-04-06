@@ -11,13 +11,16 @@ import ConditionalFooter from "./ConditionalFooter"
 import UserSpace from "./pages/UserSpace/UserSpace"
 import UserTravelogs from "./pages/UserTravelogs/UserTravelogs"
 import Publish from "./pages/Publish/Publish"
+import Detaillog from "./pages/Detaillog/Detaillog"
+
 function App() {
   return (
     <BrowserRouter>
       <div className="app-container">
         <Routes>
           <Route path="/" element={<Home />}></Route>
-          <Route path="/travelogs/:id" element={<div />}></Route>
+          {/* <Route path="/travelogs/:id" element={<Detaillog />}></Route> */}
+          <Route path="/travelogs" element={<Detaillog />}></Route>
           <Route path="/space/:username" element={<UserSpace />}>
           <Route path="travelog" element={<UserTravelogs />}></Route>
           </Route>
