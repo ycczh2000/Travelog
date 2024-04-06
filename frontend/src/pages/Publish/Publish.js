@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-03-27 18:42:58
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-03 20:45:43
+ * @LastEditTime: 2024-04-06 17:13:51
  * @FilePath: \frontend\src\pages\Publish\Publish.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -77,13 +77,23 @@ const Publish = () => {
 
   const handlePublishClick2 = async () => {
     const editingData = editingRef.current.getEditingData()
-
+    
     if (editingData.title.length < 1 || editingData.title.length > 20) {
       alert("Title length should be between 1 and 20 characters.") // 使用alert弹出消息提示
       return
     }
-    const result = await $publishEditTravelog({ editId: editId })
-    console.log("handlePublishClick2", result)
+    if (editingData.content.length < 1) {
+      alert("Title length should be at least 1 character.") // 使用alert弹出消息提示
+      return
+    }
+    const result1 = await $updateEditTravelog({ editData: editingData, editId: editId })
+    // const result = await $publishEditTravelog({ editId: editId })
+    // if (result1.status === 'success') {
+      // 如果第一个请求成功，则发送第二个请求，并等待结果
+      const result2 = await $publishEditTravelog({ editId: editId });
+      console.log("handlePublishClick2 result2:", result2)
+    // }
+    console.log("handlePublishClick2 result1:", result1)
   }
   // const handlePublishClick = async () => {
   //   const imageUploadInstance = imageUploadRef.current

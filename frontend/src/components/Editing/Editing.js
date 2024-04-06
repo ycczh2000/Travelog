@@ -42,7 +42,7 @@ const Editing = forwardRef((props, ref) => {
                 tripNum,
                 tripDate,
                 tripBudget,
-                city,
+                Location:city,
                 rate,
                 isPublic,
             };

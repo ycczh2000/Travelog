@@ -9,7 +9,7 @@ const travelogSchema = new mongoose.Schema({
   content: { type: String, required: true },
   images: { type: [String], default: [] },
   tags: [String],
-  Location: { type: Object, default: "" }, //地点 待细化
+  Location: { type: [String], default: [] }, //地点 待细化
   tripWay: { type: String, default: "" },
   tripNum: { type: String, default: "" },
   tripDate: { type: String, default: "" },

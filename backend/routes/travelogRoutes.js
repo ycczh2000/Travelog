@@ -31,7 +31,7 @@ router.post("/travelogs", imgUpload.array("image"), async (req, res, next) => {
   const result = await Travelog.createTravelog(userId, {
     title: title || "这是一个标题",
     content: content || "\u200B",
-    Location: city || "\u200B", // 地点，todo
+    Location: city || [], // 地点，todo
     tripWay: tripWay || "\u200B",
     tripNum: tripNum || "\u200B",
     tripDate: tripDate || "\u200B",

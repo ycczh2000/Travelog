@@ -74,6 +74,7 @@ editTravelogSchema.statics.createEditTravelog = async (userId, targetTravelogId)
 
 //2.更新的编辑游记
 editTravelogSchema.statics.updataEditTravelog = async (userId, editId, editData) => {
+  console.log("editData:",editData)
   try {
     delete editData.authorId
     delete editData.targetTravelogId
