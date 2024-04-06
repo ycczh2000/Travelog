@@ -80,9 +80,9 @@ const Detaillog = () => {
         }
       }
     };
-
     fetchData(); // 调用数据获取函数
   }, []);
+
   const handleGoBack = () => {
     window.history.go(-1); // 返回上一页面
   };

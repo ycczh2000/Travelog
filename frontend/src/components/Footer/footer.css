@@ -1,16 +1,44 @@
 .footer {
   display: flex;
   justify-content: space-around;
-  background-color: white;
-  color: black;
-  text-align: center;
+  align-items: center;
+  background-color: #f0f0f0;
   position: fixed;
   bottom: 0;
-  height: 5vh;
+  left: 0;
   width: 100%;
-  border: 0.1rem solid black;
+  height: 60px;
+  border-top: 1px solid #ccc;
 }
 
-.upload-btn {
-  border: 1px solid black;
+.footer a {
+  text-decoration: none;
+  color: #888;
+}
+
+.footer a.selected {
+  color: #ff7f50;
+}
+
+.special-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -10px;
+}
+
+.publish {
+  position: relative;
+}
+
+.publish::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #ff7f50;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
 }

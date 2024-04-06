@@ -18,6 +18,9 @@ function App() {
     <BrowserRouter>
       <div className="app-container">
         <Routes>
+        {/* <CacheSwitch>
+            <CacheRoute exact path="/" component={Home} />
+          </CacheSwitch> */}
           <Route path="/" element={<Home />}></Route>
           {/* <Route path="/travelogs/:id" element={<Detaillog />}></Route> */}
           <Route path="/travelogs" element={<Detaillog />}></Route>
@@ -31,7 +34,7 @@ function App() {
           <Route path="/register" element={<Register />}></Route>
         </Routes>
       </div>
-      {/* <ConditionalFooter /> */}
+      <ConditionalFooter />
     </BrowserRouter>
   )
 }

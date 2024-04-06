@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-03-27 18:42:58
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-06 17:13:51
+ * @LastEditTime: 2024-04-06 17:56:17
  * @FilePath: \frontend\src\pages\Publish\Publish.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -94,6 +94,16 @@ const Publish = () => {
       console.log("handlePublishClick2 result2:", result2)
     // }
     console.log("handlePublishClick2 result1:", result1)
+    if(result2.success === true){
+      Toast.show({ content: "发布成功", position: "bottom" })
+      setTimeout(() => {
+        window.history.go(-1); // 返回上一页面
+      }, 1000);
+    }else{
+      Toast.show({ content: "发布失败", position: "bottom" })
+    }
+    // const result = await $publishEditTravelog({ editId: editId })
+    // console.log("handlePublishClick2 result:", result)
   }
   // const handlePublishClick = async () => {
   //   const imageUploadInstance = imageUploadRef.current
@@ -157,6 +167,9 @@ const Publish = () => {
   //     console.log(fileList, editingData)
   //   }
   // }, [])
+  const handleGoBack = () => {
+    window.history.go(-1); // 返回上一页面
+  };
   return (
     <div style={{ margin: "10px" }}>
       {" "}
@@ -164,9 +177,7 @@ const Publish = () => {
       <div>
         <Button
           style={{ background: "transparent", border: "none" }}
-          onClick={() => {
-            /* 透明按钮的点击事件 */
-          }}>
+          onClick={handleGoBack}>
           <LeftOutline />
         </Button>
       </div>

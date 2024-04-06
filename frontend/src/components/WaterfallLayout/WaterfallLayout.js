@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-06 16:34:19
+ * @LastEditTime: 2024-04-06 19:19:40
  * @FilePath: \frontend\src\components\WaterfallLayout\WaterfallLayout.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -14,10 +14,11 @@ import './WaterfallLayout.css';
 import { HomeContext } from "../../Context/HomeContext"
 
 const WaterfallLayout = () => {
-    const { sorter, setSorter, city, setCity, selectedFilters, setSelectedFilters,searchTerm, setSearchTerm } = useContext(HomeContext);
+    const { sorter, setSorter, city, setCity, selectedFilters, setSelectedFilters, searchTerm, setSearchTerm } = useContext(HomeContext);
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false); // 新增 loading 状态
-    // const [oldData, setOldData] = useState([]);
+    // const [oldData, setOldData] = useState([])
+
     useEffect(() => {
         //todo:搜索前保存旧数据，取消搜索后直接调用旧数据
         // if (searchTerm == null) {
@@ -25,32 +26,14 @@ const WaterfallLayout = () => {
         // }
         // else {
         //     setOldData(data); // 保存旧数据
-            let newData = [];
-            setData(newData); // 清空数据
-            fetchData(sorter, city, selectedFilters, searchTerm);//重新获取数据
+        console.log('searchTerm changed', searchTerm)
+        let newData = [];
+        setData(newData); // 清空数据
+        fetchData(sorter, city, selectedFilters, searchTerm);//重新获取数据
         // }
     }, [searchTerm])
 
-    useEffect(() => {
-        const combinedData = localStorage.getItem('combinedData');
-        if (combinedData) {
-          // 如果有数据，则设置组件状态
-          const storedCombinedData = JSON.parse(localStorage.getItem('combinedData'));
-          setSorter(storedCombinedData.sorter);
-          setCity(storedCombinedData.city);
-          setSelectedFilters(storedCombinedData.selectedFilters);
-          setSearchTerm(storedCombinedData.searchTerm);
-        //   setData( storedCombinedData.data);
-          console.log('加载缓存数据',storedCombinedData)
-          fetchData(sorter, city, selectedFilters,searchTerm);
-        }
-        else{
-            console.log('没有缓存数据')
-            fetchData(sorter, city, selectedFilters,searchTerm);
-        }
-    }, []); // 在组件加载时发送请求获取数据
-
-    const fetchData = (sorter, city, selectedFilters,searchTerm='') => {
+    const fetchData = (sorter, city, selectedFilters, searchTerm = '') => {
         console.log('fetchData:', sorter, city, selectedFilters);
         // 如果正在加载数据，则直接返回，避免重复请求
         if (loading) return;
@@ -84,27 +67,28 @@ const WaterfallLayout = () => {
                     city: city,
                     selectedFilters: selectedFilters,
                     searchTerm: searchTerm
-                  };
-                  localStorage.setItem('combinedData', JSON.stringify(combinedData));//将当前数据保存到本地
+                };
+                localStorage.setItem('combinedData', JSON.stringify(combinedData));//将当前数据保存到本地
             });
     };
 
     useEffect(() => {
         const handleScroll = () => {
-            // console.log('handleScroll',data)
             // 当滚动到页面底部时，并且当前不处于加载数据状态时，触发 fetchData 函数获取更多数据
             if (!loading && window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+                console.log('handleScroll', sorter, city, selectedFilters, searchTerm)
                 fetchData(sorter, city, selectedFilters, searchTerm);
             }
         };
 
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [sorter, city, selectedFilters, loading,searchTerm]);
+    }, [sorter, city, selectedFilters, loading, searchTerm]);
     // 在组件加载时添加滚动事件监听器，并在组件卸载时移除监听器
     const masonryRef = useRef(null);
 
     useEffect(() => {
+        console.log('data changed')
         if (masonryRef.current) {
             const masonry = new Masonry(masonryRef.current, {
                 itemSelector: '.waterfall-item',
@@ -119,9 +103,15 @@ const WaterfallLayout = () => {
     }, [data]);
 
     useEffect(() => {//sorter 发生变化时触发 handleSortData 函数
-        console.log('sorter changed', sorter)
-        handleSortData(sorter);
+        console.log('sorter changed', sorter, city, selectedFilters, searchTerm)
+        handleSortData(sorter, city, selectedFilters, searchTerm);
     }, [sorter]);
+
+    // 当筛选条件改变时进行数据筛选
+    useEffect(() => {
+        console.log('selectedFilters changed', selectedFilters)
+        fetchData(sorter, city, selectedFilters);
+    }, [city, selectedFilters]); // 监听 city和selectedFilters 的变化，执行 fetchData
 
     const handleSortData = (sorter) => {
         console.log('handleSortData', sorter)
@@ -212,11 +202,6 @@ const WaterfallLayout = () => {
             return true;
         });
     };
-
-    // 当筛选条件改变时进行数据筛选
-    useEffect(() => {
-        fetchData(sorter, city, selectedFilters);
-    }, [city, selectedFilters]); // 监听 city和selectedFilters 的变化，执行 fetchData
 
     return (
         <div ref={masonryRef} className="waterfall-layout">
