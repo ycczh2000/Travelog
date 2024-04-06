@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-06 19:19:40
+ * @LastEditTime: 2024-04-06 21:52:06
  * @FilePath: \frontend\src\components\WaterfallLayout\WaterfallLayout.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -12,6 +12,7 @@ import Masonry from "masonry-layout"
 import InfCard from "../InfCard/InfCard"
 import "./WaterfallLayout.css"
 import { HomeContext } from "../../Context/HomeContext"
+import { $getTravelogs } from "../../api/travelogApi"
 
 const WaterfallLayout = () => {
     const { sorter, setSorter, city, setCity, selectedFilters, setSelectedFilters, searchTerm, setSearchTerm } = useContext(HomeContext);
@@ -33,45 +34,39 @@ const WaterfallLayout = () => {
         // }
     }, [searchTerm])
 
-    const fetchData = (sorter, city, selectedFilters, searchTerm = '') => {
+    const fetchData = async (sorter, city, selectedFilters, searchTerm = '') => {
         console.log('fetchData:', sorter, city, selectedFilters);
         // 如果正在加载数据，则直接返回，避免重复请求
         if (loading) return;
-
-    setLoading(true) // 设置 loading 为 true，表示正在加载数据
-
-    // 发送 GET 请求获取数据
-    fetch(process.env.PUBLIC_URL + "/testHome.json")
-      .then(response => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok")
+      
+        setLoading(true); // 设置 loading 为 true，表示正在加载数据
+      
+        try {
+          // 调用 API 获取数据
+          const newData = await $getTravelogs(city, selectedFilters, searchTerm);
+          console.log('newData:',newData)
+          const filteredNewData = city ? filterByCity(newData, city) : newData;
+          const filteredOldData = city ? filterByCity(data, city) : data;
+      
+          // 进行参数筛选
+          const updatedData = filterByFilters([...filteredOldData, ...filteredNewData], selectedFilters);
+      
+          setData(updatedData); // 更新数据
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        } finally {
+          setLoading(false); // 请求完成后，设置 loading 为 false
+          const combinedData = {
+            data: data,
+            sorter: sorter,
+            city: city,
+            selectedFilters: selectedFilters,
+            searchTerm: searchTerm
+          };
+          localStorage.setItem('combinedData', JSON.stringify(combinedData)); //将当前数据保存到本地
         }
-        return response.json()
-      })
-      .then(newData => {
-        // 进行城市筛选
-        const filteredNewData = city ? filterByCity(newData, city) : newData
-        const filteredOldData = city ? filterByCity(data, city) : data
-
-        // 进行参数筛选
-        const updatedData = filterByFilters([...filteredOldData, ...filteredNewData], selectedFilters)
-
-                setData(updatedData); // 更新数据
-            })
-            .catch(error => console.error('Error fetching data:', error))
-            .finally(() => {
-                setLoading(false); // 请求完成后，设置 loading 为 false
-                const combinedData = {
-                    data: data,
-                    sorter: sorter,
-                    city: city,
-                    selectedFilters: selectedFilters,
-                    searchTerm: searchTerm
-                };
-                localStorage.setItem('combinedData', JSON.stringify(combinedData));//将当前数据保存到本地
-            });
-    };
-
+      };
+      
     useEffect(() => {
         const handleScroll = () => {
             // 当滚动到页面底部时，并且当前不处于加载数据状态时，触发 fetchData 函数获取更多数据
@@ -154,20 +149,28 @@ const WaterfallLayout = () => {
 
   // 筛选函数
   const filterByCity = (data, city) => {
+
     return data.filter(item => {
+        if(city==false)
+        return true;
+  
       // 检查数据的 Location 是否与 city 的前缀匹配
-      const location = item.Location
+      const location = item.Location;
+      if (!Array.isArray(location) || !location) {
+        return false;
+      }
       if (city.length > location.length) {
-        return false // 如果city的长度比Location的长度长，直接返回false
+        return false; // 如果 city 的长度比 Location 的长度长，直接返回 false
       }
       for (let i = 0; i < city.length; i++) {
         if (city[i] !== location[i]) {
-          return false // 如果任意一个位置上的元素不匹配，返回false
+          return false; // 如果任意一个位置上的元素不匹配，返回 false
         }
       }
-      return true // 如果所有位置的元素都匹配，返回true
-    })
-  }
+      return true; // 如果所有位置的元素都匹配，返回 true
+    });
+  };
+  
 
     const filterByFilters = (data, selectedFilters) => {
         return data.filter(item => {

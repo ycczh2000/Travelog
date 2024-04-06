@@ -5,7 +5,7 @@ export default function MyTravelogHeader() {
   return (
     <>
       <div className={styles.header}>
-        <NavBar onBack={() => 0}>我的游记</NavBar>
+        <NavBar onBack={() => 0}>个人空间</NavBar>
       </div>
     </>
   )

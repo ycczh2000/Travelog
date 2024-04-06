@@ -58,3 +58,21 @@ export const $getEditTravelog = async () => {
   const { data } = await axios.get("/travelogs/edit")
   return data
 }
+
+//8.(首页)随机获取一些游记
+export const $getTravelogs = async (city, selectedFilters, searchTerm)  => {
+  // const { data } = await axios.get("/travelogs",{city, selectedFilters, searchTerm})
+  const { data } = await axios.get("/travelogs", {
+    params: {
+      city,
+      selectedFilters,
+      searchTerm
+    }})
+  return data
+}
+
+//9.获取特定id游记
+export const $getTravelogsByID = async id => {
+  const { data } = await axios.get(`/travelogs/${id}`)
+  return data
+}

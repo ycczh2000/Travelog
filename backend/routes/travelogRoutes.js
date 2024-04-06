@@ -154,7 +154,7 @@ router.get("/travelogs", async (req, res) => {
   query.deleted = false
   query.status = "approved"
   console.log("req.query", req.query)
-
+  // Travelog.find({title:titleReg,tripWay:})
   const result = await Travelog.aggregate([
     { $match: query },
     {

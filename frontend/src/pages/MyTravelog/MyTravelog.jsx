@@ -4,6 +4,8 @@ import MyTravelogHeader from "./components/MyTravelogHeader/MyTravelogHeader"
 import MyTravelogFilter from "./components/MyTravelogFilter/MyTravelogFilter"
 import { UpOutline, CloseCircleFill, StarFill } from "antd-mobile-icons"
 import styles from "./MyTravelog.module.scss"
+import { card } from "antd-mobile"
+import './MyTravelog.css';
 const data = [
   {
     id: 1,
@@ -53,9 +55,25 @@ const data = [
 export default function MyTravelog() {
   const [myTravelogList, setMyTravelogList] = useState(data)
   const [totop, setTotop] = useState(true)
+  const [username, setUsername] = useState("MOMO")
+  const [uid, setUid] = useState("1145141919810")
+  const [avatarUrl, setAvatarUrl] = useState("https://img1.baidu.com/it/u=1389873612,485301600&fm=253&app=120&size=w931&n=0&f=JPEG&fmt=auto?sec=1712595600&t=76261ab2a1585815f46c7b306c6f66e3")
   return (
     <>
+     <div className="background-image"></div>
       <MyTravelogHeader />
+      <div className="user-space">
+     
+      <div className="content">
+        <div className="avatar">
+          <img src={avatarUrl} alt="User Avatar" />
+        </div>
+        <div className="user-details">
+          <div className="username">{username}</div>
+          <div className="uid">UID: {uid}</div>
+        </div>
+      </div>
+    </div>
       <MyTravelogFilter />
       <MyTravelogList myTravelogList={myTravelogList} />
       {totop ? (
