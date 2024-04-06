@@ -8,7 +8,7 @@ const editTravelogSchema = new mongoose.Schema({
 
   title: { type: String, default: "" },
   content: { type: String, default: "" },
-  images: [String],
+  images: { type: [String], default: [] }, //图片路径
   tags: [String],
   Location: { type: Object, default: "" }, //地点 待细化
   tripWay: { type: String, default: "" },
@@ -90,12 +90,12 @@ editTravelogSchema.statics.updataEditTravelog = async (userId, editId, editData)
     }
     return { success: true, message: "保存成功", data: updatedEdit }
   } catch (err) {
-    console.log("DB ERROR saveEditTravelog:", err)
+    console.log("DB ERROR updataEditTravelog:", err)
     return { success: false, message: "保存失败", data: {} }
   }
 }
 
-//3.1.发布新游记-原游记不存在
+//3.1.发布新游记-原游记不存在 返回完整的新游记
 editTravelogSchema.statics.publishEditTravelog = async (userId, editId) => {
   try {
     const edit = await EditTravelog.findOne({ _id: editId, authorId: userId, status: "editing" })
@@ -171,11 +171,25 @@ editTravelogSchema.statics.updateExistTravelog = async (userId, editId) => {
   }
 }
 
-//4.上传一张图片到编辑游记 更新第i张图片路径imags[i]
-editTravelogSchema.statics.uploadImage = async (userId, editId, imgName, index) => {
+//4获取图片列表 返回数组
+editTravelogSchema.statics.getImages = async userId => {
+  try {
+    const edit = await EditTravelog.findOne({ authorId: userId, status: "editing" })
+    if (!edit) {
+      return { success: true, message: "还没有图片", data: [] }
+    }
+    return { success: true, message: "获取成功", data: edit.images }
+  } catch (err) {
+    console.log("DB ERROR getImages:", err)
+    return { success: false, message: "获取失败", data: [] }
+  }
+}
+
+//4.上传一张图片到编辑游记 更新第i张图片路径imags[i] 返回图片名列表
+editTravelogSchema.statics.uploadImage = async (userId, imgName, index) => {
   try {
     const result = await EditTravelog.findOneAndUpdate(
-      { _id: editId, authorId: userId, status: "editing" },
+      { authorId: userId, status: "editing" },
       { $set: { [`images.${index}`]: imgName } },
       { new: true }
     )
@@ -189,18 +203,26 @@ editTravelogSchema.statics.uploadImage = async (userId, editId, imgName, index) 
   }
 }
 
-//5.删除第i张图片
-editTravelogSchema.statics.deleteImage = async (userId, editId, index) => {
+//5.删除第i张图片 返回图片名列表
+editTravelogSchema.statics.deleteImage = async (userId, index) => {
   try {
-    const result = await EditTravelog.findOneAndUpdate(
-      { _id: editId, authorId: userId, status: "editing" },
-      { $set: { [`images.${index}`]: "" } },
-      { new: true }
-    )
-    if (!result) {
+    const travelog = await EditTravelog.findOne({ authorId: userId, status: "editing" })
+
+    if (!travelog) {
       return { success: false, message: "找不到要更新的游记", data: {} }
     }
-    return { success: true, message: "删除成功", data: result.images }
+    console.log("travelog.images", travelog.images)
+    console.log("index", index)
+
+    // 使用数组方法删除指定索引的图片
+    if (index >= 0 && index < travelog.images.length) {
+      travelog.images.splice(index, 1)
+    } else {
+      return { success: false, message: "索引超出范围", data: {} }
+    }
+    const updatedTravelog = await travelog.save()
+
+    return { success: true, message: "删除成功", data: updatedTravelog.images }
   } catch (err) {
     console.log("DB ERROR deleteImage:", err)
     return { success: false, message: "删除失败", data: {} }
@@ -208,13 +230,30 @@ editTravelogSchema.statics.deleteImage = async (userId, editId, index) => {
 }
 
 //6.查询是否有正在编辑的游记
-editTravelogSchema.statics.publishEditTravelog = async userId => {
+editTravelogSchema.statics.hasEditTravelog = async userId => {
   try {
     const edit = await EditTravelog.findOne({ authorId: userId, status: "editing" })
-    return { success: true, message: "存在正在编辑的游记", data: { edit } }
+    if (!edit) {
+      return { success: true, message: "没有正在编辑的游记", data: {} }
+    }
+    return { success: true, message: "存在正在编辑的游记", data: { editId: edit._id } }
   } catch (err) {
     console.log("DB ERROR getEditTravelog:", err)
     return { success: false, message: "没有正在编辑的游记", data: {} }
+  }
+}
+
+//7.获取正在编辑的游记
+editTravelogSchema.statics.getEditTravelog = async userId => {
+  try {
+    const edit = await EditTravelog.findOne({ authorId: userId, status: "editing" })
+    if (!edit) {
+      return { success: false, message: "没有正在编辑的游记", data: {} }
+    }
+    return { success: true, message: "获取成功", data: { edit } }
+  } catch (err) {
+    console.log("DB ERROR getEditTravelog:", err)
+    return { success: false, message: "获取失败", data: {} }
   }
 }
 
