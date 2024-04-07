@@ -26,7 +26,7 @@ function App() {
           </CacheSwitch> */}
             <Route path="/home" element={<Home />}></Route>
             {/* <Route path="/travelogs/:id" element={<Detaillog />}></Route> */}
-            <Route path="/travelogs" element={<Detaillog />}></Route>
+            <Route path="/travelogs/:id" element={<Detaillog />}></Route>
             <Route path="/space/:username" element={<UserSpace />}>
               <Route path="travelog" element={<UserTravelogs />}></Route>
             </Route>

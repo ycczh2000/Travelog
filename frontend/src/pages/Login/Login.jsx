@@ -18,6 +18,9 @@ export default function Login() {
       // console.log("token:",result.data.userId,result.data.username)
       localStorage.setItem('UID', result.data.userId);
       localStorage.setItem('userName', result.data.username);
+      setUID(result.data.userId)
+      setUserName(result.data.username)
+      console.log(UID,userName)
     } else {
       Toast.show(result.message)
     }
@@ -30,6 +33,8 @@ export default function Login() {
           // console.log("token:",result.data.userId,result.data.username)
           localStorage.setItem('UID', result.data.userId);
           localStorage.setItem('userName', result.data.username);
+          setUID(result.data.userId)
+          setUserName(result.data.username)
           Toast.show("自动登录成功")
         }
       }
