@@ -7,15 +7,31 @@ import { $login } from "../../api/adminApi"
 import MyNotification from "../../components/MyNotification/MyNotification"
 export default function Login() {
   let navigate = useNavigate()
-  const role = useContext(AuthContext)
-  console.log(role)
+  const { userInfo, setUserInfo } = useContext(AuthContext)
+
+  console.log(setUserInfo)
   let [notiMsg, setNotiMsg] = useState({ type: "", description: "" })
   const [form] = Form.useForm()
+
+  const autoLogin = async () => {
+    let result = await $login()
+    if (result.success) {
+      setUserInfo({ username: result.data.username, role: result.data.role })
+      navigate("/layout/travelog")
+      result.data?.admintoken && localStorage.setItem("admintoken", result.data.admintoken)
+    }
+  }
+
+  useEffect(() => {
+    autoLogin()
+  }, [])
+
   const onFinish = async values => {
     try {
       let result = await $login(values)
       console.log(result)
       if (result.success) {
+        setUserInfo({ username: result.data.username, role: result.data.role })
         navigate("/layout/travelog")
         result.data?.admintoken && localStorage.setItem("admintoken", result.data.admintoken)
       } else {
