@@ -67,9 +67,7 @@ const Detaillog = () => {
       // if (logID) {
       // 发送fetch请求，获取其他数据
       try {
-        // const response = await fetch(`api-log/${logID}`);//todo:获取游记数据
         const travelog = await $getTravelogsByID(id); // 使用 ID 调用 API 获取游记信息
-        // const data = await response.json();
         console.log('travelog:', travelog)
         // 设置获取到的数据
         setTitle(travelog.data.title);
