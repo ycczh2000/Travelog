@@ -46,7 +46,7 @@ const ObjectId = mongoose.Types.ObjectId
 // })
 //###################游记上传相关###################
 //游记上传v2 逐张上传
-//1.创建编辑状态的游记 userId->editId
+//1.创建编辑状态的游记 targetTravelogId指向一个已发布的游记，可以为空值。空值下为创建新游记
 router.post("/travelogs/edit", async (req, res) => {
   const userId = req.userId
   const targetTravelogId = req.body.targetTravelogId || null
@@ -55,7 +55,7 @@ router.post("/travelogs/edit", async (req, res) => {
   res.json(result)
 })
 
-//2.更新当前编辑的游记
+//2.更新当前编辑的游记 只接受对文本的更新
 router.put("/travelogs/edit", async (req, res) => {
   const userId = req.userId
   console.log(req.body)
@@ -204,7 +204,7 @@ router.get("/travelogs", async (req, res) => {
   res.json(result)
 })
 
-//获取某篇游记 要放到/travelogs/edit下面
+//获取某篇游记 要放到/travelogs/edit这个路由下面
 router.get("/travelogs/:id", async (req, res) => {
   const id = req.params?.id
   const result = await Travelog.getTravelogById(id)
