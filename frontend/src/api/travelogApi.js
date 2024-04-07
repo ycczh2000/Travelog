@@ -76,3 +76,9 @@ export const $getTravelogsByID = async id => {
   const { data } = await axios.get(`/travelogs/${id}`)
   return data
 }
+
+//10.发送删除游记请求
+export const $deleteTravelog = async id => {
+  const { data } = await axios.delete(`/travelogs/${id}`)
+  return data
+}
