@@ -13,32 +13,33 @@ import UserTravelogs from "./pages/UserTravelogs/UserTravelogs"
 import Publish from "./pages/Publish/Publish"
 import Detaillog from "./pages/Detaillog/Detaillog"
 
-import { HomeContextProvider } from "./Context/HomeContext"
+import { UserContextProvider } from "./Context/UserContext"
 
 function App() {
   return (
     <BrowserRouter>
-    <HomeContextProvider>
-      <div className="app-container">
-        <Routes>
-        {/* <CacheSwitch>
+      <UserContextProvider>
+        <div className="app-container">
+          <Routes>
+            {/* <CacheSwitch>
             <CacheRoute exact path="/" component={Home} />
           </CacheSwitch> */}
-          <Route path="/" element={<Home />}></Route>
-          {/* <Route path="/travelogs/:id" element={<Detaillog />}></Route> */}
-          <Route path="/travelogs" element={<Detaillog />}></Route>
-          <Route path="/space/:username" element={<UserSpace />}>
-            <Route path="travelog" element={<UserTravelogs />}></Route>
-          </Route>
-          <Route path="/mytravelog" element={<MyTravelog />}></Route>
-          <Route path="/publish" element={<Publish />}></Route>
-          <Route path="/avatarupload" element={<AvatarUpload />}></Route>
-          <Route path="/login" element={<Login />}></Route>
-          <Route path="/register" element={<Register />}></Route>
-        </Routes>
-      </div>
-      <ConditionalFooter />
-      </HomeContextProvider>
+            <Route path="/home" element={<Home />}></Route>
+            {/* <Route path="/travelogs/:id" element={<Detaillog />}></Route> */}
+            <Route path="/travelogs" element={<Detaillog />}></Route>
+            <Route path="/space/:username" element={<UserSpace />}>
+              <Route path="travelog" element={<UserTravelogs />}></Route>
+            </Route>
+            <Route path="/mytravelog" element={<MyTravelog />}></Route>
+            <Route path="/publish" element={<Publish />}></Route>
+            <Route path="/avatarupload" element={<AvatarUpload />}></Route>
+            <Route path="/login" element={<Login />}></Route>
+            <Route path="/" element={<Login />}></Route>
+            <Route path="/register" element={<Register />}></Route>
+          </Routes>
+        </div>
+        <ConditionalFooter />
+      </UserContextProvider>
     </BrowserRouter>
   )
 }

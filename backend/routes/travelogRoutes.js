@@ -145,7 +145,7 @@ router.put("/travelogs/edit/savedraft", async (req, res) => {
 //###################获取游记相关#####################
 //1.查询所有游记
 router.get("/travelogs", async (req, res) => {
-  const { title } = req.query
+  const { title,tripBudget,tripNum } = req.query
   const query = {}
   if (title) {
     const titleReg = new RegExp(title)

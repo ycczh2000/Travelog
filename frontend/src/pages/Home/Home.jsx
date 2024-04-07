@@ -35,6 +35,7 @@ const Home = () => {
   // });
   return (
     <div>
+      <HomeContextProvider>
         <SearchBarComponent />
         {/* <LocalRecommendation/> */}
         <FilterBar />
@@ -50,6 +51,7 @@ const Home = () => {
         >
           <IoMdRocket color='black' fontSize={32} />
         </FloatingBubble>
+        </HomeContextProvider>
     </div>
   );
 };

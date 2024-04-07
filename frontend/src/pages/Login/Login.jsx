@@ -4,9 +4,9 @@ import { Form, Input, Button, Toast } from "antd-mobile"
 import { CalendarOutline } from "antd-mobile-icons"
 import { Link } from "react-router-dom"
 import { $login } from "../../api/userApi"
-import {UserContext } from "../../Context/UserContext"
+import {UserContext} from "../../Context/UserContext"
 export default function Login() {
-  const {UID, setUID, userName, setUserName } = useContext(UserContext);
+  const { UID, setUID, userName, setUserName } = useContext(UserContext);
   const [form] = Form.useForm()
   const onFinishHandle = async () => {
     const values = form.getFieldsValue()
@@ -15,7 +15,9 @@ export default function Login() {
     if (result.success) {
       result.data.token && localStorage.setItem("token", result.data.token)
       Toast.show(result.message)
-      console.log("token:",result.data.userId,result.data.username)
+      // console.log("token:",result.data.userId,result.data.username)
+      localStorage.setItem('UID', result.data.userId);
+      localStorage.setItem('userName', result.data.username);
     } else {
       Toast.show(result.message)
     }
@@ -25,7 +27,9 @@ export default function Login() {
       if (localStorage.getItem("token")) {
         const result = await $login()
         if (result.success) {
-          console.log("token:",result.data.userId,result.data.username)
+          // console.log("token:",result.data.userId,result.data.username)
+          localStorage.setItem('UID', result.data.userId);
+          localStorage.setItem('userName', result.data.username);
           Toast.show("自动登录成功")
         }
       }

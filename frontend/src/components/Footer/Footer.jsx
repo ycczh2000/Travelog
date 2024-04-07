@@ -11,7 +11,7 @@ export default function Footer() {
   };
   return (
     <div className="footer">
-      <Link to="/" onClick={() => handleSelect("home")} className={selected === "home" ? "selected" : ""}>
+      <Link to="/home" onClick={() => handleSelect("home")} className={selected === "home" ? "selected" : ""}>
         {selected === "home" ? <GiHouse size={32} color="#ff7f50" /> : <GiHouse size={32} color="#888" />}
       </Link>
       <Link to="/follow" onClick={() => handleSelect("follow")} className={selected === "follow" ? "selected" : ""}>
