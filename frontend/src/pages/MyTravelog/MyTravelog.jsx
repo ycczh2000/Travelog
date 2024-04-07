@@ -9,7 +9,7 @@ import { UserContext } from "../../Context/UserContext"
 import { Popup, Button } from 'antd-mobile'
 import { UploadOutlined } from '@ant-design/icons';
 import { Upload } from 'antd';
-import AvatarEditor from "react-avatar-editor";
+import AvatarEditor from 'react-avatar-editor'
 
 import './MyTravelog.css';
 
@@ -94,6 +94,15 @@ export default function MyTravelog() {
   };
   const changeAvatarComponent = (
     <div>
+      <AvatarEditor
+      image="https://img1.baidu.com/it/u=1389873612,485301600&fm=253&app=120&size=w931&n=0&f=JPEG&fmt=auto?sec=1712595600&t=76261ab2a1585815f46c7b306c6f66e3"
+      width={250}
+      height={250}
+      border={50}
+      color={[255, 255, 255, 0.6]} // RGBA
+      scale={1.2}
+      rotate={0}
+    />
       <Button block size='large' style={{ margin: '10px' }} onClick={() =>{setVisible(false)}}>
         取消
       </Button>
