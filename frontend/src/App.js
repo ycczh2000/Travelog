@@ -13,9 +13,12 @@ import UserTravelogs from "./pages/UserTravelogs/UserTravelogs"
 import Publish from "./pages/Publish/Publish"
 import Detaillog from "./pages/Detaillog/Detaillog"
 
+import { HomeContextProvider } from "./Context/HomeContext"
+
 function App() {
   return (
     <BrowserRouter>
+    <HomeContextProvider>
       <div className="app-container">
         <Routes>
         {/* <CacheSwitch>
@@ -35,6 +38,7 @@ function App() {
         </Routes>
       </div>
       <ConditionalFooter />
+      </HomeContextProvider>
     </BrowserRouter>
   )
 }

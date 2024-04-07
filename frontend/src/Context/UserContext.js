@@ -10,23 +10,15 @@
 
 import React, { createContext, useState } from 'react';
 
-export const HomeContext = createContext();
+export const UserContext = createContext();
 
-export const HomeContextProvider = ({ children }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sorter, setSorter] = useState('0');
-  const [city, setCity] = useState([]);
-  const [selectedFilters, setSelectedFilters] = useState({
-    tripWay: null,
-    tripNum: null,
-    tripDate: null,
-    tripBudget: null,
-    tripRate: 0,
-  });
+export const UserContextProvider = ({ children }) => {
+  const [UID, setUID] = useState('');//用于本地追踪UID
+  const [userName, setUserName] = useState('MOMO');
 
   return (
-    <HomeContext.Provider value={{ sorter, setSorter, city, setCity, selectedFilters, setSelectedFilters,searchTerm, setSearchTerm }}>
+    <UserContext.Provider value={{UID, setUID, userName, setUserName }}>
       {children}
-    </HomeContext.Provider>
+    </UserContext.Provider>
   );
 };

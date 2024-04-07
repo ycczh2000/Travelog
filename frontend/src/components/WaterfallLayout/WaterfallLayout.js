@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-06 21:52:06
+ * @LastEditTime: 2024-04-07 18:09:11
  * @FilePath: \frontend\src\components\WaterfallLayout\WaterfallLayout.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -13,7 +13,7 @@ import InfCard from "../InfCard/InfCard"
 import "./WaterfallLayout.css"
 import { HomeContext } from "../../Context/HomeContext"
 import { $getTravelogs } from "../../api/travelogApi"
-
+import { DotLoading } from 'antd-mobile'
 const WaterfallLayout = () => {
     const { sorter, setSorter, city, setCity, selectedFilters, setSelectedFilters, searchTerm, setSearchTerm } = useContext(HomeContext);
     const [data, setData] = useState([]);
@@ -68,17 +68,18 @@ const WaterfallLayout = () => {
       };
       
     useEffect(() => {
-        const handleScroll = () => {
-            // 当滚动到页面底部时，并且当前不处于加载数据状态时，触发 fetchData 函数获取更多数据
-            if (!loading && window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-                console.log('handleScroll', sorter, city, selectedFilters, searchTerm)
-                fetchData(sorter, city, selectedFilters, searchTerm);
-            }
-        };
+      const handleScroll = () => {
+        // 当滚动到页面底部的上方一定距离时，并且当前不处于加载数据状态时，触发 fetchData 函数获取更多数据
+        const scrollThreshold = window.innerHeight * 0.8; // 在底部上方80%的位置触发加载
+        if (!loading && window.innerHeight + window.scrollY >= document.body.offsetHeight - scrollThreshold) {
+            console.log('handleScroll', sorter, city, selectedFilters, searchTerm);
+            fetchData(sorter, city, selectedFilters, searchTerm);
+        }
+    };
 
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [sorter, city, selectedFilters, loading, searchTerm]);
+    }, [sorter, city, selectedFilters, searchTerm]);
     // 在组件加载时添加滚动事件监听器，并在组件卸载时移除监听器
     const masonryRef = useRef(null);
 
@@ -215,7 +216,7 @@ const WaterfallLayout = () => {
           <InfCard
             id={item.id}
             city={item.Location}
-            imageUrl={item.imageUrl}
+            imageUrl={item.image ? 'http://localhost:8000/images/' + item.image : 'https://img1.baidu.com/it/u=1389873612,485301600&fm=253&app=120&size=w931&n=0&f=JPEG&fmt=auto?sec=1712595600&t=76261ab2a1585815f46c7b306c6f66e3'}
             title={item.title}
             username={item.username}
             avatar={item.avatar}
@@ -223,6 +224,7 @@ const WaterfallLayout = () => {
           />
         </div>
       ))}
+      <DotLoading/>
     </div>
   )
 }
