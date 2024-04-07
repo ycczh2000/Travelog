@@ -2,33 +2,35 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-05 16:18:15
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-07 19:37:31
+ * @LastEditTime: 2024-04-07 20:31:49
  * @FilePath: \frontend\src\pages\Detaillog\Detaillog.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import React, { useState, useEffect } from 'react';
 import { LeftOutline } from 'antd-mobile-icons'
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import SwiperN from '../../components/swiper/swiper';
 import UserInfo from '../../components/UserInfo/UserInfo';
 import Details from '../../components/Details/Details';
 import Content from '../../components/content/content'
 import Comment from '../../components/comment/comment'
+import { $getTravelogsByID } from '../../api/travelogApi';
 
 const Detaillog = () => {
+  const { id } = useParams();
   const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const logID = queryParams.get('logID');
-  console.log("logID:", logID)
+  // const queryParams = new URLSearchParams(location.search);
+  // const logID = queryParams.get('logID');
+  // console.log("logID:", logID)
   // const title = queryParams.get('title');
   // const content = queryParams.get('content');
   // const city = queryParams.get('city')?.split(',');
   // const tripInfo = JSON.parse(queryParams.get('tempTripInfo'));
 
-  const [title, setTitle] = useState(queryParams.get('title')||'游记标题');
-  const [content, setContent] = useState(queryParams.get('content')||'游记内容');
-  const [city, setCity] = useState( queryParams.get('city')?.split(',')||'');
-  const [tripInfo, setTripInfo] = useState(JSON.parse(queryParams.get('tempTripInfo'))||{
+  const [title, setTitle] = useState('游记标题');
+  const [content, setContent] = useState('游记内容');
+  const [city, setCity] = useState([]);
+  const [tripInfo, setTripInfo] = useState({
     tripWay: null,
     tripNum: null,
     tripDate: null,
@@ -57,29 +59,43 @@ const Detaillog = () => {
       }
     ]
   });
-  console.log('city:',city)
+  // console.log('city:',city)
   useEffect(() => {
     const fetchData = async () => {
-      
+
       // 如果 logID 不为空，则额外获取数据
-      if (logID) {
-        // 发送fetch请求，获取其他数据
-        try {
-          const response = await fetch(`api-log/${logID}`);//todo:获取游记数据
-          const data = await response.json();
-          // 设置获取到的数据
-          setTitle(data.title);
-          setContent(data.content);
-          setCity(data.city.split(',')); // 假设城市数据是以逗号分隔的字符串
-          setTripInfo(JSON.parse(data.tempTripInfo));
-          setBannerList(data.bannerList);
-          setDetailInfo(data.detailInfo);
-          setCommentInfo(data.commentInfo);
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
+      // if (logID) {
+      // 发送fetch请求，获取其他数据
+      try {
+        // const response = await fetch(`api-log/${logID}`);//todo:获取游记数据
+        const travelog = await $getTravelogsByID(id); // 使用 ID 调用 API 获取游记信息
+        // const data = await response.json();
+        console.log('travelog:', travelog)
+        // 设置获取到的数据
+        setTitle(travelog.data.title);
+        setContent(travelog.data.content);
+        setCity(travelog.data.Location ? travelog.data.Location : []);
+        setTripInfo({
+          tripNum: travelog.data.tripNum,
+          tripDate: travelog.data.tripDate,
+          tripBudget: travelog.data.tripBudget,
+          tripRate: travelog.data.tripRate,
+          tripWay: travelog.data.tripWay
+        });
+        const prefixedImages = travelog.data.images.map(image => 'http://localhost:8000/images/' + image);
+        setBannerList(prefixedImages);
+        // setBannerList(travelog.data.images);
+        setDetailInfo({
+          authorUID: travelog.data.authorId, userAvatar: 'https://zos.alipayobjects.com/rmsportal/AiyWuByWklrrUDlFignR.png',
+          userName: '用户名',
+          lastEditTime: '2024-04-05 16:18:15',
+        });
+        const author = await $getTravelogsByID(id);
+      } catch (error) {
+        console.error('Error fetching data:', error);
       }
-    };
+    }
+    // };
     fetchData(); // 调用数据获取函数
   }, []);
 

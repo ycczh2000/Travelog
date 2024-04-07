@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-05 23:42:06
+ * @LastEditTime: 2024-04-07 19:43:44
  * @FilePath: \backend\routes\travelogRoutes.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -145,11 +145,23 @@ router.put("/travelogs/edit/savedraft", async (req, res) => {
 //###################获取游记相关#####################
 //1.查询所有游记
 router.get("/travelogs", async (req, res) => {
-  const { title,tripBudget,tripNum } = req.query
+  const { title,tripBudget,tripNum,tripWay,tripDate} = req.query
   const query = {}
   if (title) {
     const titleReg = new RegExp(title)
     query.title = { $regex: titleReg }
+  }
+  if(tripBudget){
+    query.tripBudget = tripBudget
+  }
+  if(tripNum){
+    query.tripNum = tripNum
+  }
+  if(tripWay){
+    query.tripWay = tripWay
+  }
+  if(tripDate){
+    query.tripDate = tripDate
   }
   query.deleted = false
   query.status = "approved"

@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-06 16:18:48
+ * @LastEditTime: 2024-04-07 19:46:55
  * @FilePath: \frontend\src\components\InfCard\InfCard.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -24,7 +24,7 @@ const InfCard = ({ id,city,imageUrl, title, username, likes, liked,avatarUrl }) 
         // tempTripInfo: JSON.stringify(tempTripInfo)
       }).toString();
   
-      navigate(`/travelogs?${queryString}`);// 进行路由跳转，并传递参数,从信息流进入详细页只传递id
+      navigate(`/travelogs/${id}`);// 进行路由跳转，并传递参数,从信息流进入详细页只传递id
     //   navigate(`/detail/${title}`);
     };
     return (
