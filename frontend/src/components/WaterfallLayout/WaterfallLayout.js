@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-06 21:52:06
+ * @LastEditTime: 2024-04-07 19:25:55
  * @FilePath: \frontend\src\components\WaterfallLayout\WaterfallLayout.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -13,7 +13,7 @@ import InfCard from "../InfCard/InfCard"
 import "./WaterfallLayout.css"
 import { HomeContext } from "../../Context/HomeContext"
 import { $getTravelogs } from "../../api/travelogApi"
-
+import { DotLoading } from 'antd-mobile'
 const WaterfallLayout = () => {
     const { sorter, setSorter, city, setCity, selectedFilters, setSelectedFilters, searchTerm, setSearchTerm } = useContext(HomeContext);
     const [data, setData] = useState([]);
@@ -21,28 +21,32 @@ const WaterfallLayout = () => {
     // const [oldData, setOldData] = useState([])
 
     useEffect(() => {
-        //todo:搜索前保存旧数据，取消搜索后直接调用旧数据
-        // if (searchTerm == null) {
-        //     setData(oldData);//将旧数据重新放到首页
-        // }
-        // else {
-        //     setOldData(data); // 保存旧数据
         console.log('searchTerm changed', searchTerm)
-        let newData = [];
-        setData(newData); // 清空数据
-        fetchData(sorter, city, selectedFilters, searchTerm);//重新获取数据
+        setData([]); // 清空数据
+        // handleClearData(); // 清空数据
+        // console.log('搜索词启动，重新获取数据:', data)
+        // fetchData(sorter, city, selectedFilters, searchTerm);//重新获取数据
         // }
     }, [searchTerm])
 
+    // const handleClearData = () => {
+    //     setData([]);
+    //     console.log(data)
+    // }
+
     const fetchData = async (sorter, city, selectedFilters, searchTerm = '') => {
-        console.log('fetchData:', sorter, city, selectedFilters);
+        console.log('fetchData:', sorter, city, selectedFilters,searchTerm);
         // 如果正在加载数据，则直接返回，避免重复请求
         if (loading) return;
       
-        setLoading(true); // 设置 loading 为 true，表示正在加载数据
+        // if (!city.length && !selectedFilters && !searchTerm&&data!=oldData) {
+        //   // 保存当前数据到 oldData
+        //   setData(oldData);
+        // }
       
         try {
           // 调用 API 获取数据
+          console.log("city, selectedFilters, searchTerm",city, selectedFilters, searchTerm)
           const newData = await $getTravelogs(city, selectedFilters, searchTerm);
           console.log('newData:',newData)
           const filteredNewData = city ? filterByCity(newData, city) : newData;
@@ -56,29 +60,36 @@ const WaterfallLayout = () => {
           console.error('Error fetching data:', error);
         } finally {
           setLoading(false); // 请求完成后，设置 loading 为 false
-          const combinedData = {
-            data: data,
-            sorter: sorter,
-            city: city,
-            selectedFilters: selectedFilters,
-            searchTerm: searchTerm
-          };
-          localStorage.setItem('combinedData', JSON.stringify(combinedData)); //将当前数据保存到本地
+          // console.log('updateddata:',data)
+          // if (city.length && !selectedFilters && !searchTerm) {
+          //   // 保存当前数据到 oldData
+          //   setOldData(data);
+          //   console.log('oldData:',oldData)
+          // }
         }
       };
       
-    useEffect(() => {
+      useEffect(() => {
         const handleScroll = () => {
-            // 当滚动到页面底部时，并且当前不处于加载数据状态时，触发 fetchData 函数获取更多数据
-            if (!loading && window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-                console.log('handleScroll', sorter, city, selectedFilters, searchTerm)
+            // 当滚动到页面底部的上方一定距离时，并且当前不处于加载数据状态时，触发 fetchData 函数获取更多数据
+            const scrollThreshold = window.innerHeight * 0.8; // 在底部上方80%的位置触发加载
+            if (!loading && window.innerHeight + window.scrollY >= document.body.offsetHeight - scrollThreshold) {
+                console.log('handleScroll', sorter, city, selectedFilters, searchTerm);
                 fetchData(sorter, city, selectedFilters, searchTerm);
             }
         };
-
+    
         window.addEventListener('scroll', handleScroll);
+    
+        // 当 data 的长度小于 10 时，也触发 fetchData 函数
+        if (data.length < 10) {
+            console.log('Data length less than 10, triggering fetchData');
+            fetchData(sorter, city, selectedFilters, searchTerm);
+        }
+    
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [sorter, city, selectedFilters, loading, searchTerm]);
+    }, [data.length, sorter, city, selectedFilters, searchTerm]);
+    
     // 在组件加载时添加滚动事件监听器，并在组件卸载时移除监听器
     const masonryRef = useRef(null);
 
@@ -207,6 +218,7 @@ const WaterfallLayout = () => {
     };
 
   return (
+    <>
     <div ref={masonryRef} className="waterfall-layout">
       <div className="waterfall-sizer"></div>
       <div className="waterfall-gutter"></div>
@@ -215,7 +227,7 @@ const WaterfallLayout = () => {
           <InfCard
             id={item.id}
             city={item.Location}
-            imageUrl={item.imageUrl}
+            imageUrl={item.image ? 'http://localhost:8000/images/' + item.image : 'https://img1.baidu.com/it/u=1389873612,485301600&fm=253&app=120&size=w931&n=0&f=JPEG&fmt=auto?sec=1712595600&t=76261ab2a1585815f46c7b306c6f66e3'}
             title={item.title}
             username={item.username}
             avatar={item.avatar}
@@ -223,7 +235,13 @@ const WaterfallLayout = () => {
           />
         </div>
       ))}
-    </div>
+
+    </div>        
+    <span style={{ fontSize: 24, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+  <DotLoading />
+</span>
+
+        </>
   )
 }
 

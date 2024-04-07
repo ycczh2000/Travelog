@@ -51,7 +51,7 @@ const Home = () => {
         >
           <IoMdRocket color='black' fontSize={32} />
         </FloatingBubble>
-      </HomeContextProvider>
+        </HomeContextProvider>
     </div>
   );
 };

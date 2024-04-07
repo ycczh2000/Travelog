@@ -66,7 +66,7 @@ export const $getTravelogs = async (city, selectedFilters, searchTerm)  => {
     params: {
       city,
       selectedFilters,
-      searchTerm
+      title:searchTerm//搜索title
     }})
   return data
 }
