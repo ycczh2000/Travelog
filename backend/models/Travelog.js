@@ -25,8 +25,8 @@ const travelogSchema = new mongoose.Schema({
   deleted: { type: Boolean, default: false }, //逻辑删除
   status: {
     type: String,
-    enum: ["editing", "draft", "pending", "approved", "rejected"],
-    default: "approved",
+    enum: ["pending", "approved", "rejected"],
+    default: "pending",
   },
   rejectReason: {
     type: String,
@@ -50,7 +50,7 @@ const travelogSchema = new mongoose.Schema({
 })
 
 const selfSelectFields = " -deleted" //访问自己的游记列表 排除的字段
-const publicSelectFields = "-status -auditDate -deleted" //访问他人的的游记列表 排除状态信息
+const publicSelectFields = "-status -auditDate -deleted -rejectReason -auditorId -auditDate" //访问他人的的游记列表 排除状态信息
 
 travelogSchema.statics.createTravelog = async function (authorId, log) {
   try {
@@ -76,9 +76,40 @@ travelogSchema.statics.getMyTravelogs = async function (authorId) {
 //获取单个游记
 travelogSchema.statics.getTravelogById = async function (travelogId) {
   try {
-    const travelog = await await this.findOne({ _id: travelogId, deleted: false, status: "approved" })
-      .select(publicSelectFields)
-      .exec()
+    const ObjectId = mongoose.Types.ObjectId
+    const travelog = await await this.aggregate([
+      { $match: { _id: new ObjectId(travelogId), deleted: false, status: "approved", isPublic: true } },
+      {
+        $lookup: {
+          from: "users",
+          let: { authorId: "$authorId" },
+          pipeline: [{ $match: { $expr: { $eq: ["$_id", "$$authorId"] } } }, { $project: { username: 1, _id: 0 } }],
+          as: "author_info",
+        },
+      },
+      { $unwind: "$author_info" },
+      { $addFields: { username: "$author_info.username" } },
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          content: 1,
+          images: 1,
+          tags: 1,
+          Location: 1,
+          tripWay: 1,
+          tripNum: 1,
+          tripDate: 1,
+          tripBudget: 1,
+          isPublic: 1,
+          rate: 1,
+          createDate: 1,
+          username: 1,
+          likesCount: { $size: "$likes" },
+          uploadDate: 1,
+        },
+      },
+    ]).exec()
     if (!travelog) {
       return { success: false, message: "游记不存在" }
     }
@@ -101,6 +132,17 @@ travelogSchema.statics.getTravelogsByUsername = async function (username) {
   } catch (err) {
     console.log("DB ERROR travelogSchema.statics.getTravelogsByUserId:", err)
     return { success: false, message: "获取失败" }
+  }
+}
+
+//删除某个游记
+travelogSchema.statics.deleteTravelog = async function (authorId, travelogId) {
+  try {
+    await this.deleteOne({ _id: travelogId, authorId, deleted: false }).exec()
+    return { success: true, message: "删除成功" }
+  } catch (err) {
+    console.log("DB ERROR travelogSchema.statics.deleteTravelog:", err)
+    return { success: false, message: "删除失败" }
   }
 }
 

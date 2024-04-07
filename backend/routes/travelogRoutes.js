@@ -145,22 +145,22 @@ router.put("/travelogs/edit/savedraft", async (req, res) => {
 //###################获取游记相关#####################
 //1.查询所有游记
 router.get("/travelogs", async (req, res) => {
-  const { title,tripBudget,tripNum,tripWay,tripDate} = req.query
+  const { title, tripBudget, tripNum, tripWay, tripDate } = req.query
   const query = {}
   if (title) {
     const titleReg = new RegExp(title)
     query.title = { $regex: titleReg }
   }
-  if(tripBudget){
+  if (tripBudget) {
     query.tripBudget = tripBudget
   }
-  if(tripNum){
+  if (tripNum) {
     query.tripNum = tripNum
   }
-  if(tripWay){
+  if (tripWay) {
     query.tripWay = tripWay
   }
-  if(tripDate){
+  if (tripDate) {
     query.tripDate = tripDate
   }
   query.deleted = false
@@ -216,7 +216,7 @@ router.get("/travelogs", async (req, res) => {
   res.json(result)
 })
 
-//获取某篇游记 要放到/travelogs/edit这个路由下面
+//获取某篇游记 要放到/travelogs/edit路由下面
 router.get("/travelogs/:id", async (req, res) => {
   const id = req.params?.id
   const result = await Travelog.getTravelogById(id)
@@ -234,6 +234,14 @@ router.get("/users/:username/travelogs", async (req, res) => {
 router.get("/mytravelogs", async (req, res) => {
   const userId = req.userId
   const result = await Travelog.getMyTravelogs(userId)
+  res.json(result)
+})
+
+//删除游记
+router.delete("/travelogs/:id", async (req, res) => {
+  const userId = req.userId
+  const travelogId = req.params?.id
+  const result = await Travelog.deleteTravelog(userId, travelogId)
   res.json(result)
 })
 
