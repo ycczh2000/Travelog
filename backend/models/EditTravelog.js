@@ -34,6 +34,7 @@ const editTravelogSchema = new mongoose.Schema({
 //编辑状态的游记可以上传图片，删除图片，保存到草稿箱，发布
 
 //1.创建编辑状态的游记
+////需要有方法更新草稿箱的游记，在创建时targetTravelogId能指向草稿箱的游记
 editTravelogSchema.statics.createEditTravelog = async (userId, targetTravelogId) => {
   try {
     await EditTravelog.findOneAndDelete({ authorId: userId, status: "editing" })
@@ -74,11 +75,11 @@ editTravelogSchema.statics.createEditTravelog = async (userId, targetTravelogId)
 
 //2.更新的编辑游记
 editTravelogSchema.statics.updataEditTravelog = async (userId, editId, editData) => {
-  console.log("editData:",editData)
+  console.log("editData:", editData)
   try {
     delete editData.authorId
     delete editData.targetTravelogId
-    delete editData.images //图片单独上传
+    delete editData.images //图片要单独上传
     delete editData.createDate
 
     const updatedEdit = await EditTravelog.findOneAndUpdate(
@@ -96,7 +97,7 @@ editTravelogSchema.statics.updataEditTravelog = async (userId, editId, editData)
   }
 }
 
-//3.1.发布新游记-原游记不存在 返回完整的新游记
+//3.1.发布新游记-原游记不存在 发布一个新游记并返回
 editTravelogSchema.statics.publishEditTravelog = async (userId, editId) => {
   try {
     const edit = await EditTravelog.findOne({ _id: editId, authorId: userId, status: "editing" })
@@ -131,7 +132,7 @@ editTravelogSchema.statics.publishEditTravelog = async (userId, editId) => {
   }
 }
 
-//3.2.更新游记-原游记存在
+//3.2.更新游记-目标原游记存在 用新游记的信息去更新targetTravelogId指向的原游记的字段，并重置发布时间和审核状态
 editTravelogSchema.statics.updateExistTravelog = async (userId, editId) => {
   try {
     const edit = await EditTravelog.findOne({ _id: editId, authorId: userId, status: "editing" })
@@ -172,7 +173,7 @@ editTravelogSchema.statics.updateExistTravelog = async (userId, editId) => {
   }
 }
 
-//4获取图片列表 返回数组
+//4获取图片列表 返回图片名数组，加上url前缀可得到图片的src
 editTravelogSchema.statics.getImages = async userId => {
   try {
     const edit = await EditTravelog.findOne({ authorId: userId, status: "editing" })
@@ -186,7 +187,7 @@ editTravelogSchema.statics.getImages = async userId => {
   }
 }
 
-//4.上传一张图片到编辑游记 更新第i张图片路径imags[i] 返回图片名列表
+//4.上传一张图片到编辑游记 更新第i张图片路径imags[i] 返回图片名数组
 editTravelogSchema.statics.uploadImage = async (userId, imgName, index) => {
   try {
     const result = await EditTravelog.findOneAndUpdate(
@@ -230,7 +231,7 @@ editTravelogSchema.statics.deleteImage = async (userId, index) => {
   }
 }
 
-//6.查询是否有正在编辑的游记
+//6.查询是否有正在编辑的游记 返回id
 editTravelogSchema.statics.hasEditTravelog = async userId => {
   try {
     const edit = await EditTravelog.findOne({ authorId: userId, status: "editing" })
@@ -244,7 +245,7 @@ editTravelogSchema.statics.hasEditTravelog = async userId => {
   }
 }
 
-//7.获取正在编辑的游记
+//7.获取正在编辑的游记 返回游记的详细信息
 editTravelogSchema.statics.getEditTravelog = async userId => {
   try {
     const edit = await EditTravelog.findOne({ authorId: userId, status: "editing" })
@@ -258,7 +259,7 @@ editTravelogSchema.statics.getEditTravelog = async userId => {
   }
 }
 
-//6.存到草稿箱
+//6.存到草稿箱 返回bool
 editTravelogSchema.statics.saveDraftTravelog = async (userId, editId) => {
   try {
     const edit = await EditTravelog.findOne({ _id: editId, authorId: userId, status: "editing" })
