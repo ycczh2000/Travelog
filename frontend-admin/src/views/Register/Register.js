@@ -14,7 +14,7 @@ export default function Register() {
       const { message, success, resdata } = data
       console.log(data)
       if (success) {
-        setNotiMsg({ type: "success", description: message + "，两秒后跳转到登录页" })
+        setNotiMsg({ type: "success", description: message + "，两秒自动后跳转到登录页" })
         setTimeout(() => {
           navigate("/login", { state: { userinfo: resdata } })
         }, 2000)
@@ -25,18 +25,6 @@ export default function Register() {
       setNotiMsg({ type: "error", description: e.message })
     }
   }
-
-  // const loginByToken = async () => {
-  //   const data = await $loginByCookie()
-  //   if (data?.success) {
-  //     const { message, resdata } = data
-  //     navigate("/layout/task", { state: { userinfo: resdata } })
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   loginByToken()
-  // }, [])
 
   return (
     <div className="login-page">

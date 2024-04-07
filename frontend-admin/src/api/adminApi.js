@@ -7,7 +7,8 @@ export const $login = async params => {
 }
 
 export const $register = async params => {
-  const { data } = await axios.post("admin/register", params)
+  const { username, password, role } = params
+  const { data } = await axios.post("admin/register", { username, password, role })
   console.log("respond: ", data)
   return data
 }

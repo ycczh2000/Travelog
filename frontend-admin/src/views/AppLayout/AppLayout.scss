@@ -1,6 +1,6 @@
 .Layout {
-  width: 100vw;
-  height: 100vh;
+  max-width: 100%;
+  max-height: 100%;
   .logo {
     width: auto;
     height: 32px;
@@ -25,8 +25,6 @@
   }
   .content {
     margin: auto;
-    padding: 5px;
-    padding: 24;
-    background: rgb(245, 245, 245);
+    background: rgb(235, 235, 235);
   }
 }

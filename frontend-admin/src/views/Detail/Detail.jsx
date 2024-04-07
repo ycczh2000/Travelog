@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useContext } from "react"
 import { useParams, useNavigate } from "react-router-dom"
+import { AuthContext } from "../../context/AuthProvider"
 import { $travelog } from "../../api/adminApi"
 import { Image } from "antd"
 import { Button, Modal, Form, Input, Radio, Space } from "antd"
@@ -37,8 +38,8 @@ export default function Detail() {
   const [travelog, setTravelog] = useState({})
   const [modalOpen, setModalOpen] = useState(false)
   const [rejectform] = Form.useForm()
-
   const { title, images, tags, content } = travelog
+  const { userInfo, setUserInfo } = useContext(AuthContext)
   const imgSrc = "https://dimg04.c-ctrip.com/images/01019120008gm9rczEEBF_R_800_10000_Q90.jpg?proc=autoorient"
   let navigate = useNavigate()
   useEffect(() => {
@@ -142,9 +143,11 @@ export default function Detail() {
           </Button>
         </div>
         <div className={styles.backButtonArea}>
-          <Button className={styles.btn} onClick={handleDeleteButton} type="primary" key="delete" danger>
-            删除
-          </Button>
+          {userInfo.role === "admin" ? (
+            <Button className={styles.btn} onClick={handleDeleteButton} type="primary" key="delete" danger>
+              删除
+            </Button>
+          ) : null}
           <Button className={styles.btn} onClick={() => navigate(-1)}>
             返回
           </Button>

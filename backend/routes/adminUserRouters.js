@@ -40,6 +40,9 @@ router.delete("/travelogs/:id", async (req, res) => {
 })
 
 router.put("/travelogs/:id", async (req, res) => {
+  if (!req.userId) {
+    return res.status(401).send("未登录")
+  }
   const { auditStatus, reason } = req.body
   console.log("auditStatus", auditStatus)
   console.log(reason)
@@ -47,15 +50,32 @@ router.put("/travelogs/:id", async (req, res) => {
   res.json(result)
 })
 
+const adminFields = {
+  _id: 1,
+  title: 1,
+  createDate: 1,
+  status: 1,
+  authorUsername: 1,
+  auditorUsername: 1,
+}
+
+const auditorFields = {
+  _id: 1,
+  title: 1,
+  createDate: 1,
+  status: 1,
+}
+
 //查询游记   title 作者 authorUsername  审核人 auditorUsername
 router.get("/travelogs", async (req, res) => {
-  // console.log("admin/travelogs")
-  // console.log("req.query", req.query)
-  // console.log("req.role", req.role)
+  if (!req.userId) {
+    return res.status(401).send("未登录")
+  }
+  const projectFields = req.role === "admin" ? adminFields : auditorFields
   const { title, auditorUsername, authorUsername, status } = req.query
-  console.log(title, auditorUsername, authorUsername)
+
   const query = { deleted: false }
-  if (authorUsername) {
+  if (authorUsername && req.role === "admin") {
     const author = await User.findOne({ username: authorUsername }, "_id")
     if (!author) {
       return res.json([])
@@ -63,7 +83,7 @@ router.get("/travelogs", async (req, res) => {
     query.authorId = author._id
   }
 
-  if (auditorUsername) {
+  if (auditorUsername && req.role === "admin") {
     const auditor = await AdminUser.findOne({ username: auditorUsername }, "_id")
     if (!auditor) {
       return res.json([])
@@ -119,14 +139,7 @@ router.get("/travelogs", async (req, res) => {
       },
     },
     {
-      $project: {
-        _id: 1,
-        title: 1,
-        createDate: 1,
-        status: 1,
-        authorUsername: 1,
-        auditorUsername: 1,
-      },
+      $project: projectFields,
     },
     {
       $sort: { createDate: -1 },
@@ -137,6 +150,9 @@ router.get("/travelogs", async (req, res) => {
 })
 
 router.get("/travelogs/:id", async (req, res) => {
+  if (!req.userId) {
+    return res.status(401).send("未登录")
+  }
   console.log("/travelogs/:id")
   const result = await Travelog.findById(req.params.id).catch(err => {
     res.status(404).send("游记不存在")

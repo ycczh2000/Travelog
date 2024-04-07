@@ -2,10 +2,16 @@
   margin-bottom: 10px;
   background-color: white;
   border-radius: 10px;
+  .welcomeText {
+    font-size: 20px;
+    text-align: center;
+    font-weight: bold;
+    margin: 5px;
+  }
   .buttonArea {
     display: flex;
     justify-content: flex-end;
-    margin-right: 20px;
+    margin-right: 10%;
     .btn {
       margin: 5px;
     }
