@@ -5,6 +5,7 @@ import { PictureOutline } from "antd-mobile-icons"
 import styles from "./AvatarUpload.module.scss"
 import { $uploadAvatar, $getAvatar } from "../../api/userApi"
 
+//纯测试组件，用于测试头像与图片上传功能
 export default function AvatarUpload() {
   const [fileList, setFileList] = useState([])
   const [image, setImage] = useState(null)

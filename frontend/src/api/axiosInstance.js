@@ -24,7 +24,22 @@ Instance.interceptors.response.use(
   function (response) {
     return response
   },
+  //登录失败或没有权限时清除token并跳转页面，跳转时应该有提示选择是否登录或回到首页
   function (error) {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem("token")
+      localStorage.removeItem("UID")
+      localStorage.removeItem("userName")
+      alert("登录状态过期，请重新登录")
+      window.location.href = "/"
+    }
+    if (error.response && error.response.status === 403) {
+      localStorage.removeItem("token")
+      localStorage.removeItem("UID")
+      localStorage.removeItem("userName")
+      alert("没有该权限，请重新登录")
+      window.location.href = "/"
+    }
     return Promise.reject(error)
   }
 )

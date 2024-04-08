@@ -24,12 +24,15 @@ import {
   $publishEditTravelog,
 } from "../../api/travelogApi"
 
+//组件说明
+//
 const Publish = () => {
   const [fileList, setFileList] = useState([])
   const [editingData, setEditingData] = useState({})
   const imageUploadRef = useRef(null)
   const editingRef = useRef(null)
   const [editId, setEditId] = useState("")
+  //编辑文档的id
 
   const loadEditTravelog = async () => {
     await Modal.alert({
@@ -38,12 +41,13 @@ const Publish = () => {
     Toast.show({ content: "已关闭", position: "bottom" })
   }
 
-  //自动加载编辑状态的游记
+  //v2弹出窗口让用户选择加载之前编辑的内容，或是创建新的编辑状态的游记
   const hasEditTravelog = async () => {
     const res = await $hasEditTravelog()
     console.log("$hasEditTravelog", res)
     const editId = res.data?.editId
     console.log("editId", editId)
+    //当前用户有正在编辑的的游记
     if (editId) {
       setEditId(editId)
       const result = await $getEditTravelog()
@@ -77,7 +81,7 @@ const Publish = () => {
 
   const handlePublishClick2 = async () => {
     const editingData = editingRef.current.getEditingData()
-    
+
     if (editingData.title.length < 1 || editingData.title.length > 20) {
       alert("Title length should be between 1 and 20 characters.") // 使用alert弹出消息提示
       return
@@ -89,62 +93,23 @@ const Publish = () => {
     const result1 = await $updateEditTravelog({ editData: editingData, editId: editId })
     // const result = await $publishEditTravelog({ editId: editId })
     // if (result1.status === 'success') {
-      // 如果第一个请求成功，则发送第二个请求，并等待结果
-      const result2 = await $publishEditTravelog({ editId: editId });
-      console.log("handlePublishClick2 result2:", result2)
+    // 如果第一个请求成功，则发送第二个请求，并等待结果
+    const result2 = await $publishEditTravelog({ editId: editId })
+    console.log("handlePublishClick2 result2:", result2)
     // }
     console.log("handlePublishClick2 result1:", result1)
-    if(result2.success === true){
+    if (result2.success === true) {
       Toast.show({ content: "发布成功", position: "bottom" })
+      //在定时器结束前再次点击发布按钮会出bug
       setTimeout(() => {
-        window.history.go(-1); // 返回上一页面
-      }, 1000);
-    }else{
+        window.history.go(-1) // 返回上一页面
+      }, 1000)
+    } else {
       Toast.show({ content: "发布失败", position: "bottom" })
     }
     // const result = await $publishEditTravelog({ editId: editId })
     // console.log("handlePublishClick2 result:", result)
   }
-  // const handlePublishClick = async () => {
-  //   const imageUploadInstance = imageUploadRef.current
-  //   const fileList = await imageUploadInstance.getFileList()
-  //   console.log(fileList)
-
-  // const editingData = editingRef.current.getEditingData()
-
-  // if (editingData.title.length < 1 || editingData.title.length > 20) {
-  //   alert("Title length should be between 1 and 20 characters.") // 使用alert弹出消息提示
-  //   return
-  // }
-  //   const convertedFiles = fileList.map((file, index) => {
-  //     return {
-  //       key: "image" + (index + 1), // 使用索引来生成唯一的key，如image1, image2, ...
-  //       type: "file",
-  //       src: file.url, // 假设File对象有一个"url"属性表示文件路径
-  //     }
-  //   })
-
-  //   const imgInfo = {
-  //     key: "imgInfo",
-  //     value: JSON.stringify(convertedFiles.map(file => file.key)), // 将key值列表转换为JSON字符串
-  //     type: "text",
-  //   }
-
-  //   // 输出转换后的文件列表
-  //   // console.log(convertedFiles);
-  //   // for (const key in fileList) {
-  //   //   if (Object.hasOwnProperty.call(fileList, key)) {
-  //   //     console.log(`${key}:`, fileList[key]);
-  //   //   }
-  //   // }
-
-  //   // console.log(fileList, editingData);
-  //   // // 将处理后的数据传输到服务端
-  //   console.log("Publish clicked!", convertedFiles, imgInfo, editingData)
-  //   sendTraveLogToServer(convertedFiles, imgInfo, editingData)
-  //   // 发布游记后，销毁本地存储中的草稿数据
-  //   localStorage.removeItem("draftData")
-  // }
 
   const handleSaveDraftClick = async () => {
     const fileList = imageUploadRef.current.getFileList()
@@ -157,27 +122,16 @@ const Publish = () => {
     localStorage.setItem("draftData", draftData)
     console.log("Draft saved!")
   }
-  // useEffect(() => {
-  //   const draftData = localStorage.getItem("draftData")
-  //   if (draftData) {
-  //     const { fileList, editingData } = JSON.parse(draftData)
-  //     setFileList(fileList)
-  //     setEditingData(editingData)
-  //     console.log("draft loaded")
-  //     console.log(fileList, editingData)
-  //   }
-  // }, [])
+
   const handleGoBack = () => {
-    window.history.go(-1); // 返回上一页面
-  };
+    window.history.go(-1) // 返回上一页面
+  }
   return (
     <div style={{ margin: "10px" }}>
       {" "}
       {/* 添加外边距 */}
       <div>
-        <Button
-          style={{ background: "transparent", border: "none" }}
-          onClick={handleGoBack}>
+        <Button style={{ background: "transparent", border: "none" }} onClick={handleGoBack}>
           <LeftOutline />
         </Button>
       </div>
