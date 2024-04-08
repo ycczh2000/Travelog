@@ -13,7 +13,7 @@ import "./Publish.css"
 import ImageUpload, { getFileList } from "../../components/ImageUpload/ImageUpload"
 import Editing from "../../components/Editing/Editing"
 import { LeftOutline } from "antd-mobile-icons"
-import { Button, Modal, Toast } from "antd-mobile"
+import { Button, Modal, Toast, Dialog } from "antd-mobile"
 import { DownlandOutline, EyeOutline } from "antd-mobile-icons"
 import { sendTraveLogToServer } from "../../api/userApi"
 import {
@@ -25,46 +25,80 @@ import {
 } from "../../api/travelogApi"
 
 //组件说明
-//
+//sleep函数，用于模拟异步请求
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
+
 const Publish = () => {
   const [fileList, setFileList] = useState([])
   const [editingData, setEditingData] = useState({})
   const imageUploadRef = useRef(null)
   const editingRef = useRef(null)
   const [editId, setEditId] = useState("")
+  const [loading, setloading] = useState(false) //加载游记后开启自动保存
   //编辑文档的id
 
-  const loadEditTravelog = async () => {
-    await Modal.alert({
-      content: "人在天边月上明",
-    })
-    Toast.show({ content: "已关闭", position: "bottom" })
-  }
+  // const loadEditTravelog = async () => {
+  //   await Modal.alert({
+  //     content: "人在天边月上明",
+  //   })
+  //   Toast.show({ content: "已关闭", position: "bottom" })
+  // }
 
-  //v2弹出窗口让用户选择加载之前编辑的内容，或是创建新的编辑状态的游记
-  const hasEditTravelog = async () => {
+  //v2弹出窗口让用户选择加载之前编辑的内容，或是重新创建新的编辑状态游记
+  const selectEditTravelog = async () => {
     const res = await $hasEditTravelog()
     console.log("$hasEditTravelog", res)
     const editId = res.data?.editId
-    console.log("editId", editId)
     //当前用户有正在编辑的的游记
+    console.log("editid", editId)
     if (editId) {
-      setEditId(editId)
-      const result = await $getEditTravelog()
-      const editData = result.data?.edit
-      setEditingData(editData)
+      await Dialog.confirm({
+        content: "检查到有正在编辑中的游记，是否要加载（点击取消会丢失之前编辑的数据）",
+        onConfirm: async () => {
+          console.log("LoadingeditId", editId)
+          const result = await $getEditTravelog()
+          const editData = result.data?.edit
+          setEditingData(editData)
+          setEditId(editId)
+          setloading(true)
+          Toast.show({
+            icon: "success",
+            content: "加载成功",
+            position: "bottom",
+          })
+        },
+        onCancel: async () => createNewEditTravelog(),
+      })
     } else {
-      const result = await $createEditTravelog()
-      console.log("createEditTravelog", result)
-      const editId = result.data?.newEdit?._id
-      setEditId(editId)
+      await createNewEditTravelog()
     }
+  }
+
+  const createNewEditTravelog = async () => {
+    const result = await $createEditTravelog()
+    console.log("createEditTravelog", result)
+    const editId = result.data?.newEdit?._id
+    console.log("createNewEditTravelog", editId)
+    setEditId(editId)
+    setloading(true)
   }
 
   //初始加载时，判断是否有编辑状态的游记
   useEffect(() => {
-    hasEditTravelog()
+    selectEditTravelog()
   }, [])
+
+  //定时器，每10秒自动保存草稿
+  useEffect(() => {
+    const intervalId = setInterval(async () => {
+      const editingDataNow = editingRef.current.getEditingData()
+      await $updateEditTravelog({ editData: editingDataNow, editId: editId })
+    }, 10000)
+
+    return () => {
+      clearInterval(intervalId)
+    }
+  }, [editId])
 
   // useEffect(() => {}, [editId])
 
@@ -119,7 +153,7 @@ const Publish = () => {
     console.log(result)
     setEditingData(result.data)
     const draftData = JSON.stringify({ fileList, editingData })
-    localStorage.setItem("draftData", draftData)
+    // localStorage.setItem("draftData", draftData)
     console.log("Draft saved!")
   }
 
@@ -136,7 +170,7 @@ const Publish = () => {
         </Button>
       </div>
       <div style={{ margin: "10px", marginTop: "0px" }}>
-        <ImageUpload ref={imageUploadRef} fileList={fileList} />
+        <ImageUpload ref={imageUploadRef} fileList={fileList} editId={editId} />
         <Editing ref={editingRef} editingData={editingData} />
       </div>
       <div style={{ position: "absolute", bottom: "10px", left: "0", right: "0" }}>
