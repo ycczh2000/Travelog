@@ -6,7 +6,7 @@ import { UpOutline, CloseCircleFill, StarFill, UploadOutlined } from "antd-mobil
 import styles from "./MyTravelog.module.scss"
 import { UserSpaceContentProvider } from "./UserSpaceContent"
 import { UserContext } from "../../Context/UserContext"
-import { Toast, Popup, Button, Slider } from "antd-mobile"
+import { Toast, Popup, Button, Slider,Dialog } from "antd-mobile"
 import "./MyTravelog.css"
 import { $getMyTravelogs, $deleteTravelog } from "../../api/travelogApi"
 import AvatarEditor from "react-avatar-editor"
@@ -26,6 +26,17 @@ export default function MyTravelog() {
   const [avatarFile, setAvatarFile] = useState('')// 用于存储用户选择的头像文件(本地待上传的)
   const [avatarScale, setAvatarScale] = useState(1)// 用于存放头像缩放倍率
   const [editor, setEditor] = useState(null);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('UID');
+    setUID('');
+    setUserName('');
+    alert('退出成功');
+    window.location.href = "/";
+  };
+  
 
   const handleFileInputChange = (event) => {
     const file = event.target.files[0];
@@ -127,6 +138,7 @@ export default function MyTravelog() {
 
   useEffect(() => {
     loadingData()
+    setAvatarUrl(`http://localhost:8000/getAvatar/${userName}` );
   }, [])
 
   //删除方法 传入id 返回bool 之后只从前端移除myTravelogList中对应项，不用重新请求、加载数据
@@ -172,6 +184,7 @@ export default function MyTravelog() {
           </div>
         </div>
         <MyTravelogFilter />
+        
         <MyTravelogList myTravelogList={myTravelogList} deleteTravelog={deleteTravelog} />
         {totop ? (
           <div
@@ -184,10 +197,38 @@ export default function MyTravelog() {
               })
             }}>
             <UpOutline style={{ fontSize: "1rem" }} />
+  
           </div>
         ) : (
           <></>
-        )}
+        )}  <div style={{width:'95%'}}>
+            <Button color='danger'block fill='outline' onClick={() => {
+              Dialog.show({
+                content: '你是否真的要退出账户？',
+                closeOnAction: true,
+                actions: [
+                  [
+                    {
+                      key: 'cancel',
+                      text: '取消',
+                    },
+                    {
+                      key: 'delete',
+                      text: '退出',
+                      bold: true,
+                      danger: true,
+                      onClick: () => {
+                        console.log('退出账户');
+                        handleLogout();
+                      },
+                    },
+                  ],
+                ],
+              })
+            }}>
+              退出账户
+            </Button>
+            </div>
       </UserSpaceContentProvider>
     </>
   )

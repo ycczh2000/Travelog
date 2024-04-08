@@ -37,7 +37,8 @@ export default function MyTravelogItem(props) {
   console.log("item", item)
   const handleDeleteForever = async () => {
     const result = await Modal.confirm({
-      content: "确定要永久删除该游记吗？（真的很久）",
+      closeOnMaskClick: true,
+      content: "确定要永久删除该游记吗？(真的很久)",
     })
     if (result) {
       // Toast.show({ content: '点击了确认', position: 'bottom' })
