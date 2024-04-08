@@ -1,3 +1,11 @@
+/*
+ * @Author: Sueyuki 2574397962@qq.com
+ * @Date: 2024-04-02 19:17:09
+ * @LastEditors: Sueyuki 2574397962@qq.com
+ * @LastEditTime: 2024-04-08 20:00:33
+ * @FilePath: \frontend\src\pages\MyTravelog\components\MyTravelogFilter\MyTravelogFilter.jsx
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import React, { useState,useContext } from "react"
 import { Dropdown, Radio, Space } from "antd-mobile"
 import styles from "./MyTravelogFilter.module.scss"
@@ -18,7 +26,7 @@ export default function MyTravelogHeader() {
       <Dropdown className={styles.dropdown}>
         <Dropdown.Item
           key="filter"
-          title={filter === 'all' ? '全部' : filter === 'approved' ? '已通过' : filter === 'unreview' ? '审核中' : '未通过'}
+          title={filter === 'all' ? '全部' : filter === 'approved' ? '已通过' : filter === 'pending' ? '审核中' : '未通过'}
         >
           <div style={{ padding: 2 }}>
             <Radio.Group defaultValue="all" onChange={handleFilterChange} style={{opacity: 0.075}}>
@@ -28,7 +36,7 @@ export default function MyTravelogHeader() {
               <Radio block value="approved" style={{ padding: 6 }}>
                 已通过
               </Radio>
-              <Radio block value="unreview" style={{ padding: 6 }}>
+              <Radio block value="pending" style={{ padding: 6 }}>
                 审核中
               </Radio>
               <Radio block value="rejected" style={{ padding: 6 }}>

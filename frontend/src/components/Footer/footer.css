@@ -3,7 +3,7 @@
   justify-content: space-around;
   align-items: center;
   background-color: #f0f0f0;
-  position: sticky;
+  position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
@@ -11,6 +11,7 @@
   border-top: 1px solid #ccc;
   z-index: 100;
 }
+
 
 .footer a {
   text-decoration: none;

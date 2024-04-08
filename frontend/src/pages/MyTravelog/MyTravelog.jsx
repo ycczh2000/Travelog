@@ -201,7 +201,7 @@ export default function MyTravelog() {
           </div>
         ) : (
           <></>
-        )}  <div style={{width:'95%'}}>
+        )}  <div style={{width:'95%',marginBottom:'30px'}}>
             <Button color='danger'block fill='outline' onClick={() => {
               Dialog.show({
                 content: '你是否真的要退出账户？',
