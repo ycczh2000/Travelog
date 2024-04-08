@@ -17,12 +17,14 @@ export default function MyTravelog() {
   console.log(userName, UID)
   const [myTravelogList, setMyTravelogList] = useState([])
   const [totop, setTotop] = useState(true)
+  const [avatarUrl, setAvatarUrl] = useState(MoMo)// 用于存放用户头像的URL(从服务器获取)
   const [visible, setVisible] = useState(false) //标志上传头像的弹出组件是否弹出
-  const [avatarFile, setAvatarFile] = useState('')// 用于存储用户选择的头像文件
-  const [avatarScale,setAvatarScale ] = useState(1)// 用于存放头像缩放倍率
+  const [avatarFile, setAvatarFile] = useState('')// 用于存储用户选择的头像文件(本地待上传的)
+  const [avatarScale, setAvatarScale] = useState(1)// 用于存放头像缩放倍率
   const [editor, setEditor] = useState(null);
   const MoMo = 'https://img1.baidu.com/it/u=1389873612,485301600&fm=253&app=120&size=w931&n=0&f=JPEG&fmt=auto?sec=1712682000&t=ff2af80b5ee2888d42c58c2aff22a8d3'
   //默认的头像地址(MOMO头像)
+
 
   const handleFileInputChange = (event) => {
     const file = event.target.files[0];
@@ -37,11 +39,38 @@ export default function MyTravelog() {
       const croppedAvatarFile = canvas.toDataURL(); // 获取裁剪后的图像数据 URL
       // 此时 croppedAvatarFile 就是裁剪后的图像数据 URL
       console.log('url after cropping:', croppedAvatarFile);
+      const blob = dataURItoBlob(croppedAvatarFile);
+      // 创建一个新的文件对象
+      const file = new File([blob], 'cropped_image.png', { type: 'image/png' });
+      // console.log('file:', file);
+      upload(file)
+      setAvatarUrl(croppedAvatarFile)
+      setVisible(false)
     }
   };
+
+  const upload = async (file) => {
+    console.log("file:", file)
+    const res = await $uploadAvatar(file)
+      .then(res => console.log("res", res))
+      .catch(err => console.log("err", err))
+  }
+
+
   const handleChangeScale = (value) => {//修改图片缩放
     setAvatarScale(value * 0.01 + 1);
   };
+
+  function dataURItoBlob(dataURI) {//将dataURI(base64)转换为Blob对象（file)
+    const byteString = atob(dataURI.split(',')[1]);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const uint8Array = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < byteString.length; i++) {
+      uint8Array[i] = byteString.charCodeAt(i);
+    }
+    // 返回一个 Blob 对象
+    return new Blob([arrayBuffer], { type: 'image/png' });
+  }
 
   const changeAvatarComponent = (
     <div>
@@ -57,7 +86,7 @@ export default function MyTravelog() {
           rotate={0}
           defaultValue={20}
         />
-         
+
       </div>
       <input type="file" onChange={handleFileInputChange} style={{ display: "none" }} ref={(input) => input && input.setAttribute('accept', 'image/*')} />
       <Slider onAfterChange={handleChangeScale} />
@@ -89,10 +118,6 @@ export default function MyTravelog() {
   )
   // const [username, setUsername] = useState("MOMO")
   // const [uid, setUid] = useState("1145141919810")
-
-  const [avatarUrl, setAvatarUrl] = useState(
-    "https://img1.baidu.com/it/u=1389873612,485301600&fm=253&app=120&size=w931&n=0&f=JPEG&fmt=auto?sec=1712595600&t=76261ab2a1585815f46c7b306c6f66e3"
-  )
   const loadingData = async () => {
     const res = await $getMyTravelogs()
     if (res.success) {

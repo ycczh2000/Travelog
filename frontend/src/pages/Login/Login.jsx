@@ -40,6 +40,7 @@ export default function Login() {
       setUID(result.data.userId)
       setUserName(result.data.username)
       console.log(UID, userName)
+      window.location.href = "/home"
     } else {
       Toast.show(result.message)
     }
