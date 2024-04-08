@@ -6,11 +6,11 @@ import { UpOutline, CloseCircleFill, StarFill, UploadOutlined } from "antd-mobil
 import styles from "./MyTravelog.module.scss"
 import { UserSpaceContentProvider } from "./UserSpaceContent"
 import { UserContext } from "../../Context/UserContext"
-import { card, Toast, Popup, Button } from "antd-mobile"
+import { card, Toast, Popup, Button, Slider } from "antd-mobile"
 import "./MyTravelog.css"
 import { $getMyTravelogs, $deleteTravelog } from "../../api/travelogApi"
-
 import AvatarEditor from "react-avatar-editor"
+import { $uploadAvatar, $getAvatar } from "../../api/userApi"
 
 export default function MyTravelog() {
   const { UID, setUID, userName, setUserName } = React.useContext(UserContext)
@@ -18,51 +18,71 @@ export default function MyTravelog() {
   const [myTravelogList, setMyTravelogList] = useState([])
   const [totop, setTotop] = useState(true)
   const [visible, setVisible] = useState(false) //标志上传头像的弹出组件是否弹出
-  const [avatarFile, setAvatarFile] = useState([
-    {
-      uid: "-1",
-      name: "image.png",
-      status: "done",
-      url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
-    },
-  ])
-  const onChange = ({ avatarFile: newAvatarFile }) => {
-    console.log("onChange", newAvatarFile)
-    setAvatarFile(newAvatarFile)
-  }
-  const onPreview = async file => {
-    console.log("onPreview", file)
-    let src = file.url
-    if (!src) {
-      src = await new Promise(resolve => {
-        const reader = new FileReader()
-        reader.readAsDataURL(file.originFileObj)
-        reader.onload = () => resolve(reader.result)
-      })
+  const [avatarFile, setAvatarFile] = useState('')// 用于存储用户选择的头像文件
+  const [avatarScale,setAvatarScale ] = useState(1)// 用于存放头像缩放倍率
+  const [editor, setEditor] = useState(null);
+  const MoMo = 'https://img1.baidu.com/it/u=1389873612,485301600&fm=253&app=120&size=w931&n=0&f=JPEG&fmt=auto?sec=1712682000&t=ff2af80b5ee2888d42c58c2aff22a8d3'
+  //默认的头像地址(MOMO头像)
+
+  const handleFileInputChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setAvatarFile(URL.createObjectURL(file)); // 将文件转换为 URL 并设置为 avatarFile
     }
-    const image = new Image()
-    image.src = src
-    const imgWindow = window.open(src)
-    imgWindow?.document.write(image.outerHTML)
-  }
+  };
+
+  const handleConfirm = () => {
+    if (editor) {
+      const canvas = editor.getImage();
+      const croppedAvatarFile = canvas.toDataURL(); // 获取裁剪后的图像数据 URL
+      // 此时 croppedAvatarFile 就是裁剪后的图像数据 URL
+      console.log('url after cropping:', croppedAvatarFile);
+    }
+  };
+  const handleChangeScale = (value) => {//修改图片缩放
+    setAvatarScale(value * 0.01 + 1);
+  };
+
   const changeAvatarComponent = (
     <div>
-      <AvatarEditor
-        image="https://img1.baidu.com/it/u=1389873612,485301600&fm=253&app=120&size=w931&n=0&f=JPEG&fmt=auto?sec=1712595600&t=76261ab2a1585815f46c7b306c6f66e3"
-        width={250}
-        height={250}
-        border={50}
-        color={[255, 255, 255, 0.6]} // RGBA
-        scale={1.2}
-        rotate={0}
-      />
+      <div style={{ display: "flex", justifyContent: "center", margin: "10px" }}>
+        <AvatarEditor
+          ref={(ref) => setEditor(ref)}
+          image={avatarFile}
+          width={250}
+          height={250}
+          border={50}
+          color={[255, 255, 255, 0.6]} // RGBA
+          scale={avatarScale}
+          rotate={0}
+          defaultValue={20}
+        />
+         
+      </div>
+      <input type="file" onChange={handleFileInputChange} style={{ display: "none" }} ref={(input) => input && input.setAttribute('accept', 'image/*')} />
+      <Slider onAfterChange={handleChangeScale} />
       <Button
         block
         size="large"
         style={{ margin: "10px" }}
-        onClick={() => {
-          setVisible(false)
-        }}>
+        onClick={() => document.querySelector('input[type="file"]').click()} // 点击按钮触发文件选择框
+      >
+        选择文件
+      </Button>
+      <Button
+        block
+        size="large"
+        style={{ margin: "10px" }}
+        onClick={handleConfirm}
+      >
+        确认
+      </Button>
+      <Button
+        block
+        size="large"
+        style={{ margin: "10px" }}
+        onClick={() => setAvatarFile('')}
+      >
         取消
       </Button>
     </div>
@@ -121,6 +141,7 @@ export default function MyTravelog() {
             <div className="user-details">
               <div className="username">{userName ? userName : "MOMO"}</div>
               <div className="uid">UID: {UID ? UID : 1145141919810}</div>
+              <div className="uid">tip:点击头像可以更换</div>
             </div>
           </div>
         </div>
