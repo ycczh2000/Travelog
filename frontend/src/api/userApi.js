@@ -1,3 +1,11 @@
+/*
+ * @Author: Sueyuki 2574397962@qq.com
+ * @Date: 2024-04-02 19:17:09
+ * @LastEditors: Sueyuki 2574397962@qq.com
+ * @LastEditTime: 2024-04-08 18:42:06
+ * @FilePath: \frontend\src\api\userApi.js
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import axios from "./axiosInstance"
 
 export const $login = async params => {
@@ -21,10 +29,12 @@ export const $uploadAvatar = async file => {
   return data
 }
 
-export const $getAvatar = async username => {
-  let { data } = await axios.get("/getAvatar", { params: { username } })
-  return data
-}
+export const $getAvatar = async (username) => {
+  console.log(`/getAvatar/${username}`);
+  let { data } = await axios.get(`/getAvatar/${username}`);
+  return data;
+};
+
 
 export const sendTraveLogToServer = async (fileList,imgInfo, editingData) => {
     const data = {

@@ -39,8 +39,9 @@ router.post("/uploadAvator", avatarImgUpload.single("image"), async (req, res) =
 //将用户头像返回给前端
 router.get("/getAvatar/:username", async (req, res) => {
   const username = req.params.username
-  console.log(username)
-  const result = await User.getAvatar(username)
+  console.log('将用户头像返回给前端',username)
+  // const result = await User.getAvatar(username)
+  console.log(result)
   if (result.success) {
     const { avatar, type } = result.data
     res.type(type)

@@ -20,7 +20,8 @@ export default function MyTravelog() {
   console.log(userName, UID)
   const [myTravelogList, setMyTravelogList] = useState([])
   const [totop, setTotop] = useState(true)
-  const [avatarUrl, setAvatarUrl] = useState(MoMo)// 用于存放用户头像的URL(从服务器获取)
+  const [avatarUrl, setAvatarUrl] = useState(`http://localhost:8000/getAvatar/${userName}` || MoMo);
+  // 用于存放用户头像的URL(从服务器获取)
   const [visible, setVisible] = useState(false) //标志上传头像的弹出组件是否弹出
   const [avatarFile, setAvatarFile] = useState('')// 用于存储用户选择的头像文件(本地待上传的)
   const [avatarScale, setAvatarScale] = useState(1)// 用于存放头像缩放倍率
@@ -55,7 +56,6 @@ export default function MyTravelog() {
       .then(res => console.log("res", res))
       .catch(err => console.log("err", err))
   }
-
 
   const handleChangeScale = (value) => {//修改图片缩放
     setAvatarScale(value * 0.01 + 1);
@@ -124,6 +124,7 @@ export default function MyTravelog() {
       setMyTravelogList(res.data)
     }
   }
+
   useEffect(() => {
     loadingData()
   }, [])
