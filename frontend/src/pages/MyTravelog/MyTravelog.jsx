@@ -6,13 +6,16 @@ import { UpOutline, CloseCircleFill, StarFill, UploadOutlined } from "antd-mobil
 import styles from "./MyTravelog.module.scss"
 import { UserSpaceContentProvider } from "./UserSpaceContent"
 import { UserContext } from "../../Context/UserContext"
-import { card, Toast, Popup, Button, Slider } from "antd-mobile"
+import { Toast, Popup, Button, Slider } from "antd-mobile"
 import "./MyTravelog.css"
 import { $getMyTravelogs, $deleteTravelog } from "../../api/travelogApi"
 import AvatarEditor from "react-avatar-editor"
 import { $uploadAvatar, $getAvatar } from "../../api/userApi"
 
 export default function MyTravelog() {
+  const MoMo = 'https://img1.baidu.com/it/u=1389873612,485301600&fm=253&app=120&size=w931&n=0&f=JPEG&fmt=auto?sec=1712682000&t=ff2af80b5ee2888d42c58c2aff22a8d3'
+  //默认的头像地址(MOMO头像)
+
   const { UID, setUID, userName, setUserName } = React.useContext(UserContext)
   console.log(userName, UID)
   const [myTravelogList, setMyTravelogList] = useState([])
@@ -22,9 +25,6 @@ export default function MyTravelog() {
   const [avatarFile, setAvatarFile] = useState('')// 用于存储用户选择的头像文件(本地待上传的)
   const [avatarScale, setAvatarScale] = useState(1)// 用于存放头像缩放倍率
   const [editor, setEditor] = useState(null);
-  const MoMo = 'https://img1.baidu.com/it/u=1389873612,485301600&fm=253&app=120&size=w931&n=0&f=JPEG&fmt=auto?sec=1712682000&t=ff2af80b5ee2888d42c58c2aff22a8d3'
-  //默认的头像地址(MOMO头像)
-
 
   const handleFileInputChange = (event) => {
     const file = event.target.files[0];
