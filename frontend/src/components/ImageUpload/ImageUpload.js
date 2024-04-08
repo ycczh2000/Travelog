@@ -11,13 +11,10 @@ import { ImageUploader, Toast } from "antd-mobile"
 import "./ImageUpload.css"
 import { $uploadImage, $getImageList, $deleteImage } from "../../api/travelogApi.js"
 
+//应该当父元素publish确认登录状态后再请求图片列表
 const ImageUpload = forwardRef((props, ref) => {
   const maxCount = 9
-  const [fileList, setFileList] = useState([
-    // {
-    //   url: "https://images.unsplash.com/photo-1567945716310-4745a6b7844b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=60",
-    // },
-  ])
+  const [fileList, setFileList] = useState([])
 
   //重新加载图片url列表，并在fileList数组中附上index，供删除，更新方法使用
   async function reloadImages() {
@@ -53,6 +50,7 @@ const ImageUpload = forwardRef((props, ref) => {
     }
   }
 
+  //重新获取图片列表，并加载
   const handleChange = function (items) {
     reloadImages()
   }
@@ -69,16 +67,16 @@ const ImageUpload = forwardRef((props, ref) => {
     },
   }))
 
-  async function fetchImages(urls) {
-    const imagePromises = urls.map(async file => {
-      const response = await fetch(file.url)
-      const blob = await response.blob()
-      const fileName = file.url.substring(file.url.lastIndexOf("/") + 1) // 从 URL 中提取文件名
-      const imageFile = new File([blob], fileName, { type: blob.type })
-      return imageFile
-    })
-    return Promise.all(imagePromises)
-  }
+  // async function fetchImages(urls) {
+  //   const imagePromises = urls.map(async file => {
+  //     const response = await fetch(file.url)
+  //     const blob = await response.blob()
+  //     const fileName = file.url.substring(file.url.lastIndexOf("/") + 1) // 从 URL 中提取文件名
+  //     const imageFile = new File([blob], fileName, { type: blob.type })
+  //     return imageFile
+  //   })
+  //   return Promise.all(imagePromises)
+  // }
 
   return (
     <ImageUploader

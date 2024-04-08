@@ -49,6 +49,9 @@ const ObjectId = mongoose.Types.ObjectId
 //1.创建编辑状态的游记 targetTravelogId指向一个已发布的游记，可以为空值。空值下为创建新游记
 router.post("/travelogs/edit", async (req, res) => {
   const userId = req.userId
+  if (!userId) {
+    return res.status(401).send("未登录")
+  }
   const targetTravelogId = req.body.targetTravelogId || null
   console.log("targetTravelogId", targetTravelogId)
   const result = await EditTravelog.createEditTravelog(userId, targetTravelogId)
@@ -58,6 +61,9 @@ router.post("/travelogs/edit", async (req, res) => {
 //2.更新当前编辑的游记 只接受对文本的更新
 router.put("/travelogs/edit", async (req, res) => {
   const userId = req.userId
+  if (!userId) {
+    return res.status(401).send("未登录")
+  }
   console.log(req.body)
   const { editId, editData } = req.body
   console.log("editId", editId, "userId", userId)
@@ -68,6 +74,9 @@ router.put("/travelogs/edit", async (req, res) => {
 //3.1 发布新游记-不存在原游记
 router.post("/travelogs/edit/publish", async (req, res) => {
   const userId = req.userId
+  if (!userId) {
+    return res.status(401).send("未登录")
+  }
   const editId = req.body.editId
   console.log("editId", editId)
   const result = await EditTravelog.publishEditTravelog(userId, editId)
@@ -77,6 +86,9 @@ router.post("/travelogs/edit/publish", async (req, res) => {
 //3.2 更新游记-原游记存在
 router.put("/travelogs/edit/update", async (req, res) => {
   const userId = req.userId
+  if (!userId) {
+    return res.status(401).send("未登录")
+  }
   const editId = req.body.editId
   const result = await EditTravelog.updateEditTravelog(userId, editId)
   res.json(result)
@@ -85,6 +97,9 @@ router.put("/travelogs/edit/update", async (req, res) => {
 //4.0 获取图片列表 data: ["image1.png", "image2.jpg", ...]
 router.get("/travelogs/edit/images", async (req, res) => {
   const userId = req.userId
+  if (!userId) {
+    return res.status(401).send("未登录")
+  }
   const result = await EditTravelog.getImages(userId)
   res.json(result)
 })
@@ -92,10 +107,14 @@ router.get("/travelogs/edit/images", async (req, res) => {
 //4.上传或更新第i张图片
 //存储到某个目录./uploads下 返回值为文件名
 router.post("/travelogs/edit/uploadimg", travelogImgUpload.single("image"), async (req, res) => {
+  const userId = req.userId
+  if (!userId) {
+    return res.status(401).send("未登录")
+  }
+  //上传失败，需要前端处理
   if (!req.file) {
     return res.status(400).json({ message: "没有图片上传" })
   }
-  const userId = req.userId
   const { index } = req.body
   const fileName = new mongoose.Types.ObjectId().toString()
   const fileExtension = path.extname(req.file.originalname)
@@ -114,6 +133,9 @@ router.post("/travelogs/edit/uploadimg", travelogImgUpload.single("image"), asyn
 //5.删除第i张图片
 router.delete("/travelogs/edit/deleteimg", async (req, res) => {
   const userId = req.userId
+  if (!userId) {
+    return res.status(401).send("未登录")
+  }
   const { index } = req.query
   console.log("req.params", index)
   const result = await EditTravelog.deleteImage(userId, index)
@@ -123,6 +145,9 @@ router.delete("/travelogs/edit/deleteimg", async (req, res) => {
 //6.查询是否有正在编辑的游记 返回值为id
 router.get("/travelogs/editid", async (req, res) => {
   const userId = req.userId
+  if (!userId) {
+    return res.status(401).send("未登录")
+  }
   const result = await EditTravelog.hasEditTravelog(userId)
   res.json(result)
 })
@@ -130,6 +155,9 @@ router.get("/travelogs/editid", async (req, res) => {
 //7.获取正在编辑的游记
 router.get("/travelogs/edit", async (req, res) => {
   const userId = req.userId
+  if (!userId) {
+    return res.status(401).send("未登录")
+  }
   const result = await EditTravelog.getEditTravelog(userId)
   res.json(result)
 })
@@ -137,6 +165,9 @@ router.get("/travelogs/edit", async (req, res) => {
 //8.存到草稿箱
 router.put("/travelogs/edit/savedraft", async (req, res) => {
   const userId = req.userId
+  if (!userId) {
+    return res.status(401).send("未登录")
+  }
   const { editId } = req.body
   const result = await EditTravelog.saveDraftTravelog(userId, editId)
   res.json(result)
@@ -233,6 +264,9 @@ router.get("/users/:username/travelogs", async (req, res) => {
 //获取我的游记列表
 router.get("/mytravelogs", async (req, res) => {
   const userId = req.userId
+  if (!userId) {
+    return res.status(401).send("未登录")
+  }
   const result = await Travelog.getMyTravelogs(userId)
   res.json(result)
 })

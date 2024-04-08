@@ -1,9 +1,9 @@
 import React, { createContext, useState, useContext } from "react"
 
 //role : admin auditor null
+//尝试从sessionStorage中获取用户信息，如果没有则设置为null
 const AuthContext = createContext()
 const AuthProvider = ({ children }) => {
-  // const [userInfo,setUserInfo] = useState({ username: undefined,role: undefined })
   const storedUserInfo = sessionStorage.getItem("userInfo")
   const initialUserInfo = storedUserInfo ? JSON.parse(storedUserInfo) : { username: null, role: null }
 
