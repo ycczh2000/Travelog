@@ -37,7 +37,7 @@ const editTravelogSchema = new mongoose.Schema({
 ////需要有方法更新草稿箱的游记，在创建时targetTravelogId能指向草稿箱的游记
 editTravelogSchema.statics.createEditTravelog = async (userId, targetTravelogId) => {
   try {
-    await EditTravelog.findOneAndDelete({ authorId: userId, status: "editing" })
+    await EditTravelog.deleteMany({ authorId: userId, status: "editing" })
     const newEditData = {
       authorId: userId,
       targetTravelogId: targetTravelogId,
@@ -123,8 +123,7 @@ editTravelogSchema.statics.publishEditTravelog = async (userId, editId) => {
     fieldsToCopy.forEach(field => (newTravelogData[field] = edit[field]))
 
     const newTravelog = await Travelog.create(newTravelogData)
-    edit.status = "published"
-    await edit.save()
+    await EditTravelog.deleteOne({ _id: editId, status: "editing" })
     return { success: true, message: "发布成功", data: newTravelog }
   } catch (err) {
     console.log("DB ERROR publishEditTravelog:", err)

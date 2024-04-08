@@ -15,7 +15,7 @@ import { $uploadImage, $getImageList, $deleteImage } from "../../api/travelogApi
 const ImageUpload = forwardRef((props, ref) => {
   const maxCount = 9
   const [fileList, setFileList] = useState([])
-
+  const { editId } = props
   //重新加载图片url列表，并在fileList数组中附上index，供删除，更新方法使用
   async function reloadImages() {
     const result = await $getImageList()
@@ -35,8 +35,10 @@ const ImageUpload = forwardRef((props, ref) => {
     }
   }
   useEffect(() => {
-    reloadImages()
-  }, [])
+    if (editId && editId !== "") {
+      reloadImages()
+    }
+  }, [editId])
 
   //上传最后一张图片，更新第i张需要另写方法
   async function mockUpload2(file) {

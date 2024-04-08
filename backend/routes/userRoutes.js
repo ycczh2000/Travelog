@@ -26,6 +26,7 @@ router.post("/login", async (req, res) => {
   }
 })
 
+//头像上传
 router.post("/uploadAvator", avatarImgUpload.single("image"), async (req, res) => {
   if (!req.userId) {
     return res.json({ success: false, message: "未登录" })
