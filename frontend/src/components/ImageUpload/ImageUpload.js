@@ -6,16 +6,17 @@
  * @FilePath: \Travelog\frontend\src\components\ImageUpload\ImageUpload.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import React, { useState, useEffect, forwardRef, useImperativeHandle } from "react"
-import { ImageUploader, Toast } from "antd-mobile"
-import "./ImageUpload.css"
+import React, { useState, useEffect, forwardRef, useImperativeHandle, useRef } from "react"
+import { ImageUploader, Toast, ImageViewer } from "antd-mobile"
 import { $uploadImage, $getImageList, $deleteImage } from "../../api/travelogApi.js"
-
+import styles from "./ImageUpload.module.scss"
 //应该当父元素publish确认登录状态后再请求图片列表
 const ImageUpload = forwardRef((props, ref) => {
   const maxCount = 9
   const [fileList, setFileList] = useState([])
   const { editId } = props
+  const [imageViewerVisible, setImageViewerVisible] = useState(false)
+  const [imageViewerData, setImageViewerData] = useState({ image: "", index: 0 })
   //重新加载图片url列表，并在fileList数组中附上index，供删除，更新方法使用
   async function reloadImages() {
     const result = await $getImageList()
@@ -61,7 +62,25 @@ const ImageUpload = forwardRef((props, ref) => {
     const result = await $deleteImage({ index: ImageUploadItem.index })
     console.log("delete result", result)
   }
-  //####结束新增方法
+
+  const fileInputRef = useRef(null)
+
+  const handleButtonClick = () => {
+    fileInputRef.current.click()
+  }
+
+  const handleFileChange = async event => {
+    const file = event.target.files[0]
+    const result = await $uploadImage({ image: file, index: imageViewerData.index })
+    if (result.success) {
+      await reloadImages()
+        .then(setImageViewerVisible(false))
+        .catch(err => console.log(err))
+      Toast.show("更换成功")
+    } else {
+      Toast.show("更换失败")
+    }
+  }
 
   useImperativeHandle(ref, () => ({
     getFileList() {
@@ -69,36 +88,55 @@ const ImageUpload = forwardRef((props, ref) => {
     },
   }))
 
-  // async function fetchImages(urls) {
-  //   const imagePromises = urls.map(async file => {
-  //     const response = await fetch(file.url)
-  //     const blob = await response.blob()
-  //     const fileName = file.url.substring(file.url.lastIndexOf("/") + 1) // 从 URL 中提取文件名
-  //     const imageFile = new File([blob], fileName, { type: blob.type })
-  //     return imageFile
-  //   })
-  //   return Promise.all(imagePromises)
-  // }
-
   return (
-    <ImageUploader
-      columns={4}
-      upload={mockUpload2}
-      style={{ "--cell-size": "150px", display: "inline-block" }}
-      value={fileList}
-      onChange={handleChange}
-      onPreview={async (file, index) => {
-        console.log("file", file)
-        console.log("index", index)
-      }}
-      onDelete={handleDelete}
-      multiple={true}
-      maxCount={maxCount}
-      showUpload={fileList.length < maxCount}
-      onCountExceed={exceed => {
-        Toast.show(`最多选择 ${maxCount} 张图片，你多选了 ${exceed} 张`)
-      }}
-    />
+    <>
+      <ImageUploader
+        columns={4}
+        upload={mockUpload2}
+        style={{ "--cell-size": "150px", display: "inline-block" }}
+        value={fileList}
+        onChange={handleChange}
+        onPreview={async (index, file) => {
+          setImageViewerData({ image: file.url, index: index })
+          setImageViewerVisible(true)
+        }}
+        preview={false}
+        onDelete={handleDelete}
+        multiple={true}
+        maxCount={maxCount}
+        showUpload={fileList.length < maxCount}
+        onCountExceed={exceed => {
+          Toast.show(`最多选择 ${maxCount} 张图片，你多选了 ${exceed} 张`)
+        }}
+      />
+      <ImageViewer
+        classNames={{
+          mask: "customize-mask",
+          body: "customize-body",
+        }}
+        image={imageViewerData.image}
+        visible={imageViewerVisible}
+        onClose={() => {
+          setImageViewerVisible(false)
+        }}
+        renderFooter={() => {
+          return (
+            <div className={styles.footer}>
+              <input
+                ref={fileInputRef}
+                accept="image/jpeg, image/png, image/gif,image/webp"
+                type="file"
+                style={{ display: "none" }}
+                onChange={handleFileChange}
+              />
+              <div className={styles.footerButton} onClick={handleButtonClick}>
+                更换图像
+              </div>
+            </div>
+          )
+        }}
+      />
+    </>
   )
 })
 
