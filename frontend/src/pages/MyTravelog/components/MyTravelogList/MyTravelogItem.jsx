@@ -10,37 +10,42 @@ import React from "react"
 import { Image, Button, Tag } from "antd-mobile"
 import styles from "./MyTravelogItem.module.scss"
 import { ExclamationCircleOutline, HeartFill } from "antd-mobile-icons"
-import { Modal, Space, Toast, Divider } from 'antd-mobile'
+import { Modal, Space, Toast, Divider } from "antd-mobile"
 import { $deleteTravelog } from "../../../../api/travelogApi"
 // import "./MyTravelogItem.scss"
 
 const statusStyles = {
-  0: { color: "primary", fill: "outline" },
-  1: { color: "#87d068", fill: "outline" },
-  "-1": { color: "#ff6430", fill: "outline" },
+  pending: { color: "primary", fill: "outline" },
+  approved: { color: "#87d068", fill: "outline" },
+  rejected: { color: "#ff6430", fill: "outline" },
 }
 
 const statusTexts = {
-  0: "审核中",
-  1: "已通过",
-  "-1": "未通过",
+  pending: "审核中",
+  approved: "已通过",
+  rejected: "未通过",
 }
 //上传时间 审核结束时间 排序
 export default function MyTravelogItem(props) {
+  //显式地展示用到了props的哪些静态的数据
+  //content返回长度需要限制
   const { item } = props
-  // console.log(item)
-  const audit = item.examine
-  const handleDeleteForever = async() => {
+  const { _id, title, content, status, likesCount, images, viewsCount, rejectReason, createDate } = item
+  //props用到的方法
+  const { deleteTravelog } = props
+
+  console.log("item", item)
+  const handleDeleteForever = async () => {
     const result = await Modal.confirm({
-      content: '确定要永久删除该游记吗？（真的很久）',
+      content: "确定要永久删除该游记吗？（真的很久）",
     })
     if (result) {
       // Toast.show({ content: '点击了确认', position: 'bottom' })
       try {
-        const response = await $deleteTravelog(item.id);
-        console.log("删除成功", response);
+        const response = await deleteTravelog(_id)
+        console.log("删除成功", response)
       } catch (error) {
-        console.error("删除失败", error);
+        console.error("删除失败", error)
       }
     } else {
       // Toast.show({ content: '点击了取消', position: 'bottom' })
@@ -49,25 +54,29 @@ export default function MyTravelogItem(props) {
   return (
     <div className={styles.myTravelogItem}>
       <div className={styles.top}>
-        <Image className={styles.myTravelogImg} src={item.imageUrl} width={150} height={100} fit="cover" />
+        <Image
+          className={styles.myTravelogImg}
+          src={"http://localhost:8000/images/" + images[0]}
+          width={150}
+          height={100}
+          fit="cover"
+        />
         <div className={styles.MyTravelogInfo}>
-          <div className={styles.MyTravelogTitle}>标题标题标题</div>
-          <div className={styles.MyTravelogDescription}>
-            详情详情详情详情详情详情详情详情详情详情详情详情详情详情详情
-          </div>
+          <div className={styles.MyTravelogTitle}>{title}</div>
+          <div className={styles.MyTravelogDescription}>{content}</div>
           <div className="inf-card-likes">
-            {item.likes ? <HeartFill fontSize="18px" color="#FF0000" /> : null}
-            {item.likes}
+            {<HeartFill fontSize="18px" color="#FF0000" />}
+            {likesCount}
           </div>
-          <div className={styles.MyTravelogDate}>提交日期</div>
+          <div className={styles.MyTravelogDate}>创建日期{createDate}</div>
         </div>
       </div>
       <div className={styles.bottom}>
         <div className={styles.auditResult}>
-          <Tag style={{ fontSize: "1rem", padding: "0.3rem" }} {...statusStyles[audit]}>
-            {statusTexts[audit]}
+          <Tag style={{ fontSize: "1rem", padding: "0.3rem" }} {...statusStyles[status]}>
+            {statusTexts[status]}
           </Tag>
-          {audit === -1 ? (
+          {status === "rejected" ? (
             <div>
               <ExclamationCircleOutline />
               查看原因

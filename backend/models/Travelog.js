@@ -138,7 +138,9 @@ travelogSchema.statics.getTravelogsByUsername = async function (username) {
 //删除某个游记
 travelogSchema.statics.deleteTravelog = async function (authorId, travelogId) {
   try {
-    await this.deleteOne({ _id: travelogId, authorId, deleted: false }).exec()
+    //这里是防止与顶部的ObjectId冲突     优先先实现当前功能，之后再统一修改
+    const ObjectId = mongoose.Types.ObjectId
+    await this.deleteOne({ _id: new ObjectId(travelogId), authorId, deleted: false }).exec()
     return { success: true, message: "删除成功" }
   } catch (err) {
     console.log("DB ERROR travelogSchema.statics.deleteTravelog:", err)

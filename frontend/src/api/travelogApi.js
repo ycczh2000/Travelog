@@ -60,14 +60,15 @@ export const $getEditTravelog = async () => {
 }
 
 //8.(首页)随机获取一些游记
-export const $getTravelogs = async (city, selectedFilters, searchTerm)  => {
+export const $getTravelogs = async (city, selectedFilters, searchTerm) => {
   // const { data } = await axios.get("/travelogs",{city, selectedFilters, searchTerm})
   const { data } = await axios.get("/travelogs", {
     params: {
       city,
       selectedFilters,
-      title:searchTerm//搜索title
-    }})
+      title: searchTerm, //搜索title
+    },
+  })
   return data
 }
 
@@ -78,7 +79,14 @@ export const $getTravelogsByID = async id => {
 }
 
 //10.发送删除游记请求
+//返回格式 {success: true, message: "删除成功"}
 export const $deleteTravelog = async id => {
   const { data } = await axios.delete(`/travelogs/${id}`)
+  return data
+}
+
+//11.获取我的游记列表
+export const $getMyTravelogs = async () => {
+  const { data } = await axios.get("/mytravelogs")
   return data
 }
