@@ -13,7 +13,7 @@ import InfCard from "../InfCard/InfCard"
 import "./WaterfallLayout.css"
 import { HomeContext } from "../../Context/HomeContext"
 import { $getTravelogs } from "../../api/travelogApi"
-import { DotLoading, PullToRefresh } from 'antd-mobile'
+import { DotLoading} from 'antd-mobile'
 const WaterfallLayout = () => {
   const { sorter, city, selectedFilters, searchTerm, searchMode } = useContext(HomeContext);
   const [data, setData] = useState([]);
