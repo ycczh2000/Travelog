@@ -1,18 +1,25 @@
 import axios from "./axiosInstance"
 
 //1.创建编辑状态的游记 该方法同时会从editravelogs表中删除当前用户其它处于编辑状态的游记
-export const $createEditTravelog = async params => {
-  console.log("createEditTravelog params", params)
+export const $createEditTravelog = async () => {
+  const { data } = await axios.post("/travelogs/edit")
+  console.log("$createEditTravelog", data)
+  return data
+}
+
+//1.2 创建一个编辑状态的游记，targetTravelogId指向一个已有的游记
+export const $createUpdateTravelog = async params => {
+  console.log("$createUpdateTravelog params", params)
   const { targetTravelogId } = params
-  const { data } = await axios.post("/travelogs/edit", { targetTravelogId })
+  const { data } = await axios.post("/travelogs/updating", { targetTravelogId })
   console.log("respond: ", data)
   return data
 }
 
 //2.更新当前编辑的游记
 export const $updateEditTravelog = async params => {
-  console.log("params: ", params)
-  const { data } = await axios.put("/travelogs/edit", params)
+  const { editData, editId, status } = params
+  const { data } = await axios.put("/travelogs/edit", { editData, editId, status })
   console.log("respond: ", data)
   return data
 }
@@ -34,38 +41,39 @@ export const $updateTargetTravelog = async params => {
 //4.0 获取图片列表
 //{message: "获取成功",success: true, data: ["image1.png", "image1.jpg", ...] }
 //{message: "找不到图片列表", success: false, data: {}}
-export const $getImageList = async () => {
-  const { data } = await axios.get("/travelogs/edit/images")
+export const $getImageList = async status => {
+  const { data } = await axios.get(`/travelogs/edit/images/${status}`)
   return data
 }
 
 //4.上传或更新第i张图片 返回图片名列表["image1.png", "image1.jpg", ...]
 export const $uploadImage = async params => {
-  const { image, index } = params
+  const { image, index, status } = params
   const formData = new FormData()
   formData.append("image", image)
   formData.append("index", index)
+  formData.append("status", status)
   const { data } = await axios.post("/travelogs/edit/uploadimg", formData)
   return data
 }
 
 //5.删除第i张图片
 export const $deleteImage = async params => {
-  const { index } = params
-  const { data } = await axios.delete("/travelogs/edit/deleteimg", { params: { index } })
+  const { index, status } = params
+  const { data } = await axios.delete("/travelogs/edit/deleteimg", { params: { index, status } })
   return data
 }
 
-//6.查询是否有正在编辑的游记 返回{editId,targetTravelogId}
-export const $hasEditTravelog = async () => {
-  const { data } = await axios.get("/travelogs/editid")
+//6.查询某个用户编辑区是否已有待发布或待更新的游记 返回{editId,targetTravelogId} status:edit或updating
+export const $hasEditTravelog = async status => {
+  const { data } = await axios.get(`/travelogs/editid/${status}`)
   return data
 }
 
-//7.获取正在编辑的游记 返回{edit:{editId,targetTravelogId,...}}
-export const $getEditTravelog = async () => {
-  const { data } = await axios.get("/travelogs/edit")
-  console.log("$getEditTravelog")
+//7.获取某个用户编辑区一篇待发布或待更新游记 返回{edit:{editId,targetTravelogId,...}} status:edit或updating
+export const $getEditTravelog = async status => {
+  const { data } = await axios.get(`/travelogs/edit/${status}`)
+  console.log("$getEditTravelog", data)
   return data
 }
 

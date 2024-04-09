@@ -14,12 +14,12 @@ import styles from "./ImageUpload.module.scss"
 const ImageUpload = forwardRef((props, ref) => {
   const maxCount = 9
   const [fileList, setFileList] = useState([])
-  const { editId } = props
+  const { editId, status } = props
   const [imageViewerVisible, setImageViewerVisible] = useState(false)
   const [imageViewerData, setImageViewerData] = useState({ image: "", index: 0 })
   //重新加载图片url列表，并在fileList数组中附上index，供删除，更新方法使用
   async function reloadImages() {
-    const result = await $getImageList()
+    const result = await $getImageList(status)
     console.log("result", result)
     //图片名称数组
     const imageNames = result.data
@@ -44,7 +44,7 @@ const ImageUpload = forwardRef((props, ref) => {
   //上传最后一张图片，更新第i张需要另写方法
   async function mockUpload2(file) {
     const index = fileList.length
-    const result = await $uploadImage({ image: file, index: index })
+    const result = await $uploadImage({ image: file, index: index, status: status })
     if (result.success) {
       return {
         url: "http://localhost:8000/images/" + result.data[index],
@@ -59,7 +59,7 @@ const ImageUpload = forwardRef((props, ref) => {
   }
   //删除第i张图片
   const handleDelete = async function (ImageUploadItem) {
-    const result = await $deleteImage({ index: ImageUploadItem.index })
+    const result = await $deleteImage({ index: ImageUploadItem.index, status: status })
     console.log("delete result", result)
   }
 
@@ -71,7 +71,7 @@ const ImageUpload = forwardRef((props, ref) => {
 
   const handleFileChange = async event => {
     const file = event.target.files[0]
-    const result = await $uploadImage({ image: file, index: imageViewerData.index })
+    const result = await $uploadImage({ image: file, index: imageViewerData.index, status: status })
     if (result.success) {
       await reloadImages()
         .then(setImageViewerVisible(false))
