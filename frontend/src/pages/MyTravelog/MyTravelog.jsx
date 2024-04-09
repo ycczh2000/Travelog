@@ -6,7 +6,7 @@ import { UpOutline, CloseCircleFill, StarFill, UploadOutlined } from "antd-mobil
 import styles from "./MyTravelog.module.scss"
 import { UserSpaceContentProvider } from "./UserSpaceContent"
 import { UserContext } from "../../Context/UserContext"
-import { Toast, Popup, Button, Slider,Dialog } from "antd-mobile"
+import { Toast, Popup, Button, Slider, Dialog } from "antd-mobile"
 import "./MyTravelog.css"
 import { $getMyTravelogs, $deleteTravelog } from "../../api/travelogApi"
 import AvatarEditor from "react-avatar-editor"
@@ -36,7 +36,6 @@ export default function MyTravelog() {
     alert('退出成功');
     window.location.href = "/";
   };
-  
 
   const handleFileInputChange = (event) => {
     const file = event.target.files[0];
@@ -46,7 +45,7 @@ export default function MyTravelog() {
   };
 
   const handleConfirm = () => {
-    if (editor) {
+    if (avatarFile) {
       const canvas = editor.getImage();
       const croppedAvatarFile = canvas.toDataURL(); // 获取裁剪后的图像数据 URL
       // 此时 croppedAvatarFile 就是裁剪后的图像数据 URL
@@ -56,8 +55,16 @@ export default function MyTravelog() {
       const file = new File([blob], 'cropped_image.png', { type: 'image/png' });
       // console.log('file:', file);
       upload(file)
+      Toast.show({
+        content: '上传成功',
+      })
       setAvatarUrl(croppedAvatarFile)
       setVisible(false)
+    }
+    else{
+      Toast.show({
+        content: '请先选择上传的头像',
+      })
     }
   };
 
@@ -101,30 +108,37 @@ export default function MyTravelog() {
       </div>
       <input type="file" onChange={handleFileInputChange} style={{ display: "none" }} ref={(input) => input && input.setAttribute('accept', 'image/*')} />
       <Slider onAfterChange={handleChangeScale} />
-      <Button
-        block
-        size="large"
-        style={{ margin: "10px" }}
-        onClick={() => document.querySelector('input[type="file"]').click()} // 点击按钮触发文件选择框
-      >
-        选择文件
-      </Button>
-      <Button
-        block
-        size="large"
-        style={{ margin: "10px" }}
-        onClick={handleConfirm}
-      >
-        确认
-      </Button>
-      <Button
-        block
-        size="large"
-        style={{ margin: "10px" }}
-        onClick={() => setAvatarFile('')}
-      >
-        取消
-      </Button>
+      <div style={{ display: "flex", justifyContent: "center", margin: "10px" }}>
+        <Button
+          block
+          size="large"
+          style={{ margin: "10px" }}
+          // color='danger' 
+          fill='outline'
+          onClick={() => document.querySelector('input[type="file"]').click()} // 点击按钮触发文件选择框
+        >
+          选择文件
+        </Button>
+        <Button
+          block
+          color='primary'
+          size="large"
+          style={{ margin: "10px" }}
+          onClick={handleConfirm}
+        >
+          确认
+        </Button>
+        <Button
+          block
+          size="large"
+          style={{ margin: "10px" }}
+          onClick={() => setVisible(false)}
+          color='danger'
+          fill='outline'
+        >
+          取消
+        </Button>
+      </div>
     </div>
   )
   // const [username, setUsername] = useState("MOMO")
@@ -138,7 +152,7 @@ export default function MyTravelog() {
 
   useEffect(() => {
     loadingData()
-    setAvatarUrl(`http://localhost:8000/getAvatar/${userName}` );
+    setAvatarUrl(`http://localhost:8000/getAvatar/${userName}`);
   }, [])
 
   //删除方法 传入id 返回bool 之后只从前端移除myTravelogList中对应项，不用重新请求、加载数据
@@ -184,7 +198,7 @@ export default function MyTravelog() {
           </div>
         </div>
         <MyTravelogFilter />
-        
+
         <MyTravelogList myTravelogList={myTravelogList} deleteTravelog={deleteTravelog} />
         {totop ? (
           <div
@@ -197,38 +211,38 @@ export default function MyTravelog() {
               })
             }}>
             <UpOutline style={{ fontSize: "1rem" }} />
-  
+
           </div>
         ) : (
           <></>
-        )}  <div style={{width:'95%',marginBottom:'30px'}}>
-            <Button color='danger'block fill='outline' onClick={() => {
-              Dialog.show({
-                content: '你是否真的要退出账户？',
-                closeOnAction: true,
-                actions: [
-                  [
-                    {
-                      key: 'cancel',
-                      text: '取消',
+        )}  <div style={{ width: '95%', marginBottom: '30px' }}>
+          <Button color='danger' block fill='outline' onClick={() => {
+            Dialog.show({
+              content: '你是否真的要退出账户？',
+              closeOnAction: true,
+              actions: [
+                [
+                  {
+                    key: 'cancel',
+                    text: '取消',
+                  },
+                  {
+                    key: 'delete',
+                    text: '退出',
+                    bold: true,
+                    danger: true,
+                    onClick: () => {
+                      console.log('退出账户');
+                      handleLogout();
                     },
-                    {
-                      key: 'delete',
-                      text: '退出',
-                      bold: true,
-                      danger: true,
-                      onClick: () => {
-                        console.log('退出账户');
-                        handleLogout();
-                      },
-                    },
-                  ],
+                  },
                 ],
-              })
-            }}>
-              退出账户
-            </Button>
-            </div>
+              ],
+            })
+          }}>
+            退出账户
+          </Button>
+        </div>
       </UserSpaceContentProvider>
     </>
   )
