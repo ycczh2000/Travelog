@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-05 16:18:15
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-07 20:31:49
+ * @LastEditTime: 2024-04-09 22:07:58
  * @FilePath: \frontend\src\pages\Detaillog\Detaillog.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -84,8 +84,8 @@ const Detaillog = () => {
         setBannerList(prefixedImages);
         // setBannerList(travelog.data.images);
         setDetailInfo({
-          authorUID: travelog.data.authorId, userAvatar: 'https://zos.alipayobjects.com/rmsportal/AiyWuByWklrrUDlFignR.png',
-          userName: '用户名',
+          authorUID: travelog.data.authorId,
+          username: travelog.data.username,
           lastEditTime: '2024-04-05 16:18:15',
         });
         const author = await $getTravelogsByID(id);
@@ -101,14 +101,14 @@ const Detaillog = () => {
     window.history.go(-1); // 返回上一页面
   };
   return (
-    <div style={{ maxWidth: '100%', margin: '0 auto' }}>
+    <div style={{ width: '100%' }}>
       <button className="transparent-button left-button" onClick={handleGoBack} style={{
         margin: '1rem',
         marginLeft: '0.5rem',
         fontSize: '1.2rem',
         fontWeight: 'bold',
         fontFamily: 'Arial, sans-serif',
-        color: 'rgba(0, 0, 0, 0.7)',
+        color: 'rgba(0, 0, 0, 0.9)',
         letterSpacing: '0.05em',
         position: 'fixed',
         top: 0,
@@ -118,8 +118,8 @@ const Detaillog = () => {
         <LeftOutline />
       </button>
       <SwiperN bannerList={bannerList} />
-      <UserInfo title={title} content={content} />
       <Details detailInfo={detailInfo} />
+      <UserInfo title={title} content={content} city={city} />
       <Content tripInfo={tripInfo} />
       <Comment commentInfo={commentInfo} />
     </div>

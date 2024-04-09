@@ -85,11 +85,11 @@ export const $getTravelogs = async (city, selectedFilters, searchTerm, searchMod
   };
 
   if (searchMode === "user") {
-    params.userName = searchTerm;
+    params.username = searchTerm;
   } else {
     params.title = searchTerm;
   }
-
+  console.log("params:", params)
   const { data } = await axios.get("/travelogs", {
     params: params
   });
