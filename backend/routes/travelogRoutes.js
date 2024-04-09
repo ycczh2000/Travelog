@@ -90,7 +90,7 @@ router.put("/travelogs/edit/update", async (req, res) => {
     return res.status(401).send("未登录")
   }
   const editId = req.body.editId
-  const result = await EditTravelog.updateEditTravelog(userId, editId)
+  const result = await EditTravelog.updateExistTravelog(userId, editId)
   res.json(result)
 })
 
@@ -142,7 +142,7 @@ router.delete("/travelogs/edit/deleteimg", async (req, res) => {
   res.json(result)
 })
 
-//6.查询是否有正在编辑的游记 返回值为id
+//6.查询是否有正在编辑的游记 返回editId和targetTravelogId
 router.get("/travelogs/editid", async (req, res) => {
   const userId = req.userId
   if (!userId) {
@@ -247,7 +247,18 @@ router.get("/travelogs", async (req, res) => {
   res.json(result)
 })
 
-//获取某篇游记 要放到/travelogs/edit路由下面
+//通过id获取我的某篇游记
+router.get("/mytravelogs/:id", async (req, res) => {
+  const userId = req.userId
+  if (!userId) {
+    return res.status(401).send("未登录")
+  }
+  const id = req.params?.id
+  const result = await EditTravelog.saveDraftTravelog(userId, id)
+  res.json(result)
+})
+
+//获取某篇游记 这个api只能获取到审核通过、已发布、公开的游记 要放到/travelogs/edit路由下面
 router.get("/travelogs/:id", async (req, res) => {
   const id = req.params?.id
   const result = await Travelog.getTravelogById(id)

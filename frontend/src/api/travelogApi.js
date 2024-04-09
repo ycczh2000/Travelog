@@ -1,8 +1,10 @@
 import axios from "./axiosInstance"
 
-//1.创建编辑状态的游记
+//1.创建编辑状态的游记 该方法同时会从editravelogs表中删除当前用户其它处于编辑状态的游记
 export const $createEditTravelog = async params => {
-  const { data } = await axios.post("/travelogs/edit", params)
+  console.log("createEditTravelog params", params)
+  const { targetTravelogId } = params
+  const { data } = await axios.post("/travelogs/edit", { targetTravelogId })
   console.log("respond: ", data)
   return data
 }
@@ -19,6 +21,13 @@ export const $updateEditTravelog = async params => {
 export const $publishEditTravelog = async params => {
   const { editId } = params
   const { data } = await axios.post("/travelogs/edit/publish", { editId })
+  return data
+}
+
+//3.2更新游记-原游记存在
+export const $updateTargetTravelog = async params => {
+  const { editId } = params
+  const { data } = await axios.put("/travelogs/edit/update", { editId })
   return data
 }
 
@@ -47,15 +56,16 @@ export const $deleteImage = async params => {
   return data
 }
 
-//6.查询是否有正在编辑的游记 游记id
+//6.查询是否有正在编辑的游记 返回{editId,targetTravelogId}
 export const $hasEditTravelog = async () => {
   const { data } = await axios.get("/travelogs/editid")
   return data
 }
 
-//7.获取正在编辑的游记
+//7.获取正在编辑的游记 返回{edit:{editId,targetTravelogId,...}}
 export const $getEditTravelog = async () => {
   const { data } = await axios.get("/travelogs/edit")
+  console.log("$getEditTravelog")
   return data
 }
 
@@ -72,7 +82,7 @@ export const $getTravelogs = async (city, selectedFilters, searchTerm) => {
   return data
 }
 
-//9.获取特定id游记
+//9.获取特定id游记 共有
 export const $getTravelogsByID = async id => {
   const { data } = await axios.get(`/travelogs/${id}`)
   return data

@@ -73,12 +73,12 @@ travelogSchema.statics.getMyTravelogs = async function (authorId) {
   }
 }
 
-//获取单个游记
+//获取单个游记 公共接口
 travelogSchema.statics.getTravelogById = async function (travelogId) {
   try {
     const ObjectId = mongoose.Types.ObjectId
-    const travelog = await await this.aggregate([
-      { $match: { _id: new ObjectId(travelogId), deleted: false, status: "approved", isPublic: true } },
+    const travelog = await this.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(travelogId), deleted: false, status: "approved", isPublic: true } },
       {
         $lookup: {
           from: "users",
@@ -113,9 +113,58 @@ travelogSchema.statics.getTravelogById = async function (travelogId) {
     if (!travelog) {
       return { success: false, message: "游记不存在" }
     }
-    return { success: true, data: travelog }
+    console.log(travelog)
+    return { success: true, data: travelog[0] }
   } catch (err) {
     console.log("DB ERROR travelogSchema.statics.getTravelogById:", err)
+    return { success: false, message: "获取失败" }
+  }
+}
+
+//获取单个游记 私人接口
+travelogSchema.statics.getMyTravelogById = async function (userId, travelogId) {
+  try {
+    const ObjectId = mongoose.Types.ObjectId
+    const travelog = await this.aggregate([
+      { $match: { _id: new ObjectId(travelogId), authorId: userId } },
+      {
+        $lookup: {
+          from: "users",
+          let: { authorId: "$authorId" },
+          pipeline: [{ $match: { $expr: { $eq: ["$_id", "$$authorId"] } } }, { $project: { username: 1, _id: 0 } }],
+          as: "author_info",
+        },
+      },
+      { $unwind: "$author_info" },
+      { $addFields: { username: "$author_info.username" } },
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          content: 1,
+          images: 1,
+          tags: 1,
+          Location: 1,
+          tripWay: 1,
+          tripNum: 1,
+          tripDate: 1,
+          tripBudget: 1,
+          isPublic: 1,
+          rate: 1,
+          createDate: 1,
+          username: 1,
+          likesCount: { $size: "$likes" },
+          uploadDate: 1,
+        },
+      },
+    ]).exec()
+    if (!travelog) {
+      return { success: false, message: "游记不存在" }
+    }
+    console.log(travelog)
+    return { success: true, data: travelog[0] }
+  } catch (err) {
+    console.log("DB ERROR travelogSchema.statics.getMyTravelogById:", err)
     return { success: false, message: "获取失败" }
   }
 }

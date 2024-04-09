@@ -11,8 +11,9 @@ import Footer from "./components/Footer/Footer"
 
 function ConditionalFooter() {
   const location = useLocation()
-  const hideFooterOnPaths = ["/", "/register", "/publish","/login"]
-  const shouldHideFooter = hideFooterOnPaths.includes(location.pathname)
+  const hideFooterOnPaths = ["/", "/register", "/publish", "/login", "/publish/"]
+  // const shouldHideFooter = hideFooterOnPaths.includes(location.pathname)
+  const shouldHideFooter = hideFooterOnPaths.includes(location.pathname) || /^\/update\/[^/]+$/.test(location.pathname)
 
   return shouldHideFooter ? null : <Footer />
 }

@@ -52,6 +52,7 @@ export default function MyTravelogItem(props) {
       // Toast.show({ content: '点击了取消', position: 'bottom' })
     }
   }
+  //  window.location.href = `/`
   return (
     <div className={styles.myTravelogItem}>
       <div className={styles.top}>
@@ -85,7 +86,7 @@ export default function MyTravelogItem(props) {
           ) : null}
         </div>
         <div className={styles.operate}>
-          <Button color="success" fill="outline" size="small">
+          <Button onClick={() => (window.location.href = `/update/${_id}`)} color="success" fill="outline" size="small">
             编辑
           </Button>
           <Button color="danger" fill="outline" size="small" onClick={handleDeleteForever}>

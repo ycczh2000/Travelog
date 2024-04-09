@@ -78,7 +78,6 @@ editTravelogSchema.statics.updataEditTravelog = async (userId, editId, editData)
   console.log("editData:", editData)
   try {
     delete editData.authorId
-    delete editData.targetTravelogId
     delete editData.images //图片要单独上传
     delete editData.createDate
 
@@ -106,6 +105,7 @@ editTravelogSchema.statics.publishEditTravelog = async (userId, editId) => {
     }
     const newTravelogData = {
       authorId: userId,
+      uploadDate: Date.now(),
     }
     const fieldsToCopy = [
       "title",
@@ -139,6 +139,9 @@ editTravelogSchema.statics.updateExistTravelog = async (userId, editId) => {
       return { success: false, message: "游记不存在", data: {} }
     }
     const targetTravelog = await Travelog.findById(edit.targetTravelogId)
+    if (!targetTravelog) {
+      return { success: false, message: "要修改的游记不存在", data: {} }
+    }
     const updateDatas = {}
     const fieldsToCopy = [
       "title",
@@ -153,17 +156,18 @@ editTravelogSchema.statics.updateExistTravelog = async (userId, editId) => {
       "isPublic",
       "rate",
     ]
-    fieldsToCopy.forEach(field => (targetTravelog[field] = updateDatas[field]))
+    fieldsToCopy.forEach(field => (updateDatas[field] = edit[field]))
+    console.log("updateDatas", updateDatas)
     const updatedTravelog = await Travelog.findOneAndUpdate(
       { _id: edit.targetTravelogId, authorId: userId },
-      { $set: editData, uploadDate: Date.now(), status: "pending" },
+      { $set: updateDatas, uploadDate: Date.now(), status: "pending" },
       { new: true }
     )
     if (!updatedTravelog) {
       return { success: false, message: "更新失败", data: {} }
     } else {
-      edit.status = "published"
-      await edit.save()
+      // edit.status = "published"
+      await EditTravelog.deleteOne({ _id: editId, authorId: userId, status: "editing" })
       return { success: true, message: "更新成功", data: updatedTravelog }
     }
   } catch (err) {
@@ -230,14 +234,18 @@ editTravelogSchema.statics.deleteImage = async (userId, index) => {
   }
 }
 
-//6.查询是否有正在编辑的游记 返回id
+//6.查询是否有正在编辑的游记 返回editId和targetTravelogId
 editTravelogSchema.statics.hasEditTravelog = async userId => {
   try {
     const edit = await EditTravelog.findOne({ authorId: userId, status: "editing" })
     if (!edit) {
       return { success: true, message: "没有正在编辑的游记", data: {} }
     }
-    return { success: true, message: "存在正在编辑的游记", data: { editId: edit._id } }
+    return {
+      success: true,
+      message: "存在正在编辑的游记",
+      data: { editId: edit._id, targetTravelogId: edit.targetTravelogId },
+    }
   } catch (err) {
     console.log("DB ERROR getEditTravelog:", err)
     return { success: false, message: "没有正在编辑的游记", data: {} }
