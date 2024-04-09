@@ -24,45 +24,20 @@ const editTravelogSchema = new mongoose.Schema({
   deleted: { type: Boolean, default: false }, //逻辑删除
   status: {
     type: String,
-    enum: ["editing", "draft", "published"], //published:测试用
+    enum: ["updating", "editing", "draft", "published"], //published:测试用
     default: "editing",
   },
 })
 
-//每个用户只有一个正在编辑的游记，状态为editing，或者存进草稿箱draft
-//可以编辑已有的游记，也可以新建一个编辑状态的空游记
-//编辑状态的游记可以上传图片，删除图片，保存到草稿箱，发布
+//每个用户只有一个状态为editing的待发布游记和一个状态为updating待更新游记，保存已编辑的信息
 
-//1.创建编辑状态的游记
-////需要有方法更新草稿箱的游记，在创建时targetTravelogId能指向草稿箱的游记
-editTravelogSchema.statics.createEditTravelog = async (userId, targetTravelogId) => {
+//1.创建一个新的状态为editing的待发布游记，并删除之前的
+editTravelogSchema.statics.createEditTravelog = async (userId, targetTravelogId = null) => {
   try {
     await EditTravelog.deleteMany({ authorId: userId, status: "editing" })
     const newEditData = {
       authorId: userId,
-      targetTravelogId: targetTravelogId,
-    }
-    //存在targetTravelogId时，将对应的字段复制进来
-    if (targetTravelogId) {
-      const targetTravelog = await Travelog.findById(targetTravelogId)
-      if (!targetTravelog) {
-        return { success: false, message: "游记不存在", data: {} }
-      } else {
-        const fieldsToCopy = [
-          "title",
-          "content",
-          "images",
-          "tags",
-          "Location",
-          "tripWay",
-          "tripNum",
-          "tripDate",
-          "tripBudget",
-          "isPublic",
-          "rate",
-        ]
-        fieldsToCopy.forEach(field => (newEditData[field] = targetTravelog[field]))
-      }
+      targetTravelogId: null,
     }
     const newEdit = new EditTravelog(newEditData)
     await newEdit.save()
@@ -73,8 +48,47 @@ editTravelogSchema.statics.createEditTravelog = async (userId, targetTravelogId)
   }
 }
 
-//2.更新的编辑游记
-editTravelogSchema.statics.updataEditTravelog = async (userId, editId, editData) => {
+//1.2创建一个状态为updating待更新游记，targetTravelogId指向更新目标，并删除之前的
+editTravelogSchema.statics.createUpdateTravelog = async (userId, targetTravelogId) => {
+  try {
+    await EditTravelog.deleteMany({ authorId: userId, status: "updating" })
+    const newEditData = {
+      authorId: userId,
+      targetTravelogId: targetTravelogId,
+      status: "updating",
+    }
+    //存在targetTravelogId时，将对应的字段复制进来
+    const targetTravelog = await Travelog.findById(targetTravelogId)
+    if (!targetTravelog) {
+      return { success: false, message: "游记不存在", data: {} }
+    } else {
+      const fieldsToCopy = [
+        "title",
+        "content",
+        "images",
+        "tags",
+        "Location",
+        "tripWay",
+        "tripNum",
+        "tripDate",
+        "tripBudget",
+        "isPublic",
+        "rate",
+      ]
+      fieldsToCopy.forEach(field => (newEditData[field] = targetTravelog[field]))
+    }
+
+    const newEdit = new EditTravelog(newEditData)
+    await newEdit.save()
+    return { success: true, message: "创建成功", data: { newEdit } }
+  } catch (err) {
+    console.log("DB ERROR createEditTravelog:", err)
+    return { success: false, message: "创建失败", data: {} }
+  }
+}
+
+//2.更新当前编辑游记的状态
+editTravelogSchema.statics.updataEditTravelog = async (userId, editId, editData, status) => {
   console.log("editData:", editData)
   try {
     delete editData.authorId
@@ -82,7 +96,7 @@ editTravelogSchema.statics.updataEditTravelog = async (userId, editId, editData)
     delete editData.createDate
 
     const updatedEdit = await EditTravelog.findOneAndUpdate(
-      { _id: editId, authorId: userId, status: "editing" },
+      { _id: editId, authorId: userId, status: status },
       { $set: editData, uploadDate: Date.now() },
       { new: true }
     )
@@ -134,7 +148,7 @@ editTravelogSchema.statics.publishEditTravelog = async (userId, editId) => {
 //3.2.更新游记-目标原游记存在 用新游记的信息去更新targetTravelogId指向的原游记的字段，并重置发布时间和审核状态
 editTravelogSchema.statics.updateExistTravelog = async (userId, editId) => {
   try {
-    const edit = await EditTravelog.findOne({ _id: editId, authorId: userId, status: "editing" })
+    const edit = await EditTravelog.findOne({ _id: editId, authorId: userId, status: "updating" })
     if (!edit) {
       return { success: false, message: "游记不存在", data: {} }
     }
@@ -167,7 +181,7 @@ editTravelogSchema.statics.updateExistTravelog = async (userId, editId) => {
       return { success: false, message: "更新失败", data: {} }
     } else {
       // edit.status = "published"
-      await EditTravelog.deleteOne({ _id: editId, authorId: userId, status: "editing" })
+      await EditTravelog.deleteOne({ _id: editId, authorId: userId, status: "updating" })
       return { success: true, message: "更新成功", data: updatedTravelog }
     }
   } catch (err) {
@@ -177,9 +191,9 @@ editTravelogSchema.statics.updateExistTravelog = async (userId, editId) => {
 }
 
 //4获取图片列表 返回图片名数组，加上url前缀可得到图片的src
-editTravelogSchema.statics.getImages = async userId => {
+editTravelogSchema.statics.getImages = async (userId, status) => {
   try {
-    const edit = await EditTravelog.findOne({ authorId: userId, status: "editing" })
+    const edit = await EditTravelog.findOne({ authorId: userId, status: status })
     if (!edit) {
       return { success: true, message: "还没有图片", data: [] }
     }
@@ -191,10 +205,10 @@ editTravelogSchema.statics.getImages = async userId => {
 }
 
 //4.上传一张图片到编辑游记 更新第i张图片路径imags[i] 返回图片名数组
-editTravelogSchema.statics.uploadImage = async (userId, imgName, index) => {
+editTravelogSchema.statics.uploadImage = async (userId, imgName, index, status) => {
   try {
     const result = await EditTravelog.findOneAndUpdate(
-      { authorId: userId, status: "editing" },
+      { authorId: userId, status: status },
       { $set: { [`images.${index}`]: imgName } },
       { new: true }
     )
@@ -209,9 +223,9 @@ editTravelogSchema.statics.uploadImage = async (userId, imgName, index) => {
 }
 
 //5.删除第i张图片 返回图片名列表
-editTravelogSchema.statics.deleteImage = async (userId, index) => {
+editTravelogSchema.statics.deleteImage = async (userId, index, status) => {
   try {
-    const travelog = await EditTravelog.findOne({ authorId: userId, status: "editing" })
+    const travelog = await EditTravelog.findOne({ authorId: userId, status: status })
 
     if (!travelog) {
       return { success: false, message: "找不到要更新的游记", data: {} }
@@ -235,9 +249,9 @@ editTravelogSchema.statics.deleteImage = async (userId, index) => {
 }
 
 //6.查询是否有正在编辑的游记 返回editId和targetTravelogId
-editTravelogSchema.statics.hasEditTravelog = async userId => {
+editTravelogSchema.statics.hasEditTravelog = async (userId, status = "editing") => {
   try {
-    const edit = await EditTravelog.findOne({ authorId: userId, status: "editing" })
+    const edit = await EditTravelog.findOne({ authorId: userId, status: status })
     if (!edit) {
       return { success: true, message: "没有正在编辑的游记", data: {} }
     }
@@ -253,9 +267,9 @@ editTravelogSchema.statics.hasEditTravelog = async userId => {
 }
 
 //7.获取正在编辑的游记 返回游记的详细信息
-editTravelogSchema.statics.getEditTravelog = async userId => {
+editTravelogSchema.statics.getEditTravelog = async (userId, status = "editing") => {
   try {
-    const edit = await EditTravelog.findOne({ authorId: userId, status: "editing" })
+    const edit = await EditTravelog.findOne({ authorId: userId, status: status })
     if (!edit) {
       return { success: false, message: "没有正在编辑的游记", data: {} }
     }
@@ -266,18 +280,18 @@ editTravelogSchema.statics.getEditTravelog = async userId => {
   }
 }
 
-//6.存到草稿箱 返回bool
-editTravelogSchema.statics.saveDraftTravelog = async (userId, editId) => {
-  try {
-    const edit = await EditTravelog.findOne({ _id: editId, authorId: userId, status: "editing" })
-    edit.status = "draft"
-    await edit.save()
-    return { success: true, message: "保存成功", data: {} }
-  } catch (err) {
-    console.log("DB ERROR saveDraftTravelog:", err)
-    return { success: false, message: "保存失败", data: {} }
-  }
-}
+// //6.存到草稿箱 返回bool 不做了
+// editTravelogSchema.statics.saveDraftTravelog = async (userId, editId) => {
+//   try {
+//     const edit = await EditTravelog.findOne({ _id: editId, authorId: userId, status: "editing" })
+//     edit.status = "draft"
+//     await edit.save()
+//     return { success: true, message: "保存成功", data: {} }
+//   } catch (err) {
+//     console.log("DB ERROR saveDraftTravelog:", err)
+//     return { success: false, message: "保存失败", data: {} }
+//   }
+// }
 
 const EditTravelog = mongoose.model("EditTravelog", editTravelogSchema)
 module.exports = EditTravelog

@@ -32,7 +32,7 @@ function App() {
             </Route>
             <Route path="/mytravelog" element={<MyTravelog />}></Route>
             <Route path="/publish" element={<Publish />}></Route>
-            <Route path="/update/:targetTravelogIdInLocation" element={<Publish />}></Route>
+            <Route path="/update/:targetTravelogId" element={<Publish />}></Route>
             <Route path="/avatarupload" element={<AvatarUpload />}></Route>
             <Route path="/login" element={<Login />}></Route>
             <Route path="/" element={<Login />}></Route>

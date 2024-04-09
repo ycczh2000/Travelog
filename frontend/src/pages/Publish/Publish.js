@@ -19,6 +19,7 @@ import { DownlandOutline, EyeOutline } from "antd-mobile-icons"
 import { sendTraveLogToServer } from "../../api/userApi"
 import {
   $createEditTravelog,
+  $createUpdateTravelog,
   $updateEditTravelog,
   $hasEditTravelog,
   $getEditTravelog,
@@ -31,40 +32,59 @@ const Publish = () => {
   const [editingData, setEditingData] = useState({})
   const imageUploadRef = useRef(null)
   const editingRef = useRef(null)
-  //编辑表中的id
+  //EditTravelogs表中的id
   const [editId, setEditId] = useState("")
   //要修改的已申请发布游记的id，空值代表创建新游记
-  const { targetTravelogIdInLocation } = useParams()
-  const [targetTravelogId, setTargetTravelogId] = useState(targetTravelogIdInLocation)
-  console.log("targetId", targetTravelogId)
+  const { targetTravelogId } = useParams()
+  const status = targetTravelogId === undefined ? "editing" : "updating"
 
   //v2弹出窗口让用户选择加载之前编辑的内容，或是重新创建新的编辑状态游记
-  //进入时的路由有两种情况：/publish，/update/:targetTravelogIdInLocation
-  //保存状态有三种情况：1.无:editId不存在  2.保存待发布游记:targetTravelogId不存在  3.保存未修改完的游记:targetTravelogId存在
-  const selectEditTravelog = async () => {
-    const res = await $hasEditTravelog()
-    console.log("$hasEditTravelog", res)
-    const { editId: savedEditId, targetTravelogId: savedTargetId } = res.data
-    console.log("$hasEditTravelog", res.data)
-    console.log("savedEditId", savedEditId)
-    //当前用户是否有正在编辑的的游记
+  //1.从/publish进入 选择是否加载之前的待发布内容
+  const selectEditingTravelog = async () => {
+    const res = await $hasEditTravelog("editing")
+    const { editId: savedEditId } = res.data
     if (savedEditId) {
-      //有的情况
-      const content = savedTargetId ? "检测到已保存的修改中的游记" : "检测到已保存的编辑中的新游记"
       await Dialog.confirm({
-        content: content + "，是否要读取（点击取消会丢失之前保存的数据）",
-        //点击确定获取详细信息
+        content: "检测到正在编辑中的新游记，是否要读取（点击取消会丢失之前保存的数据）",
         onConfirm: async () => {
-          const result = await $getEditTravelog()
-          console.log("$getEditTravelog", result)
+          const result = await $getEditTravelog("editing")
           if (result.success) {
             const editData = result.data?.edit
-            if (savedTargetId && window.location.pathname !== `/update/${savedTargetId}`) {
-              window.location.replace(`/update/${savedTargetId}`)
-            }
-            if (!savedTargetId && window.location.pathname !== `/publish`) {
-              window.location.replace(`/publish`)
-            }
+            setEditingData(editData)
+            setEditId(savedEditId) //开始加载图片
+            Toast.show({
+              icon: "success",
+              content: "加载成功",
+              position: "bottom",
+            })
+          }
+        },
+        onCancel: async () => createNewEditingTravelog(), //点击取消时删除之前的，创建新的
+      })
+    } else {
+      await createNewEditingTravelog() //无编辑状态游记
+    }
+  }
+
+  const createNewEditingTravelog = async () => {
+    const result = await $createEditTravelog()
+    const newEditId = result.data?.newEdit?._id
+    setEditId(newEditId)
+    const newEditData = result.data?.newEdit
+    setEditingData(newEditData)
+  }
+
+  // 2.从/update/:targetTravelogId进入
+  const selectUpdatingTravelog = async () => {
+    const res = await $hasEditTravelog("updating")
+    const { editId: savedEditId, targetTravelogId: savedTargetId } = res.data
+    if (savedEditId) {
+      await Dialog.confirm({
+        content: "检测到正在修改中的游记，是否要读取（点击取消会丢失之前保存的数据）",
+        onConfirm: async () => {
+          const result = await $getEditTravelog("updating")
+          if (result.success) {
+            const editData = result.data?.edit
             setEditingData(editData)
             setEditId(savedEditId)
             Toast.show({
@@ -74,15 +94,15 @@ const Publish = () => {
             })
           }
         },
-        onCancel: async () => createNewEditTravelog(), //点击取消时删除之前的，创建新的
+        onCancel: async () => createNewUpdatingTravelog(), //点击取消时删除之前的，创建新的
       })
     } else {
-      await createNewEditTravelog() //无编辑状态游记
+      await createNewUpdatingTravelog()
     }
   }
 
-  const createNewEditTravelog = async () => {
-    const result = await $createEditTravelog({ targetTravelogId: targetTravelogId })
+  const createNewUpdatingTravelog = async () => {
+    const result = await $createUpdateTravelog({ targetTravelogId: targetTravelogId })
     console.log("createEditTravelog", result)
     const newEditId = result.data?.newEdit?._id
     console.log("createNewEditTravelog", newEditId)
@@ -93,14 +113,18 @@ const Publish = () => {
 
   //初始加载时，选择是否加载之前的编辑状态
   useEffect(() => {
-    selectEditTravelog()
+    if (targetTravelogId === undefined) {
+      selectEditingTravelog()
+    } else {
+      selectUpdatingTravelog()
+    }
   }, [])
 
   //定时器，每10秒自动保存草稿
   // useEffect(() => {
   //   const intervalId = setInterval(async () => {
   //     const editingDataNow = editingRef.current.getEditingData()
-  //     await $updateEditTravelog({ editData: editingDataNow, editId: editId })
+  //     await $updateEditTravelog({ editData: editingDataNow, editId: editId,status:status })
   //   }, 10000)
 
   //   return () => {
@@ -119,7 +143,7 @@ const Publish = () => {
       alert("Title length should be at least 1 character.") // 使用alert弹出消息提示
       return
     }
-    const result1 = await $updateEditTravelog({ editData: editingData, editId: editId })
+    const result1 = await $updateEditTravelog({ editData: editingData, editId: editId, status: status })
     // const result = await $publishEditTravelog({ editId: editId })
     // if (result1.status === 'success') {
     // 如果第一个请求成功，则发送第二个请求，并等待结果
@@ -151,12 +175,11 @@ const Publish = () => {
       alert("Title length should be at least 1 character.") // 使用alert弹出消息提示
       return
     }
-    const result1 = await $updateEditTravelog({ editData: editingData, editId: editId })
+    const result1 = await $updateEditTravelog({ editData: editingData, editId: editId, status: status })
     const result = await $updateTargetTravelog({ editId: editId })
-    console.log("$updateTargetTravelog", result)
     if (result.success) {
       setTimeout(() => {
-        window.location.href = `/mytravelog` // 返回上一页面
+        window.location.href = `/mytravelog`
       }, 1000)
     }
   }
@@ -164,7 +187,7 @@ const Publish = () => {
   const handleSaveDraftClick = async () => {
     const fileList = imageUploadRef.current.getFileList()
     const editingData = editingRef.current.getEditingData()
-    const result = await $updateEditTravelog({ editData: editingData, editId: editId })
+    const result = await $updateEditTravelog({ editData: editingData, editId: editId, status: status })
     if (result.success) {
       Toast.show({
         icon: "success",
@@ -180,7 +203,6 @@ const Publish = () => {
       console.log(editingData)
       console.log(result)
       setEditingData(result.data)
-      console.log("Draft saved!")
     }
   }
 
@@ -197,7 +219,7 @@ const Publish = () => {
         </Button>
       </div>
       <div style={{ margin: "10px", marginTop: "0px" }}>
-        <ImageUpload ref={imageUploadRef} fileList={fileList} editId={editId} />
+        <ImageUpload ref={imageUploadRef} fileList={fileList} editId={editId} status={status} />
         <Editing ref={editingRef} editingData={editingData} />
       </div>
       <div style={{ position: "absolute", bottom: "10px", left: "0", right: "0" }}>
