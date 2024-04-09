@@ -34,6 +34,15 @@ const SearchBarComponent = () => {
         setSearchTerm(item);
         setSearchInput(item);
     }
+    const handleBack = () => {// 返回按钮事件,如果当前在搜索，则清除搜索词和搜索输入，否则返回上一页
+        if (searchTerm !== '') {
+            setSearchTerm('');
+            setSearchInput('');
+        }
+        else {
+            window.history.back();
+        }
+    }
     return (
         <div className="search-bar-card" style={{
             backgroundImage: 'url(https://x0.ifengimg.com/res/2022/F3337B046CC16EEB79E2805025B253FE05493DC0_size395_w1280_h867.jpeg), linear-gradient(to top, #fbc2eb 0%, #a6c1ee 100%)',
@@ -50,7 +59,8 @@ const SearchBarComponent = () => {
                     marginLeft: '0.06rem',
                     color: '#fff',
                     letterSpacing: '0.05em',
-                }}>
+                }}
+                    onClick={handleBack}>
                     <LeftOutline /> {/* 返回按钮 */}
                 </button>
                 <button className="transparent-button left-button" style={{
@@ -108,7 +118,7 @@ const SearchBarComponent = () => {
                         letterSpacing: '0.05em',
                     }}
                     onClick={() => {
-                        setSearchTerm(searchInput);//将搜索词传递给HomeContext
+                        setSearchTerm(searchInput);
                         // console.log(searchTerm, searchInput);
                     }}
                 >
