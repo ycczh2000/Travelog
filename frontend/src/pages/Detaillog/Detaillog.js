@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-05 16:18:15
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-09 22:07:58
+ * @LastEditTime: 2024-04-09 23:00:45
  * @FilePath: \frontend\src\pages\Detaillog\Detaillog.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -77,7 +77,7 @@ const Detaillog = () => {
           tripNum: travelog.data.tripNum,
           tripDate: travelog.data.tripDate,
           tripBudget: travelog.data.tripBudget,
-          tripRate: travelog.data.tripRate,
+          tripRate: travelog.data.rate,
           tripWay: travelog.data.tripWay
         });
         const prefixedImages = travelog.data.images.map(image => 'http://localhost:8000/images/' + image);

@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-03-24 17:45:58
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-03-31 21:43:48
+ * @LastEditTime: 2024-04-09 23:48:56
  * @FilePath: \ultrawork\src\components\LocalRecommendation\LocalRecommendation.css
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -20,10 +20,11 @@
 }
 
 .recommendation-header {
-    font-family: LinHai; /* 使用艺术字体，待完善 */
+    font-family: LinHai;
     font-size: 24px;
     padding-bottom: 0px;
     margin-bottom: 0px;
+
 }
 
 .recommendation-images {
@@ -71,15 +72,15 @@
 
 .recommendation-label {
     position: absolute;
-    top: 5px; /* 调整标签靠图片上方位置 */
-    left: 5px; /* 调整标签靠图片左侧位置 */
-    background-color: #FFA500; /* 橘红色背景 */
+    top: 5px;
+    left: 5px; 
+    background-color: #FFA500; 
     color: #fff;
-    padding: 3px; /* 缩小标签的内边距 */
-    border-radius: 3px; /* 缩小标签的圆角 */
-    font-size: 12px; /* 缩小标签字体大小 */
-    font-weight: bold; /* 加粗标签字体 */
-    font-family: Arial, sans-serif; /* 优化字体 */
+    padding: 3px; 
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: bold; 
+    font-family: Arial, sans-serif;
     z-index: 1;
 }
 
@@ -91,12 +92,12 @@
     background-color: rgba(0, 0, 0, 0.7); /* 半透明的深灰色底部 */
     padding: 5px;
     text-align: center;
-    font-size: 18px; /* 放大标题字体大小 */
+    font-size: 18px;
     font-weight: bold;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: #fff; /* 更改标题字体颜色 */
+    color: #fff; 
     border-radius: 0 0 10px 10px; /* 底部左右两个角是圆角的 */
     z-index: 1;
 }

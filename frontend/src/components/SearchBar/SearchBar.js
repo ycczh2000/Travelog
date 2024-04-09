@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-09 19:49:18
+ * @LastEditTime: 2024-04-09 23:08:52
  * @FilePath: \frontend\src\components\SearchBar\SearchBar.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -19,7 +19,7 @@ const HotSearches = ["热搜词1", "热搜词2", "热搜词3"];
 
 const SearchBarComponent = () => {
     const { searchTerm, setSearchTerm, searchMode, setSearchMode } = useContext(HomeContext);
-    console.log('searchMode:',searchMode)
+    console.log('searchMode:', searchMode)
     const [searchInput, setSearchInput] = useState('');
     const [visible, setVisible] = useState(false);
     const options = [
@@ -30,6 +30,10 @@ const SearchBarComponent = () => {
             label: '用户',
             value: 'user',
         }]
+    const handleHotSearchClick = (item) => {
+        setSearchTerm(item);
+        setSearchInput(item);
+    }
     return (
         <div className="search-bar-card" style={{
             backgroundImage: 'url(https://x0.ifengimg.com/res/2022/F3337B046CC16EEB79E2805025B253FE05493DC0_size395_w1280_h867.jpeg), linear-gradient(to top, #fbc2eb 0%, #a6c1ee 100%)',
@@ -71,9 +75,9 @@ const SearchBarComponent = () => {
                     // value={options}
                     onConfirm={(val) => {
                         setSearchMode(val[0])
-                      }}
+                    }}
                     onSelect={(val, extend) => {
-                      console.log('onSelect', val, extend.items)
+                        console.log('onSelect', val, extend.items)
                     }}
                 />
                 {/* 返回按钮 */}
@@ -111,16 +115,28 @@ const SearchBarComponent = () => {
                     搜索
                 </button>{/* 搜索按钮 */}
             </div>
-            <div className="hot-searches">
-                <div className="hot-searches-title">当前热搜：
-                    <div className="hot-searches-tags">
-                        {HotSearches.map((item, index) => (
-                            <Tag className="hot-search-tag" key={index}>{item}</Tag>
-                        ))}
+            <div className="hot-searches-container">
+                {searchTerm === '' && ( // 使用条件语句判断是否显示热搜标签
+                    <div className="hot-searches">
+                        <div className="hot-searches-title">当前热搜：
+                            <div className="hot-searches-tags">
+                                {HotSearches.map((item, index) => (
+                                    <Tag
+                                        className="hot-search-tag"
+                                        key={index}
+                                        onClick={() => handleHotSearchClick(item)}
+                                        style={{ cursor: 'pointer' }}
+                                    >
+                                        {item}
+                                    </Tag>
+                                ))}
+                            </div>
+                        </div>
                     </div>
-                </div>
+                )}
+                <LocalRecommendation />
             </div>
-            <LocalRecommendation></LocalRecommendation>
+
         </div>
 
     );
