@@ -165,8 +165,17 @@ const Editing = forwardRef((props, ref) => {
                   <Radio block value="">
                     默认
                   </Radio>
-                  <Radio block value="1人">
-                    1人
+                  <Radio block value="亲子游">
+                    亲子游
+                  </Radio>
+                  <Radio block value="情侣游">
+                    情侣游
+                  </Radio>
+                  <Radio block value="全家游">
+                    全家游
+                  </Radio>
+                  <Radio block value="单人游">
+                    单人游
                   </Radio>
                   <Radio block value="2-5人">
                     2-5人

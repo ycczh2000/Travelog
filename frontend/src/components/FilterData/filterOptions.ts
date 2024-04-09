@@ -19,8 +19,20 @@ export const tripWays = [
   ]
   export const tripNums = [
     {
-      label: '1人',
-      value: '1人',
+      label: '亲子游',
+      value: '亲子游',
+    },
+    {
+      label: '情侣游',
+      value: '情侣游',
+    },
+    {
+      label: '全家游',
+      value: '全家游',
+    },
+    {
+      label: '单人游',
+      value: '单人游',
     },
     {
       label: '2-5人',

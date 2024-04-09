@@ -2,6 +2,7 @@ import React from 'react'
 import "./UserInfo.css"
 
 const UserInfo = ({ title, content, city }) => {
+  const testcontent = ''
   return (
     <div className="contain1">
       <div className="title">
