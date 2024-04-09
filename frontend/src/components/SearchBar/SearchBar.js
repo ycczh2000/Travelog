@@ -2,13 +2,13 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-06 00:27:50
+ * @LastEditTime: 2024-04-09 19:49:18
  * @FilePath: \frontend\src\components\SearchBar\SearchBar.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 // src/components/SearchBar.js
 import React, { useContext, useState } from 'react';
-import { SearchBar, Tag } from 'antd-mobile';
+import { SearchBar, Tag, Cascader } from 'antd-mobile';
 import './SearchBar.css';
 import { LeftOutline } from 'antd-mobile-icons'
 import LocalRecommendation from '../LocalRecommendation/LocalRecommendation';
@@ -18,8 +18,18 @@ import { HomeContext } from "../../Context/HomeContext"
 const HotSearches = ["热搜词1", "热搜词2", "热搜词3"];
 
 const SearchBarComponent = () => {
-    const { searchTerm, setSearchTerm } = useContext(HomeContext);
+    const { searchTerm, setSearchTerm, searchMode, setSearchMode } = useContext(HomeContext);
+    console.log('searchMode:',searchMode)
     const [searchInput, setSearchInput] = useState('');
+    const [visible, setVisible] = useState(false);
+    const options = [
+        {
+            label: '笔记',
+            value: 'title',
+        }, {
+            label: '用户',
+            value: 'user',
+        }]
     return (
         <div className="search-bar-card" style={{
             backgroundImage: 'url(https://x0.ifengimg.com/res/2022/F3337B046CC16EEB79E2805025B253FE05493DC0_size395_w1280_h867.jpeg), linear-gradient(to top, #fbc2eb 0%, #a6c1ee 100%)',
@@ -37,8 +47,35 @@ const SearchBarComponent = () => {
                     color: '#fff',
                     letterSpacing: '0.05em',
                 }}>
-                    <LeftOutline /> 返回
+                    <LeftOutline /> {/* 返回按钮 */}
                 </button>
+                <button className="transparent-button left-button" style={{
+                    fontSize: '1.2rem',
+                    fontWeight: 'bold',
+                    fontFamily: 'Arial, sans-serif',
+                    marginLeft: '0.06rem',
+                    color: '#fff',
+                    letterSpacing: '0.05em',
+                }}
+                    onClick={() => {
+                        setVisible(true)
+                    }}>
+                    {searchMode === 'title' ? '笔记' : (searchMode === 'user' ? '用户' : '笔记')}
+                </button>
+                <Cascader
+                    options={options}
+                    visible={visible}
+                    onClose={() => {
+                        setVisible(false)
+                    }}
+                    // value={options}
+                    onConfirm={(val) => {
+                        setSearchMode(val[0])
+                      }}
+                    onSelect={(val, extend) => {
+                      console.log('onSelect', val, extend.items)
+                    }}
+                />
                 {/* 返回按钮 */}
                 <SearchBar
                     placeholder="搜索"

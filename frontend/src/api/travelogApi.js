@@ -70,17 +70,25 @@ export const $getEditTravelog = async () => {
 }
 
 //8.(首页)随机获取一些游记
-export const $getTravelogs = async (city, selectedFilters, searchTerm) => {
-  // const { data } = await axios.get("/travelogs",{city, selectedFilters, searchTerm})
+export const $getTravelogs = async (city, selectedFilters, searchTerm, searchMode) => {
+  let params = {
+    city,
+    selectedFilters
+  };
+
+  if (searchMode === "user") {
+    params.userName = searchTerm;
+  } else {
+    params.title = searchTerm;
+  }
+
   const { data } = await axios.get("/travelogs", {
-    params: {
-      city,
-      selectedFilters,
-      title: searchTerm, //搜索title
-    },
-  })
-  return data
-}
+    params: params
+  });
+
+  return data;
+};
+
 
 //9.获取特定id游记 共有
 export const $getTravelogsByID = async id => {

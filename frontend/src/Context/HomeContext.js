@@ -14,6 +14,7 @@ export const HomeContext = createContext();
 
 export const HomeContextProvider = ({ children }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [searchMode, setSearchMode] = useState('title');
   const [sorter, setSorter] = useState('0');
   const [city, setCity] = useState([]);
   const [selectedFilters, setSelectedFilters] = useState({
@@ -25,7 +26,7 @@ export const HomeContextProvider = ({ children }) => {
   });
 
   return (
-    <HomeContext.Provider value={{ sorter, setSorter, city, setCity, selectedFilters, setSelectedFilters,searchTerm, setSearchTerm }}>
+    <HomeContext.Provider value={{ sorter, setSorter, city, setCity, selectedFilters, setSelectedFilters,searchTerm, setSearchTerm,searchMode, setSearchMode }}>
       {children}
     </HomeContext.Provider>
   );
