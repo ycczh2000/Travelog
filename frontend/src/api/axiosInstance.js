@@ -38,6 +38,8 @@ Instance.interceptors.response.use(
       localStorage.removeItem("userName")
       alert("没有该权限，请重新登录")
       window.location.href = "/"
+    } else {
+      console.log("Instance.interceptors.response", error)
     }
     return Promise.reject(error)
   }

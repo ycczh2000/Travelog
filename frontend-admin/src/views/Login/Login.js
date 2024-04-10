@@ -36,6 +36,7 @@ export default function Login() {
         result.data?.admintoken && localStorage.setItem("admintoken", result.data.admintoken)
       } else {
         setNotiMsg({ type: "error", description: result.message })
+        localStorage.removeItem("admintoken")
       }
     } catch (e) {
       setNotiMsg({ type: "error", description: e.message })

@@ -4,7 +4,7 @@ import { AuthContext } from "../../context/AuthProvider"
 import { $travelog } from "../../api/adminApi"
 import { Image } from "antd"
 import { Button, Modal, Form, Input, Radio, Space, Tag } from "antd"
-import { $deleteTravelog, $auditTravelog } from "../../api/adminApi"
+import { $deleteTravelog, $auditTravelog, $getNextTravelog } from "../../api/adminApi"
 import { ExclamationCircleFilled, ExclamationCircleOutlined } from "@ant-design/icons"
 import MyNotification from "../../components/MyNotification/MyNotification"
 import styles from "./Detail.module.scss"
@@ -22,6 +22,12 @@ const AuditStatus = {
   PENDING: "pending",
 }
 
+const AuditTag = {
+  approved: { text: "已通过", color: "green" },
+  rejected: { text: "未通过", color: "red" },
+  pending: { text: "待审核", color: "orange" },
+}
+
 const modelFormItemLayout = {
   labelCol: {
     span: 5,
@@ -35,34 +41,57 @@ const modelFormItemLayout = {
 export default function Detail() {
   const [loading, setLoading] = useState(loadingStatus.LOADING)
   let [notiMsg, setNotiMsg] = useState({ type: "", description: "" })
-  let { id } = useParams()
   const [travelog, setTravelog] = useState({})
   const [modalOpen, setModalOpen] = useState(false)
   const [rejectform] = Form.useForm()
-  const { title, images, tags, content } = travelog
+  const { title, images, tags, content, status } = travelog
   const { userInfo, setUserInfo } = useContext(AuthContext)
-  const imgSrc = "https://dimg04.c-ctrip.com/images/01019120008gm9rczEEBF_R_800_10000_Q90.jpg?proc=autoorient"
+  const [audit, setAudit] = useState(status)
+  let { id } = useParams()
   let navigate = useNavigate()
   useEffect(() => {
     getTravelog()
   }, [id])
 
   const getTravelog = async () => {
-    const result = await $travelog(id).catch(e => {
+    const result = await $travelog(id).catch(() => {
       setLoading(loadingStatus.ERROR)
     })
-    setLoading(loadingStatus.SUCCESS)
-    setTravelog(result.data)
-    console.log(result.data)
+    console.log("getTravelog", result)
+    if (result.success) {
+      setLoading(loadingStatus.SUCCESS)
+      setTravelog(result.data)
+      setAudit(result.data?.status)
+      console.log(result.data?.status)
+    } else {
+      setNotiMsg({ type: "error", description: result.message })
+      setLoading(loadingStatus.ERROR)
+    }
   }
+
   const handleAudit = async auditResult => {
     const result = await $auditTravelog(id, { ...auditResult })
     if (result.success) {
       setNotiMsg({ type: "success", description: result.message })
+      setAudit(auditResult.auditStatus)
+    } else {
+      setNotiMsg({ type: "error", description: result.message })
     }
   }
+
+  const handleNext = async () => {
+    const result = await $getNextTravelog()
+    console.log(result)
+    if (result.success && result.data) {
+      navigate(`/layout/travelog/${result.data}`, { replace: true })
+    } else if (result.success && !result.data) {
+      setNotiMsg({ type: "success", description: result.message })
+    } else {
+      setNotiMsg({ type: "error", description: result.message })
+    }
+  }
+
   const handleRejectFormFinish = value => {
-    //对象转化为json
     const reason = JSON.stringify(value)
     handleAudit({ auditStatus: AuditStatus.REJECTED, reason: reason }).then(setModalOpen(false))
   }
@@ -85,7 +114,11 @@ export default function Detail() {
       cancelText: "取消",
       onOk: async () => {
         const result = await $deleteTravelog(id)
-        console.log("sad", id)
+        if (result.success) {
+          setNotiMsg({ type: "success", description: result.message })
+        } else {
+          setNotiMsg({ type: "error", description: result.message })
+        }
       },
     })
   }
@@ -95,12 +128,16 @@ export default function Detail() {
   }
 
   if (loading === loadingStatus.ERROR) {
-    return <div>页面不存在</div>
+    return (
+      <div>
+        <MyNotification notiMsg={notiMsg} layout={"vertical"} />
+      </div>
+    )
   }
 
   return (
     <div className={styles.page}>
-      <ExclamationCircleOutlined style={{ fontSize: "16px", color: "#08c" }} />
+      {/* <ExclamationCircleOutlined style={{ fontSize: "16px", color: "#08c" }} /> */}
 
       <div className={styles.travelog}>
         <h1 className={styles.title}>{title}</h1>
@@ -146,15 +183,11 @@ export default function Detail() {
           </Button>
         </div>
         <div className={styles.auditState}>
-          <Tag className={styles.tag} color="orange">
-            待审核
-          </Tag>
-          {/* <Tag className={styles.tag} color="greed">
-          已通过
-        </Tag>
-        <Tag className={styles.tag} color="red">
-          未通过
-          </Tag> */}
+          {AuditTag[audit] ? (
+            <Tag className={styles.tag} color={AuditTag[audit].color}>
+              {AuditTag[audit].text}
+            </Tag>
+          ) : null}
         </div>
         <div className={styles.backButtonArea}>
           {userInfo.role === "admin" ? (
@@ -162,7 +195,7 @@ export default function Detail() {
               删除
             </Button>
           ) : null}
-          <Button className={styles.btn} onClick={() => navigate(-1)}>
+          <Button className={styles.btn} onClick={handleNext}>
             下一篇
           </Button>
           <Button className={styles.btn} onClick={() => navigate(-1)}>
