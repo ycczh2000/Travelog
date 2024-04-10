@@ -2,14 +2,15 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-05 16:18:15
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-10 09:26:15
+ * @LastEditTime: 2024-04-10 22:12:44
  * @FilePath: \frontend\src\pages\Detaillog\Detaillog.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import React, { useState, useEffect, createContext, useContext } from "react"
 import { LeftOutline } from "antd-mobile-icons"
-import { FloatingBubble } from "antd-mobile"
+import { FloatingBubble, Popup } from "antd-mobile"
 import { HeartOutline, HeartFill } from "antd-mobile-icons"
+import { CiPaperplane } from "react-icons/ci";
 import { useLocation, useParams } from "react-router-dom"
 import SwiperN from "../../components/swiper/swiper"
 import UserInfo from "../../components/UserInfo/UserInfo"
@@ -30,7 +31,9 @@ const Detaillog = () => {
   // const content = queryParams.get('content');
   // const city = queryParams.get('city')?.split(',');
   // const tripInfo = JSON.parse(queryParams.get('tempTripInfo'));
-
+  const [shareVisible, setShareVisible] = React.useState(false)
+  const [liked, setLiked] = React.useState(false)
+  const [followed, setFollowed] = React.useState(false)
   const [title, setTitle] = useState("游记标题")
   const [content, setContent] = useState("游记内容")
   const [city, setCity] = useState([])
@@ -98,8 +101,6 @@ const Detaillog = () => {
     fetchData() // 调用数据获取函数
   }, [])
 
-  const [liked, setLiked] = React.useState(false)
-  const [followed, setFollowed] = React.useState(false)
   useEffect(() => {
     // 检查 localStorage喜欢列表中是否存在为 {id} 的值
     let cachedLikedList = JSON.parse(localStorage.getItem("cachedLikedList"))
@@ -137,6 +138,9 @@ const Detaillog = () => {
   const handleGoBack = () => {
     window.history.go(-1) // 返回上一页面
   }
+  const handleShare = () => {
+    setShareVisible(true)
+  }
   return (
     <div style={{ width: "100%" }}>
       <button
@@ -157,7 +161,24 @@ const Detaillog = () => {
         }}>
         <LeftOutline />
       </button>
-
+      <button
+        className="transparent-button left-button"
+        onClick={handleShare}
+        style={{
+          margin: "1rem",
+          marginRight: "3.2rem",
+          fontSize: "1.2rem",
+          fontWeight: "bold",
+          fontFamily: "Arial, sans-serif",
+          color: "rgba(0, 0, 0, 0.9)",
+          letterSpacing: "0.05em",
+          position: "fixed",
+          top: 0,
+          right: 0,
+          zIndex: 999,
+        }}>
+        <CiPaperplane style={{ fontSize: "1.8rem" }} />
+      </button>
       <SwiperN bannerList={bannerList} />
       <Details detailInfo={detailInfo} followed={followed} />
       <UserInfo title={title} content={content} city={city} />
@@ -183,6 +204,26 @@ const Detaillog = () => {
           <HeartOutline color="var(--adm-color-danger)" fontSize="36px" />
         )}
       </FloatingBubble>
+      <Popup
+        visible={shareVisible}
+        onMaskClick={() => {
+          setShareVisible(false)
+        }}
+        onClose={() => {
+          setShareVisible(false)
+        }}
+        bodyStyle={{ height: '40vh' }}
+      >
+        <div style={{marginTop:'50px', display: "flex", justifyContent: "center", alignItems: "center", fontSize: "1.2rem", fontWeight: "bold", color: "black", textTransform: "uppercase" }}>
+          {title}</div>
+        <Details detailInfo={detailInfo}/>
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: "1rem"}}>
+          <Share
+            url={`http://localhost:3000/${id}`}
+            title={`分享生活点滴`}
+            disabled={["google", "facebook", "twitter"]}></Share>
+        </div>
+      </Popup>
     </div>
   )
 }
