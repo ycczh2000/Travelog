@@ -10,6 +10,7 @@ import React, { useState, useEffect, forwardRef, useImperativeHandle, useRef } f
 import { ImageUploader, Toast, ImageViewer } from "antd-mobile"
 import { $uploadImage, $getImageList, $deleteImage } from "../../api/travelogApi.js"
 import styles from "./ImageUpload.module.scss"
+import { baseURL } from "../../config/config.js"
 //应该当父元素publish确认登录状态后再请求图片列表
 const ImageUpload = forwardRef((props, ref) => {
   const maxCount = 9
@@ -27,7 +28,7 @@ const ImageUpload = forwardRef((props, ref) => {
     if (imageNames) {
       const newfileList = imageNames.map((url, index) => {
         return {
-          url: "http://localhost:8000/images/" + url,
+          url: `${baseURL}images/` + url,
           index: index,
         }
       })
@@ -44,10 +45,10 @@ const ImageUpload = forwardRef((props, ref) => {
   //上传最后一张图片，更新第i张需要另写方法
   async function mockUpload2(file) {
     const index = fileList.length
-    const result = await $uploadImage({ image: file, index: index, status: status })
+    const result = await $uploadImage({ image: file, index: index, status: status, editId })
     if (result.success) {
       return {
-        url: "http://localhost:8000/images/" + result.data[index],
+        url: `${baseURL}images/` + result.data[index],
         index: index,
       }
     }
@@ -71,7 +72,7 @@ const ImageUpload = forwardRef((props, ref) => {
 
   const handleFileChange = async event => {
     const file = event.target.files[0]
-    const result = await $uploadImage({ image: file, index: imageViewerData.index, status: status })
+    const result = await $uploadImage({ image: file, index: imageViewerData.index, status: status, editId: editId })
     if (result.success) {
       await reloadImages()
         .then(setImageViewerVisible(false))

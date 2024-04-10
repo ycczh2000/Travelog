@@ -48,11 +48,12 @@ export const $getImageList = async status => {
 
 //4.上传或更新第i张图片 返回图片名列表["image1.png", "image1.jpg", ...]
 export const $uploadImage = async params => {
-  const { image, index, status } = params
+  const { image, index, status, editId } = params
   const formData = new FormData()
   formData.append("image", image)
   formData.append("index", index)
   formData.append("status", status)
+  formData.append("editId", editId)
   const { data } = await axios.post("/travelogs/edit/uploadimg", formData)
   return data
 }

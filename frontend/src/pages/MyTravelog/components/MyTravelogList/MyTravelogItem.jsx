@@ -13,7 +13,7 @@ import { ExclamationCircleOutline, HeartFill } from "antd-mobile-icons"
 import { Modal, Space, Toast, Divider } from "antd-mobile"
 import { $deleteTravelog } from "../../../../api/travelogApi"
 // import "./MyTravelogItem.scss"
-
+import { baseURL } from "../../../../config/config"
 
 const extractReasonAndDetails = (input) => {
   const regex = /"reason":"([^"]+).*?"details":"([^"]+)/;
@@ -76,7 +76,7 @@ export default function MyTravelogItem(props) {
       <div className={styles.top}>
         <Image
           className={styles.myTravelogImg}
-          src={"http://localhost:8000/images/" + images[0]}
+          src={`${baseURL}images/` + images[0]}
           width={150}
           height={100}
           fit="cover"

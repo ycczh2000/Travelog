@@ -3,11 +3,12 @@ import { useParams, useNavigate } from "react-router-dom"
 import { AuthContext } from "../../context/AuthProvider"
 import { $travelog } from "../../api/adminApi"
 import { Image } from "antd"
-import { Button, Modal, Form, Input, Radio, Space } from "antd"
+import { Button, Modal, Form, Input, Radio, Space, Tag } from "antd"
 import { $deleteTravelog, $auditTravelog } from "../../api/adminApi"
-import { ExclamationCircleFilled } from "@ant-design/icons"
+import { ExclamationCircleFilled, ExclamationCircleOutlined } from "@ant-design/icons"
 import MyNotification from "../../components/MyNotification/MyNotification"
 import styles from "./Detail.module.scss"
+import { baseURL } from "../../config/config"
 const { confirm } = Modal
 const loadingStatus = {
   LOADING: "LOADING",
@@ -99,6 +100,8 @@ export default function Detail() {
 
   return (
     <div className={styles.page}>
+      <ExclamationCircleOutlined style={{ fontSize: "16px", color: "#08c" }} />
+
       <div className={styles.travelog}>
         <h1 className={styles.title}>{title}</h1>
         <ul className={styles.tags}>
@@ -108,7 +111,7 @@ export default function Detail() {
         </ul>
         <div className={styles.imgArea}>
           {images.map(image => (
-            <Image src={imgSrc} />
+            <Image src={`${baseURL}images/${image}`} />
           ))}
         </div>
         <div className={styles.content}>
@@ -126,9 +129,9 @@ export default function Detail() {
             通过
           </Button>
           <Button
+            danger
             className={styles.btn}
             key="rejected"
-            type="primary"
             onClick={() => {
               setModalOpen(true)
             }}>
@@ -142,12 +145,26 @@ export default function Detail() {
             重置
           </Button>
         </div>
+        <div className={styles.auditState}>
+          <Tag className={styles.tag} color="orange">
+            待审核
+          </Tag>
+          {/* <Tag className={styles.tag} color="greed">
+          已通过
+        </Tag>
+        <Tag className={styles.tag} color="red">
+          未通过
+          </Tag> */}
+        </div>
         <div className={styles.backButtonArea}>
           {userInfo.role === "admin" ? (
             <Button className={styles.btn} onClick={handleDeleteButton} type="primary" key="delete" danger>
               删除
             </Button>
           ) : null}
+          <Button className={styles.btn} onClick={() => navigate(-1)}>
+            下一篇
+          </Button>
           <Button className={styles.btn} onClick={() => navigate(-1)}>
             返回
           </Button>
