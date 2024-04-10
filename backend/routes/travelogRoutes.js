@@ -128,10 +128,10 @@ router.post("/travelogs/edit/uploadimg", travelogImgUpload.single("image"), asyn
   if (!req.file) {
     return res.status(400).json({ message: "没有图片上传" })
   }
-  const { index, status } = req.body
-  const fileName = new mongoose.Types.ObjectId().toString()
+  const { index, status, editId } = req.body
+  // const fileName = new mongoose.Types.ObjectId().toString()
   const fileExtension = path.extname(req.file.originalname)
-  const imgName = `${fileName}${fileExtension}`
+  const imgName = `${editId}_${index}${fileExtension}`
   // console.log("req.file", imgName)
   const filePath = path.join(__dirname, "../uploads", imgName)
   try {
@@ -153,6 +153,13 @@ router.delete("/travelogs/edit/deleteimg", async (req, res) => {
   console.log("req.params", index)
   const result = await EditTravelog.deleteImage(userId, index, status)
   res.json(result)
+  try {
+    const { imageName } = result
+    const filePath = path.join(__dirname, "../uploads", imageName)
+    fs.unlinkSync(filePath)
+  } catch (err) {
+    console.log('router.delete("/travelogs/edit/deleteimg) ERR', err)
+  }
 })
 
 //6.查询是否有正在编辑的游记 返回editId和targetTravelogId

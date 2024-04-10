@@ -1,5 +1,5 @@
 import axios from "axios"
-export const baseURL = "http://localhost:8000/"
+import { baseURL } from "../config/config"
 const Instance = axios.create({
   baseURL: baseURL,
   timeout: 2000,

@@ -232,7 +232,7 @@ editTravelogSchema.statics.deleteImage = async (userId, index, status) => {
     }
     console.log("travelog.images", travelog.images)
     console.log("index", index)
-
+    const imageName = travelog.images[index] //给expess删除文件
     // 使用数组方法删除指定索引的图片
     if (index >= 0 && index < travelog.images.length) {
       travelog.images.splice(index, 1)
@@ -241,7 +241,7 @@ editTravelogSchema.statics.deleteImage = async (userId, index, status) => {
     }
     const updatedTravelog = await travelog.save()
 
-    return { success: true, message: "删除成功", data: updatedTravelog.images }
+    return { success: true, message: "删除成功", data: updatedTravelog.images, imageName: imageName }
   } catch (err) {
     console.log("DB ERROR deleteImage:", err)
     return { success: false, message: "删除失败", data: {} }

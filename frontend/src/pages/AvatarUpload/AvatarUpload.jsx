@@ -4,7 +4,7 @@ import { ImageUploader, Space, Toast, Dialog, Button, Image } from "antd-mobile"
 import { PictureOutline } from "antd-mobile-icons"
 import styles from "./AvatarUpload.module.scss"
 import { $uploadAvatar, $getAvatar } from "../../api/userApi"
-
+import { baseURL } from "../../config/config"
 //纯测试组件，用于测试头像与图片上传功能
 export default function AvatarUpload() {
   const [fileList, setFileList] = useState([])
@@ -24,7 +24,7 @@ export default function AvatarUpload() {
 
   return (
     <>
-      <img src="http://localhost:8000/getAvatar/user123456" style={{ width: "5rem", height: "5rem" }} />
+      <img src={`${baseURL}getAvatar/user123456`} style={{ width: "5rem", height: "5rem" }} />
       <Image
         onContainerClick={handleClick}
         src="https://images.unsplash.com/photo-1567945716310-4745a6b7844b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=60"

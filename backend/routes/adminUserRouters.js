@@ -6,6 +6,7 @@ const Travelog = require("../models/Travelog")
 const User = require("../models/User")
 let secret = "fawgf1awi7owa35"
 
+//和管理审核相关的接口
 router.post("/register", async (req, res) => {
   const { username, password, role } = req.body
   const result = await AdminUser.createUser(username, password, role)
@@ -54,6 +55,7 @@ const adminFields = {
   _id: 1,
   title: 1,
   createDate: 1,
+  uploadDate: 1,
   status: 1,
   authorUsername: 1,
   auditorUsername: 1,
