@@ -39,14 +39,15 @@
 }
 
 .hot-searches {
-    padding-top: 0px;
-    margin-top: 10px;
+    padding-top: 5px;
+    margin-top: 0;
     margin-bottom: 0;
 }
 
 .hot-searches-title {
+    margin-left:10px;
     padding-left: 10px;
-    font-size: 14px;
+    font-size: 16px;
     margin-bottom: 0;
     display: inline-block; 
     vertical-align: middle;
@@ -70,4 +71,21 @@
     font-size: 10px;
     display: inline-block; 
     vertical-align: middle;
+}
+
+.search-container {
+    position: relative;
+}
+
+.hot-search-words {
+    display: flex;
+    flex-wrap: wrap; /* 按钮自动换行 */
+}
+
+.hot-search-words Button {
+    margin: 5px;
+}
+
+.ranking {
+    /* 这里是排行榜的样式 */
 }
