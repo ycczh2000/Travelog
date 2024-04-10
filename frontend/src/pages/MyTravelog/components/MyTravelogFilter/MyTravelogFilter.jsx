@@ -6,12 +6,12 @@
  * @FilePath: \frontend\src\pages\MyTravelog\components\MyTravelogFilter\MyTravelogFilter.jsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import React, { useState,useContext } from "react"
+import React, { useState, useContext } from "react"
 import { Dropdown, Radio, Space } from "antd-mobile"
 import styles from "./MyTravelogFilter.module.scss"
 import { UserSpaceContent } from "../../UserSpaceContent"
 export default function MyTravelogHeader() {
-  const { filter, setFilter, sorter, setSorter} = useContext(UserSpaceContent)
+  const { filter, setFilter, sorter, setSorter } = useContext(UserSpaceContent)
   // const [filter, setFilter] = useState("all")
   // const [sorter, setSorter] = useState("new")
   const handleFilterChange = (value) => {
@@ -29,7 +29,7 @@ export default function MyTravelogHeader() {
           title={filter === 'all' ? '全部' : filter === 'approved' ? '已通过' : filter === 'pending' ? '审核中' : '未通过'}
         >
           <div style={{ padding: 2 }}>
-            <Radio.Group defaultValue="all" onChange={handleFilterChange} style={{opacity: 0.075}}>
+            <Radio.Group defaultValue="all" onChange={handleFilterChange} style={{ opacity: 0.075 }}>
               <Radio block value="all" style={{ padding: 6 }}>
                 全部
               </Radio>

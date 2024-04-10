@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-10 09:05:59
+ * @LastEditTime: 2024-04-10 09:37:59
  * @FilePath: \frontend\src\components\SearchBar\SearchBar.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -16,13 +16,13 @@ import { HomeContext } from "../../Context/HomeContext"
 
 // 模拟热搜词
 const HotSearches = ["热搜词1", "热搜词2", "热搜词3"];
-const searchArray = ['','上海大学', '顾村公园', '钱伟长图书馆'];
+const searchArray = ['', '上海大学', '顾村公园', '钱伟长图书馆'];
 const SearchBarComponent = () => {
     const { searchTerm, setSearchTerm, searchMode, setSearchMode } = useContext(HomeContext);
     console.log('searchMode:', searchMode)
     const [searchInput, setSearchInput] = useState('');
     const [visible, setVisible] = useState(false);
-    
+
     const options = [
         {
             label: '笔记',
@@ -47,15 +47,19 @@ const SearchBarComponent = () => {
     const [placeholderIndex, setPlaceholderIndex] = useState(0);
     useEffect(() => {
         const intervalId = setInterval(() => {
-          setPlaceholderIndex((prevIndex) =>
-            prevIndex === searchArray.length - 1 ? 0 : prevIndex + 1
-          );
+            setPlaceholderIndex((prevIndex) =>
+                prevIndex === searchArray.length - 1 ? 0 : prevIndex + 1
+            );
         }, 5000); // 每5秒切换一次 placeholder
-      
+
         return () => {
-          clearInterval(intervalId); // 清除定时器
+            clearInterval(intervalId); // 清除定时器
         };
-      }, []); // 注意：此处将依赖项数组置空，以确保只执行一次
+    }, []); // 注意：此处将依赖项数组置空，以确保只执行一次
+
+    const handleClickSearchBar = () => {// 点击搜索框时，展开搜索页视图
+        console.log('点击搜索框')
+    }
 
     return (
         <div className="search-bar-card" style={{
@@ -105,35 +109,34 @@ const SearchBarComponent = () => {
                     }}
                 />
                 {/* 返回按钮 */}
-
-                <SearchBar
-                    /* 由于react渲染机制问题，每次搜索框placeholder变化时，都会报出Warning: Encountered two children with the same key
-                    这个警告暂时无法解决
-                    如果需要解决这个问题，请将searchArray相关语句注释掉 */
-                    key={placeholderIndex}
-                    placeholder={searchArray[placeholderIndex]}
-                    // placeholder='搜索'
-                    className={`search-bar-input`}
-                    maxLength={20}
-                    value={searchInput}
-                    onChange={(value) => {
-                        setSearchInput(value)//只修改搜索输入，实际搜索词按搜索按钮后更新
-                    }}
-                    onClear={() => {
-                        setSearchInput('');
-                        setSearchTerm('');// 清除搜索词和搜索输入
-                    }} 
-                    onSearch={(value) => {
-                        if (value !== '') {
-                          setSearchInput(value);
-                          setSearchTerm(value); // 更新搜索词
-                        } else {
-                          setSearchInput(searchArray[placeholderIndex]);
-                          setSearchTerm(searchArray[placeholderIndex]); // 清除搜索词和搜索输入
-                        }
-                      }}
-                />
-
+                    <SearchBar
+                        /* 由于react渲染机制问题，每次搜索框placeholder变化时，都会报出Warning: Encountered two children with the same key
+                        这个警告暂时无法解决
+                        如果需要解决这个问题，请将searchArray相关语句注释掉 */
+                        onFocus={handleClickSearchBar}
+                        key={placeholderIndex}
+                        placeholder={searchArray[placeholderIndex]}
+                        // placeholder='搜索'
+                        className={`search-bar-input`}
+                        maxLength={20}
+                        value={searchInput}
+                        onChange={(value) => {
+                            setSearchInput(value)//只修改搜索输入，实际搜索词按搜索按钮后更新
+                        }}
+                        onClear={() => {
+                            setSearchInput('');
+                            setSearchTerm('');// 清除搜索词和搜索输入
+                        }}
+                        onSearch={(value) => {
+                            if (value !== '') {
+                                setSearchInput(value);
+                                setSearchTerm(value); // 更新搜索词
+                            } else {
+                                setSearchInput(searchArray[placeholderIndex]);
+                                setSearchTerm(searchArray[placeholderIndex]); // 清除搜索词和搜索输入
+                            }
+                        }}
+                    />
                 <button
                     className="transparent-button right-button"
                     style={{
@@ -145,10 +148,10 @@ const SearchBarComponent = () => {
                         letterSpacing: '0.05em',
                     }}
                     onClick={() => {
-                        if(searchInput !== ''){
+                        if (searchInput !== '') {
                             setSearchTerm(searchInput);
                         }
-                        else{
+                        else {
                             setSearchTerm(searchArray[placeholderIndex]);
                             setSearchInput(searchArray[placeholderIndex]);
                         }
