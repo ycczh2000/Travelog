@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-10 01:18:06
+ * @LastEditTime: 2024-04-10 22:38:45
  * @FilePath: \frontend\src\components\WaterfallLayout\WaterfallLayout.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -13,43 +13,39 @@ import InfCard from "../InfCard/InfCard"
 import "./WaterfallLayout.css"
 import { HomeContext } from "../../Context/HomeContext"
 import { $getTravelogs } from "../../api/travelogApi"
-import { DotLoading } from "antd-mobile"
+import { DotLoading, ErrorBlock } from "antd-mobile"
 import { baseURL } from "../../config/config"
 const WaterfallLayout = () => {
   const { sorter, city, selectedFilters, searchTerm, searchMode } = useContext(HomeContext)
   const [data, setData] = useState([])
-  const [loading, setLoading] = useState(false) // 新增 loading 状态
+  const [loading, setLoading] = useState(false)
+  const [noMatchData, setNoMatchData] = useState(false)//没有匹配的数据
+  const [disconnect, setDisconnect] = useState(false)//没有连接到服务器
   // const [oldData, setOldData] = useState([])
   const momo =
     "https://img1.baidu.com/it/u=1389873612,485301600&fm=253&app=120&size=w931&n=0&f=JPEG&fmt=auto?sec=1712595600&t=76261ab2a1585815f46c7b306c6f66e3"
   useEffect(() => {
     console.log("searchTerm changed", searchTerm)
     setData([]) // 清空数据
-    // handleClearData(); // 清空数据
-    // console.log('搜索词启动，重新获取数据:', data)
-    // fetchData(sorter, city, selectedFilters, searchTerm);//重新获取数据
-    // }
   }, [searchTerm])
-
-  // const handleClearData = () => {
-  //     setData([]);
-  //     console.log(data)
-  // }
 
   const fetchData = async (sorter, city, selectedFilters, searchTerm = "", searchMode) => {
     console.log("fetchData:", sorter, city, selectedFilters, searchTerm, searchMode)
     // 如果正在加载数据，则直接返回，避免重复请求
     if (loading) return
-
-    // if (!city.length && !selectedFilters && !searchTerm&&data!=oldData) {
-    //   // 保存当前数据到 oldData
-    //   setData(oldData);
-    // }
-
+    setDisconnect(false)
+    setNoMatchData(false)
     try {
       // 调用 API 获取数据
       console.log("city, selectedFilters, searchTerm", city, selectedFilters, searchTerm, searchMode)
       const newData = await $getTravelogs(city, selectedFilters, searchTerm, searchMode)
+      if (newData.length === 0) {
+        setNoMatchData(true); // 没有匹配的数据
+      }
+      // 检查是否连接到服务器
+      if (!newData) {
+        setDisconnect(true); // 没有连接到服务器
+      }
       console.log("newData:", newData)
       const filteredNewData = city ? filterByCity(newData, city) : newData
       const filteredOldData = city ? filterByCity(data, city) : data
@@ -62,12 +58,6 @@ const WaterfallLayout = () => {
       console.error("Error fetching data:", error)
     } finally {
       setLoading(false) // 请求完成后，设置 loading 为 false
-      // console.log('updateddata:',data)
-      // if (city.length && !selectedFilters && !searchTerm) {
-      //   // 保存当前数据到 oldData
-      //   setOldData(data);
-      //   console.log('oldData:',oldData)
-      // }
     }
   }
 
@@ -221,29 +211,38 @@ const WaterfallLayout = () => {
 
   return (
     <>
-      {/* antd mobile的下拉刷新仅支持列表，这里放弃下拉刷新 */}
-      <div ref={masonryRef} className="waterfall-layout">
-        <div className="waterfall-sizer"></div>
-        <div className="waterfall-gutter"></div>
-        {data.map((item, index) => (
-          <div key={index} className="waterfall-item">
-            <InfCard
-              id={item.id}
-              city={item.Location}
-              imageUrl={item.image ? `${baseURL}images/` + item.image : { momo }}
-              title={item.title}
-              username={item.username}
-              avatar={item.avatar}
-              likesCount={item.likesCount}
-              avatarUrl={`${baseURL}getAvatar/${item.username}`}
-            />
+      {disconnect ? (
+        <ErrorBlock status='disconnected' />
+      ) : noMatchData ? (
+        <ErrorBlock status='empty' />
+      ) : (
+        <>
+          {/* antd mobile的下拉刷新仅支持列表，这里放弃下拉刷新 */}
+          <div ref={masonryRef} className="waterfall-layout">
+            <div className="waterfall-sizer"></div>
+            <div className="waterfall-gutter"></div>
+            {data.map((item, index) => (
+              <div key={index} className="waterfall-item">
+                <InfCard
+                  id={item.id}
+                  city={item.Location}
+                  imageUrl={item.image ? `${baseURL}images/` + item.image : { momo }}
+                  title={item.title}
+                  username={item.username}
+                  avatar={item.avatar}
+                  likesCount={item.likesCount}
+                  avatarUrl={`${baseURL}getAvatar/${item.username}`}
+                />
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      <span style={{ fontSize: 24, display: "flex", justifyContent: "center", alignItems: "center" }}>
-        <DotLoading />
-      </span>
+          <span style={{ fontSize: 24, display: "flex", justifyContent: "center", alignItems: "center" }}>
+            <DotLoading />
+          </span>
+        </>
+      )}
     </>
+
   )
 }
 
