@@ -14,10 +14,9 @@ function ConditionalFooter() {
   const location = useLocation();
   const hideFooterOnPaths = ["/", "/register", "/publish", "/login", "/publish/", "/travelogs"];
 
-  // 添加正则表达式以确保形如 /update/66114c55bfe46e3f74f02646 的路径也不显示 Footer
   const shouldHideFooter = hideFooterOnPaths.includes(location.pathname) || 
                           location.pathname.match(/^\/travelogs\/[^/]+$/) ||
-                          location.pathname.match(/^\/update\/[a-f\d]{24}$/); // 匹配形如 /update/66114c55bfe46e3f74f02646
+                          location.pathname.match(/^\/update\/[a-f\d]{24}$/);
 
   return shouldHideFooter ? null : <Footer />;
 }
