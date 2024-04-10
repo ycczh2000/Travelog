@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-05 16:18:15
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-10 22:12:44
+ * @LastEditTime: 2024-04-11 00:46:47
  * @FilePath: \frontend\src\pages\Detaillog\Detaillog.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -25,7 +25,6 @@ const Detaillog = () => {
   const { id } = useParams()
   const location = useLocation()
   // const queryParams = new URLSearchParams(location.search);
-  // const logID = queryParams.get('logID');
   // console.log("logID:", logID)
   // const title = queryParams.get('title');
   // const content = queryParams.get('content');
@@ -68,10 +67,12 @@ const Detaillog = () => {
     ],
   })
 
-  useEffect(() => {
+  useEffect(() => {//如果通过路由接收到logID，则从后端获取数据
     const fetchData = async () => {
       // 发送fetch请求，获取其他数据
       try {
+        if(!id)
+          return
         const travelog = await $getTravelogsByID(id) // 使用 ID 调用 API 获取游记信息
         console.log("travelog:", travelog)
         // 设置获取到的数据
@@ -102,6 +103,8 @@ const Detaillog = () => {
   }, [])
 
   useEffect(() => {
+    if(!id)//id为空，说明并不是由服务端发送的数据，而是本地预览
+      return
     // 检查 localStorage喜欢列表中是否存在为 {id} 的值
     let cachedLikedList = JSON.parse(localStorage.getItem("cachedLikedList"))
     if (!cachedLikedList) {
@@ -116,6 +119,8 @@ const Detaillog = () => {
 
   const handleLiked = event => {
     event.stopPropagation() // 阻止事件冒泡，防止触发父组件的 onClick,用于防止点击点赞时跳转到详情页
+    if(!id)//id为空，说明并不是由服务端发送的数据，而是本地预览
+      return
     if (liked) {
       // 如果已经点赞，则取消点赞
       setLiked(false)

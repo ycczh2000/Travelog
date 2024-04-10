@@ -240,7 +240,7 @@ const SearchBarComponent = () => {
                                 }
                                 key={index}
                                 style={{
-                                    backgroundColor: "#FDCEDF", color: "red", borderRadius: "20px", margin: "5px",
+                                    backgroundColor: "#F8E8EE", color: "red", borderRadius: "20px", margin: "5px",
                                     fontSize: "16px", padding: "5px 10px", border: "none", fontFamily: "Cursive, Arial, sans-serif",
                                     letterSpacing: "1px"
                                 }}
@@ -258,7 +258,7 @@ const SearchBarComponent = () => {
                             }
                                 key={index}
                                 style={{
-                                    backgroundColor: "lightgray", color: "black", borderRadius: "20px", margin: "5px",
+                                    backgroundColor: "#F9F5F6", color: "black", borderRadius: "20px", margin: "5px",
                                     fontSize: "16px", padding: "5px 10px", border: "none", fontFamily: "Cursive, Arial, sans-serif",
                                     letterSpacing: "1px"
                                 }}

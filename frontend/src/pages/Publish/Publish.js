@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-03-27 18:42:58
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-06 17:56:17
+ * @LastEditTime: 2024-04-11 01:11:54
  * @FilePath: \frontend\src\pages\Publish\Publish.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -11,7 +11,7 @@
 import React, { useState, useRef, useEffect } from "react"
 import "./Publish.css"
 import ImageUpload, { getFileList } from "../../components/ImageUpload/ImageUpload"
-import { useParams } from "react-router-dom"
+import { useParams,useNavigate } from "react-router-dom"
 import Editing from "../../components/Editing/Editing"
 import { LeftOutline } from "antd-mobile-icons"
 import { Button, Modal, Toast, Dialog } from "antd-mobile"
@@ -25,6 +25,7 @@ import {
   $getEditTravelog,
   $publishEditTravelog,
   $updateTargetTravelog,
+  $getImageList,
 } from "../../api/travelogApi"
 
 const Publish = () => {
@@ -37,6 +38,7 @@ const Publish = () => {
   //要修改的已申请发布游记的id，空值代表创建新游记
   const { targetTravelogId } = useParams()
   const status = targetTravelogId === undefined ? "editing" : "updating"
+  const navigate = useNavigate();
 
   //v2弹出窗口让用户选择加载之前编辑的内容，或是重新创建新的编辑状态游记
   //1.从/publish进入 选择是否加载之前的待发布内容
@@ -175,12 +177,32 @@ const Publish = () => {
       alert("Title length should be at least 1 character.") // 使用alert弹出消息提示
       return
     }
-    const result1 = await $updateEditTravelog({ editData: editingData, editId: editId, status: status })
+    try{
+    let timer;
+    const timeoutPromise = new Promise((resolve, reject) => {
+      timer = setTimeout(() => {
+        reject(new Error("连接超时"));
+      }, 5000); // 设置超时时间，为 5 秒
+    });
+    const result1 = await $updateEditTravelog({ editData: editingData, editId: editId, status: status });
+    if (!result1.success) {
+      throw new Error("在服务端发送笔记前保存失败");
+    }
     const result = await $updateTargetTravelog({ editId: editId })
+    if(!result.success){
+      throw new Error("在服务端发送笔记失败");
+    }
     if (result.success) {
+      clearTimeout(timer);
       setTimeout(() => {
         window.location.href = `/mytravelog`
       }, 1000)
+    }
+  }
+    catch (error) {
+      console.error("Error:", error);
+      Toast.show({ content: {error}, position: "bottom" })
+      return;
     }
   }
 
@@ -209,6 +231,15 @@ const Publish = () => {
   const handleGoBack = () => {
     window.history.go(-1) // 返回上一页面
   }
+
+  const handlePreviewClick =async () => {
+    const result1 = await $updateEditTravelog({ editData: editingData, editId: editId, status: status });//在预览前，先保存
+    const combinedData = {
+      fileList: fileList,
+      editingData: editingData
+    };
+    navigate(`/previewpage/${encodeURIComponent(JSON.stringify(combinedData))}`);
+  }
   return (
     <div style={{ margin: "10px" }}>
       {" "}
@@ -227,7 +258,7 @@ const Publish = () => {
           <Button onClick={handleSaveDraftClick} style={{ background: "transparent", border: "none" }}>
             <DownlandOutline /> 保存
           </Button>
-          <Button style={{ background: "transparent", border: "none" }}>
+          <Button style={{ background: "transparent", border: "none" }} onClick={handlePreviewClick}>
             <EyeOutline /> 预览
           </Button>
           {targetTravelogId ? (
