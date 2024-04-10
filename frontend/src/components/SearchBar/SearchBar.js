@@ -2,13 +2,13 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-10 09:37:59
+ * @LastEditTime: 2024-04-10 14:10:05
  * @FilePath: \frontend\src\components\SearchBar\SearchBar.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 // src/components/SearchBar.js
 import React, { useContext, useState, useEffect } from 'react';
-import { SearchBar, Tag, Cascader } from 'antd-mobile';
+import { SearchBar, Tag, Cascader,Popup } from 'antd-mobile';
 import './SearchBar.css';
 import { LeftOutline } from 'antd-mobile-icons'
 import LocalRecommendation from '../LocalRecommendation/LocalRecommendation';
@@ -17,11 +17,13 @@ import { HomeContext } from "../../Context/HomeContext"
 // 模拟热搜词
 const HotSearches = ["热搜词1", "热搜词2", "热搜词3"];
 const searchArray = ['', '上海大学', '顾村公园', '钱伟长图书馆'];
+
 const SearchBarComponent = () => {
     const { searchTerm, setSearchTerm, searchMode, setSearchMode } = useContext(HomeContext);
     console.log('searchMode:', searchMode)
     const [searchInput, setSearchInput] = useState('');
     const [visible, setVisible] = useState(false);
+    const [seacrchPageVisible, setSeacrchPageVisible] = useState(false);
 
     const options = [
         {
@@ -55,10 +57,20 @@ const SearchBarComponent = () => {
         return () => {
             clearInterval(intervalId); // 清除定时器
         };
-    }, []); // 注意：此处将依赖项数组置空，以确保只执行一次
+    }, []);
 
     const handleClickSearchBar = () => {// 点击搜索框时，展开搜索页视图
-        console.log('点击搜索框')
+        // console.log('点击搜索框')
+        setSeacrchPageVisible(true)
+    }
+
+    const seacrchPage=()=>{
+        return (
+            <div className="search-page" style={{width:'100%',height:'80%', backgroundColor:'#fff',borderRadius:'10px'}}>
+    
+    
+            </div>
+        )
     }
 
     return (
@@ -182,9 +194,20 @@ const SearchBarComponent = () => {
                 )}
                 <LocalRecommendation />
             </div>
-
+            <Popup
+              closeOnSwipe='true'
+              visible={visible}
+              onMaskClick={() => {
+                setSeacrchPageVisible(false)
+              }}
+              onClose={() => {
+                setSeacrchPageVisible(false)
+              }}
+              bodyStyle={{ height: '40vh' }}
+            >
+              {seacrchPage}
+            </Popup>
         </div>
-
     );
 };
 export default SearchBarComponent;
