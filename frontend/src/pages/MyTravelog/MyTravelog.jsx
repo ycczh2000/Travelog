@@ -32,6 +32,9 @@ export default function MyTravelog() {
     localStorage.removeItem("token")
     localStorage.removeItem("userName")
     localStorage.removeItem("UID")
+    localStorage.removeItem("likedList")
+    localStorage.removeItem("followingList")
+    localStorage.removeItem("historyList")
     setUID("")
     setUserName("")
     alert("退出成功")
@@ -48,7 +51,7 @@ export default function MyTravelog() {
   const handleConfirm = () => {
     if (avatarFile) {
       const canvas = editor.getImage()
-      const croppedAvatarFile = canvas.toDataURL() // 获取裁剪后的图像数据 URL
+      const croppedAvatarFile = canvas.toDataURL()
       // 此时 croppedAvatarFile 就是裁剪后的图像数据 URL
       console.log("url after cropping:", croppedAvatarFile)
       const blob = dataURItoBlob(croppedAvatarFile)
@@ -205,7 +208,7 @@ export default function MyTravelog() {
               // 点击后滚动到页面顶部
               window.scrollTo({
                 top: 0,
-                behavior: "smooth", // 平滑滚动
+                behavior: "smooth",
               })
             }}>
             <UpOutline style={{ fontSize: "1rem" }} />

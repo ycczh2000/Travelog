@@ -165,8 +165,17 @@ const Editing = forwardRef((props, ref) => {
                   <Radio block value="">
                     默认
                   </Radio>
-                  <Radio block value="1人">
-                    1人
+                  <Radio block value="亲子游">
+                    亲子游
+                  </Radio>
+                  <Radio block value="情侣游">
+                    情侣游
+                  </Radio>
+                  <Radio block value="全家游">
+                    全家游
+                  </Radio>
+                  <Radio block value="单人游">
+                    单人游
                   </Radio>
                   <Radio block value="2-5人">
                     2-5人
@@ -267,27 +276,6 @@ const Editing = forwardRef((props, ref) => {
           }}
         />
       </div>
-      {/* <Space>
-                <Tag round
-                    fill='outline'
-                    style={{ '--background-color': '#C0C0C0' }}>#话题</Tag>
-                <Tag round
-                    fill='outline'
-                    style={{ '--background-color': '#C0C0C0' }}>@用户</Tag>
-            </Space> */}
-      {/* 话题和@用户按钮 */}
-      <div style={{ display: "flex", marginTop: "10px" }}>
-        <Button
-          style={{ backgroundColor: "lightgray", color: "black", borderRadius: "20px", marginRight: "10px" }}
-          onClick={handleAddTopicClick}>
-          # 话题
-        </Button>
-        <Button
-          style={{ backgroundColor: "lightgray", color: "black", borderRadius: "20px" }}
-          onClick={handleMentionUserClick}>
-          @ 用户
-        </Button>
-      </div>
       <div style={{ display: "flex", justifyContent: "center", marginTop: "10px" }}>
         <Button
           style={{ flex: 1 }}
@@ -304,6 +292,20 @@ const Editing = forwardRef((props, ref) => {
           {city ? city.join("-") : "选择城市"}
         </Button>
       </div>
+      {/* 话题和@用户按钮 */}
+      <div style={{ display: "flex", marginTop: "10px" }}>
+        <Button
+          style={{ backgroundColor: "lightgray", color: "black", borderRadius: "20px", marginRight: "10px" }}
+          onClick={handleAddTopicClick}>
+          # 话题
+        </Button>
+        <Button
+          style={{ backgroundColor: "lightgray", color: "black", borderRadius: "20px" }}
+          onClick={handleMentionUserClick}>
+          @ 用户
+        </Button>
+      </div>
+      
       <div style={{ float: "right" }}>
         <Checkbox
           defaultChecked

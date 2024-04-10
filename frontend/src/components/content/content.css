@@ -1,7 +1,9 @@
 .contentWrapper {
-    padding: 20px;
-    background: #f2f2f2;
-  }
+  padding: 20px;
+  background: #f0e2e2;
+  border-radius: 20px;
+}
+
   
   .headerRow,
   .dataRow {

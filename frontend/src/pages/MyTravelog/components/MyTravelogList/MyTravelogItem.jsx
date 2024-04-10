@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-07 21:04:36
+ * @LastEditTime: 2024-04-10 02:37:22
  * @FilePath: \frontend\src\pages\MyTravelog\components\MyTravelogList\MyTravelogItem.jsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -28,11 +28,12 @@ const statusTexts = {
 export default function MyTravelogItem(props) {
   //显式地展示用到了props的哪些静态的数据
   //content返回长度需要限制
+  console.log("props", props)
+  console.log("props.item.auditorId", props.item.auditorId)
   const { item } = props
   const { _id, title, content, status, likesCount, images, viewsCount, rejectReason, createDate } = item
   //props用到的方法
   const { deleteTravelog } = props
-
   console.log("item", item)
   const handleDeleteForever = async () => {
     const result = await Modal.confirm({
@@ -51,6 +52,10 @@ export default function MyTravelogItem(props) {
       // Toast.show({ content: '点击了取消', position: 'bottom' })
     }
   }
+  // const handleGoDetail = (e) => {
+  //   console.log("handleGoDetail",e)
+  //   // window.location.href = `/travelogs/${e}`
+  // }
   //  window.location.href = `/`
   return (
     <div className={styles.myTravelogItem}>

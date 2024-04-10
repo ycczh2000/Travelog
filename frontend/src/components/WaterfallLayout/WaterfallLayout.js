@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-07 19:25:55
+ * @LastEditTime: 2024-04-10 01:18:06
  * @FilePath: \frontend\src\components\WaterfallLayout\WaterfallLayout.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -16,12 +16,12 @@ import { $getTravelogs } from "../../api/travelogApi"
 import { DotLoading } from "antd-mobile"
 import { baseURL } from "../../config/config"
 const WaterfallLayout = () => {
-  const { sorter, setSorter, city, setCity, selectedFilters, setSelectedFilters, searchTerm, setSearchTerm } =
-    useContext(HomeContext)
+  const { sorter, city, selectedFilters, searchTerm, searchMode } = useContext(HomeContext)
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(false) // 新增 loading 状态
   // const [oldData, setOldData] = useState([])
-
+  const momo =
+    "https://img1.baidu.com/it/u=1389873612,485301600&fm=253&app=120&size=w931&n=0&f=JPEG&fmt=auto?sec=1712595600&t=76261ab2a1585815f46c7b306c6f66e3"
   useEffect(() => {
     console.log("searchTerm changed", searchTerm)
     setData([]) // 清空数据
@@ -36,8 +36,8 @@ const WaterfallLayout = () => {
   //     console.log(data)
   // }
 
-  const fetchData = async (sorter, city, selectedFilters, searchTerm = "") => {
-    console.log("fetchData:", sorter, city, selectedFilters, searchTerm)
+  const fetchData = async (sorter, city, selectedFilters, searchTerm = "", searchMode) => {
+    console.log("fetchData:", sorter, city, selectedFilters, searchTerm, searchMode)
     // 如果正在加载数据，则直接返回，避免重复请求
     if (loading) return
 
@@ -48,8 +48,8 @@ const WaterfallLayout = () => {
 
     try {
       // 调用 API 获取数据
-      console.log("city, selectedFilters, searchTerm", city, selectedFilters, searchTerm)
-      const newData = await $getTravelogs(city, selectedFilters, searchTerm)
+      console.log("city, selectedFilters, searchTerm", city, selectedFilters, searchTerm, searchMode)
+      const newData = await $getTravelogs(city, selectedFilters, searchTerm, searchMode)
       console.log("newData:", newData)
       const filteredNewData = city ? filterByCity(newData, city) : newData
       const filteredOldData = city ? filterByCity(data, city) : data
@@ -77,7 +77,7 @@ const WaterfallLayout = () => {
       const scrollThreshold = window.innerHeight * 0.8 // 在底部上方80%的位置触发加载
       if (!loading && window.innerHeight + window.scrollY >= document.body.offsetHeight - scrollThreshold) {
         console.log("handleScroll", sorter, city, selectedFilters, searchTerm)
-        fetchData(sorter, city, selectedFilters, searchTerm)
+        fetchData(sorter, city, selectedFilters, searchTerm, searchMode)
       }
     }
 
@@ -86,7 +86,7 @@ const WaterfallLayout = () => {
     // 当 data 的长度小于 10 时，也触发 fetchData 函数
     if (data.length < 10) {
       console.log("Data length less than 10, triggering fetchData")
-      fetchData(sorter, city, selectedFilters, searchTerm)
+      fetchData(sorter, city, selectedFilters, searchTerm, searchMode)
     }
 
     return () => window.removeEventListener("scroll", handleScroll)
@@ -119,7 +119,7 @@ const WaterfallLayout = () => {
   // 当筛选条件改变时进行数据筛选
   useEffect(() => {
     console.log("selectedFilters changed", selectedFilters)
-    fetchData(sorter, city, selectedFilters)
+    fetchData(sorter, city, selectedFilters, searchTerm, searchMode)
   }, [city, selectedFilters]) // 监听 city和selectedFilters 的变化，执行 fetchData
 
   const handleSortData = sorter => {
@@ -221,6 +221,7 @@ const WaterfallLayout = () => {
 
   return (
     <>
+      {/* antd mobile的下拉刷新仅支持列表，这里放弃下拉刷新 */}
       <div ref={masonryRef} className="waterfall-layout">
         <div className="waterfall-sizer"></div>
         <div className="waterfall-gutter"></div>
@@ -229,15 +230,12 @@ const WaterfallLayout = () => {
             <InfCard
               id={item.id}
               city={item.Location}
-              imageUrl={
-                item.image
-                  ? `${baseURL}images/` + item.image
-                  : "https://img1.baidu.com/it/u=1389873612,485301600&fm=253&app=120&size=w931&n=0&f=JPEG&fmt=auto?sec=1712595600&t=76261ab2a1585815f46c7b306c6f66e3"
-              }
+              imageUrl={item.image ? `${baseURL}images/` + item.image : { momo }}
               title={item.title}
               username={item.username}
               avatar={item.avatar}
-              likes={item.likes}
+              likesCount={item.likesCount}
+              avatarUrl={`${baseURL}getAvatar/${item.username}`}
             />
           </div>
         ))}

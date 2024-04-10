@@ -16,7 +16,8 @@
     background-image: url('https://img2.baidu.com/it/u=3984034305,2510110&fm=253&fmt=auto&app=120&f=JPEG?w=800&h=500');
     background-size: cover;
     opacity: 0.075;
-  }
+    pointer-events: none; /* 不响应鼠标事件 */
+  }  
   
   .content {
     display: flex;

@@ -1,7 +1,7 @@
 .horizontal-scroll-container {
-    width: 100%; /* 或者其他你想要的宽度 */
-    max-width: 100%; /* 或者其他你想要的最大宽度 */
-    overflow-x: auto; /* 当内容超出容器宽度时自动添加横向滚动条 */
-    white-space: nowrap; /* 确保内容不换行，从而保持横向滚动效果 */
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
   }
   

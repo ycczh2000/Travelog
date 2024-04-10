@@ -2,12 +2,14 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-05 16:18:15
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-07 20:31:49
+ * @LastEditTime: 2024-04-10 09:26:15
  * @FilePath: \frontend\src\pages\Detaillog\Detaillog.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, createContext, useContext } from "react"
 import { LeftOutline } from "antd-mobile-icons"
+import { FloatingBubble } from "antd-mobile"
+import { HeartOutline, HeartFill } from "antd-mobile-icons"
 import { useLocation, useParams } from "react-router-dom"
 import SwiperN from "../../components/swiper/swiper"
 import UserInfo from "../../components/UserInfo/UserInfo"
@@ -15,7 +17,9 @@ import Details from "../../components/Details/Details"
 import Content from "../../components/content/content"
 import Comment from "../../components/comment/comment"
 import { $getTravelogsByID } from "../../api/travelogApi"
+import Share from "social-share-react"
 import { baseURL } from "../../config/config"
+
 const Detaillog = () => {
   const { id } = useParams()
   const location = useLocation()
@@ -45,7 +49,7 @@ const Detaillog = () => {
   const [detailInfo, setDetailInfo] = useState({
     authorUID: "123456789",
     userAvatar: "https://zos.alipayobjects.com/rmsportal/AiyWuByWklrrUDlFignR.png",
-    userName: "用户名",
+    username: "用户名",
     lastEditTime: "2024-04-05 16:18:15",
   })
   const [commentInfo, setCommentInfo] = useState({
@@ -60,11 +64,9 @@ const Detaillog = () => {
       },
     ],
   })
-  // console.log('city:',city)
+
   useEffect(() => {
     const fetchData = async () => {
-      // 如果 logID 不为空，则额外获取数据
-      // if (logID) {
       // 发送fetch请求，获取其他数据
       try {
         const travelog = await $getTravelogsByID(id) // 使用 ID 调用 API 获取游记信息
@@ -77,7 +79,7 @@ const Detaillog = () => {
           tripNum: travelog.data.tripNum,
           tripDate: travelog.data.tripDate,
           tripBudget: travelog.data.tripBudget,
-          tripRate: travelog.data.tripRate,
+          tripRate: travelog.data.rate,
           tripWay: travelog.data.tripWay,
         })
         const prefixedImages = travelog.data.images.map(image => `${baseURL}images/` + image)
@@ -85,11 +87,9 @@ const Detaillog = () => {
         // setBannerList(travelog.data.images);
         setDetailInfo({
           authorUID: travelog.data.authorId,
-          userAvatar: "https://zos.alipayobjects.com/rmsportal/AiyWuByWklrrUDlFignR.png",
-          userName: "用户名",
+          username: travelog.data.username,
           lastEditTime: "2024-04-05 16:18:15",
         })
-        const author = await $getTravelogsByID(id)
       } catch (error) {
         console.error("Error fetching data:", error)
       }
@@ -98,11 +98,47 @@ const Detaillog = () => {
     fetchData() // 调用数据获取函数
   }, [])
 
+  const [liked, setLiked] = React.useState(false)
+  const [followed, setFollowed] = React.useState(false)
+  useEffect(() => {
+    // 检查 localStorage喜欢列表中是否存在为 {id} 的值
+    let cachedLikedList = JSON.parse(localStorage.getItem("cachedLikedList"))
+    if (!cachedLikedList) {
+      // 如果缓存列表不存在，则创建一个空数组并保存到 localStorage 中
+      cachedLikedList = []
+      localStorage.setItem("cachedLikedList", JSON.stringify(cachedLikedList))
+    } else if (cachedLikedList.includes(id)) {
+      // 如果缓存列表存在，并且包含当前 id，则设置 liked 为 true
+      setLiked(true)
+    }
+  }, [id])
+
+  const handleLiked = event => {
+    event.stopPropagation() // 阻止事件冒泡，防止触发父组件的 onClick,用于防止点击点赞时跳转到详情页
+    if (liked) {
+      // 如果已经点赞，则取消点赞
+      setLiked(false)
+      const cachedLikedList = JSON.parse(localStorage.getItem("cachedLikedList"))
+      if (cachedLikedList) {
+        // 找到相同 id 处，并删除该项
+        const updatedList = cachedLikedList.filter(itemId => itemId !== id)
+        localStorage.setItem("cachedLikedList", JSON.stringify(updatedList))
+        // 向后端发送取消点赞的请求
+      }
+    } else {
+      // 如果尚未点赞，则点赞
+      setLiked(true)
+      const cachedLikedList = JSON.parse(localStorage.getItem("cachedLikedList")) || []
+      // 将 id 添加到 cachedLikedList 中
+      localStorage.setItem("cachedLikedList", JSON.stringify([...cachedLikedList, id]))
+      // 向后端发送点赞的请求
+    }
+  }
   const handleGoBack = () => {
     window.history.go(-1) // 返回上一页面
   }
   return (
-    <div style={{ maxWidth: "100%", margin: "0 auto" }}>
+    <div style={{ width: "100%" }}>
       <button
         className="transparent-button left-button"
         onClick={handleGoBack}
@@ -112,7 +148,7 @@ const Detaillog = () => {
           fontSize: "1.2rem",
           fontWeight: "bold",
           fontFamily: "Arial, sans-serif",
-          color: "rgba(0, 0, 0, 0.7)",
+          color: "rgba(0, 0, 0, 0.9)",
           letterSpacing: "0.05em",
           position: "fixed",
           top: 0,
@@ -121,11 +157,32 @@ const Detaillog = () => {
         }}>
         <LeftOutline />
       </button>
+
       <SwiperN bannerList={bannerList} />
-      <UserInfo title={title} content={content} />
-      <Details detailInfo={detailInfo} />
+      <Details detailInfo={detailInfo} followed={followed} />
+      <UserInfo title={title} content={content} city={city} />
       <Content tripInfo={tripInfo} />
       <Comment commentInfo={commentInfo} />
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <Share
+          url={`http://localhost:3000/${id}`}
+          title={`分享生活点滴`}
+          disabled={["google", "facebook", "twitter"]}></Share>
+      </div>
+      <FloatingBubble
+        style={{
+          "--initial-position-bottom": "24px",
+          "--initial-position-right": "100px",
+          "--edge-distance": "24px",
+          "--background": "rgba(255, 255, 255, 0.8)",
+        }}
+        onClick={handleLiked}>
+        {liked ? (
+          <HeartFill fontSize="36px" color="#FF0000" />
+        ) : (
+          <HeartOutline color="var(--adm-color-danger)" fontSize="36px" />
+        )}
+      </FloatingBubble>
     </div>
   )
 }
