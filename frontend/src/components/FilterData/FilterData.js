@@ -1,6 +1,6 @@
 import React, { useContext,useState } from 'react';
 import { Selector, Rate } from 'antd-mobile';
-import { tripWays, tripNums, tripDates, tripBudgets } from './filterOptions';
+import { tripWays, tripNums, tripDates, tripBudgets } from '../../config/options';
 import {HomeContext} from "../../Context/HomeContext"
 
 const FilterData = () => {

@@ -13,16 +13,7 @@ import './SearchBar.css';
 import { LeftOutline, FireFill } from 'antd-mobile-icons'
 import LocalRecommendation from '../LocalRecommendation/LocalRecommendation';
 import { HomeContext } from "../../Context/HomeContext"
-
-// 模拟热搜词
-const HotSearches = ["热搜词1", "热搜词2", "热搜词3"];
-const searchArray = ['', '上海大学', '顾村公园', '钱伟长图书馆'];
-const hotSearchWords = ['热搜词1', '热搜词2', '热搜词3', '热搜词4', '热搜词5', '热搜词6', '热搜词7', '热搜词8'];
-const fireSearchWords = ['上海大学', '顾村公园'];
-const hotTravelogs = [{ title: '3小时速通上海大学', id: '661556cfa9879f1482323604' },
-{ title: '3小时速通上海大学', id: '661556cfa9879f1482323604' }, { title: '3小时速通上海大学', id: '661556cfa9879f1482323604' },
-{ title: '3小时速通上海大学', id: '661556cfa9879f1482323604' }, { title: '3小时速通上海大学', id: '661556cfa9879f1482323604' }]
-
+import {HotSearches, searchArray, hotSearchWords, fireSearchWords, hotTravelogs} from '../../config/mockData'
 
 const SearchBarComponent = () => {
     const { searchTerm, setSearchTerm, searchMode, setSearchMode } = useContext(HomeContext);
