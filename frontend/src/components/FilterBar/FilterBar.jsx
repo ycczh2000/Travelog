@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-11 02:05:50
+ * @LastEditTime: 2024-04-11 20:10:29
  * @FilePath: \frontend\src\components\FilterBar\FilterBar.jsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -18,7 +18,8 @@ import FilterData from '../FilterData/FilterData';
 
 
 const FilterBar = () => {
-    const { sorter, setSorter, city, setCity, selectedFilters, setSelectedFilters } = useContext(HomeContext);
+    const { sorter, setSorter, city, setCity, selectedFilters, setSelectedFilters,visible, setVisible,
+        modevisible, setModeVisible,seacrchPageVisible, setSeacrchPageVisible } = useContext(HomeContext);
     // const [sorter, setSorter] = useState('0');
     // const [city, setCity] = useState()
     // const [selectedFilters, setSelectedFilters] = useState({
@@ -28,12 +29,11 @@ const FilterBar = () => {
     //     tripBudget: null,
     //     tripRate: 0,
     // });
-    const [visible, setVisible] = useState(false)
+
     const ref = useRef(null)
     return (
         <div>
             <Popup
-            
               visible={visible}
               onMaskClick={() => {
                 console.log(selectedFilters)
@@ -108,6 +108,7 @@ const FilterBar = () => {
                 <Dropdown.Item key='more' title='更多筛选' onClick={() => {
                     ref.current?.close()
                     setVisible(true)
+                    setSeacrchPageVisible(false)
                 }}>
                 </Dropdown.Item>
             </Dropdown>

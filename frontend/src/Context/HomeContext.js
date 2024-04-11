@@ -24,9 +24,14 @@ export const HomeContextProvider = ({ children }) => {
     tripBudget: null,
     tripRate: 0,
   });
-
+  const [visible, setVisible] = useState(false)//首页fitlerBar筛选页是否显示
+  const [modevisible, setModeVisible] = useState(false);//选择搜索模式
+  const [seacrchPageVisible, setSeacrchPageVisible] = useState(false);//搜索页
   return (
-    <HomeContext.Provider value={{ sorter, setSorter, city, setCity, selectedFilters, setSelectedFilters,searchTerm, setSearchTerm,searchMode, setSearchMode }}>
+    <HomeContext.Provider value={{ sorter, setSorter, city, setCity, selectedFilters, 
+    setSelectedFilters,searchTerm, setSearchTerm,searchMode, setSearchMode,
+    visible, setVisible ,modevisible, setModeVisible,seacrchPageVisible, setSeacrchPageVisible
+    }}>
       {children}
     </HomeContext.Provider>
   );
