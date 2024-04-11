@@ -9,7 +9,6 @@
   width: 90%;
   flex-wrap: wrap;
   box-sizing: border-box;
-  /* background-image: url('your-background-image-url'); */
   background-size: cover;
   background-position: center;
   border-radius: 10px;
@@ -30,18 +29,18 @@
   background-size: cover;
   background-position: center;
   opacity: 0.1;
-  border-radius: inherit; /* 继承 .contain2 元素的边框半径 */
-  z-index: -1; /* 将伪元素置于 .contain2 元素下方 */
+  border-radius: inherit; 
+  z-index: -1; 
 }
 
 .imager {
-  width: 50px; /* 调整图像的宽度 */
-  height: 50px; /* 调整图像的高度 */
-  border-radius: 50%; /* 将图像设置为圆形 */
-  margin-right: 10px; /* 可选：调整图像与文本之间的间距 */
+  width: 50px; 
+  height: 50px; 
+  border-radius: 50%; 
+  margin-right: 10px; 
 }
 .info {
-  flex: 1 1 auto; /* flex-grow, flex-shrink, flex-basis */  
+  flex: 1 1 auto; 
   margin-right: 10px;
 }
 .button1 {

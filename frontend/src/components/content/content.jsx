@@ -36,7 +36,7 @@ const Content = ({tripInfo}) => {
       <h4>旅行体验</h4>
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         {tripInfo && tripInfo.tripRate != undefined ? (
-          <Rate allowHalf defaultValue={tripInfo.tripRate} />
+          <Rate allowHalf readOnly defaultValue={tripInfo.tripRate} />
         ) : (
           <p>该游记未提供评价</p>
         )}

@@ -105,13 +105,11 @@ const Detaillog = () => {
     if (!id)//id为空，说明并不是由服务端发送的数据，而是本地预览
       return
     // 检查 localStorage喜欢列表中是否存在为 {id} 的值
-    let cachedLikedList = JSON.parse(localStorage.getItem("cachedLikedList"))
-    if (!cachedLikedList) {
-      // 如果缓存列表不存在，则创建一个空数组并保存到 localStorage 中
-      cachedLikedList = []
-      localStorage.setItem("cachedLikedList", JSON.stringify(cachedLikedList))
-    } else if (cachedLikedList.includes(id)) {
-      // 如果缓存列表存在，并且包含当前 id，则设置 liked 为 true
+    let likedList = JSON.parse(localStorage.getItem("likedList"))
+    if (!likedList) {
+      likedList = []
+      localStorage.setItem("likedList", JSON.stringify(likedList))
+    } else if (likedList.includes(id)) {
       setLiked(true)
     }
   }, [id])
@@ -123,24 +121,22 @@ const Detaillog = () => {
     if (liked) {
       // 如果已经点赞，则取消点赞
       setLiked(false)
-      const cachedLikedList = JSON.parse(localStorage.getItem("cachedLikedList"))
-      if (cachedLikedList) {
-        // 找到相同 id 处，并删除该项
-        const updatedList = cachedLikedList.filter(itemId => itemId !== id)
-        localStorage.setItem("cachedLikedList", JSON.stringify(updatedList))
+      const likedList = JSON.parse(localStorage.getItem("likedList"))
+      if (likedList) {
+        const updatedList = likedList.filter(itemId => itemId !== id)
+        localStorage.setItem("likedList", JSON.stringify(updatedList))
         // 向后端发送取消点赞的请求
       }
     } else {
       // 如果尚未点赞，则点赞
       setLiked(true)
-      const cachedLikedList = JSON.parse(localStorage.getItem("cachedLikedList")) || []
-      // 将 id 添加到 cachedLikedList 中
-      localStorage.setItem("cachedLikedList", JSON.stringify([...cachedLikedList, id]))
+      const likedList = JSON.parse(localStorage.getItem("likedList")) || []
+      localStorage.setItem("likedList", JSON.stringify([...likedList, id]))
       // 向后端发送点赞的请求
     }
   }
   const handleGoBack = () => {
-    window.history.go(-1) // 返回上一页面
+    window.history.go(-1)
   }
   const handleShare = () => {
     setShareVisible(true)
