@@ -22,9 +22,6 @@ function App() {
       <UserContextProvider>
         <div className="app-container">
           <Routes>
-            {/* <CacheSwitch>
-            <CacheRoute exact path="/" component={Home} />
-          </CacheSwitch> */}
             <Route path="/home" element={<Home />}></Route>
             {/* <Route path="/travelogs/:id" element={<Detaillog />}></Route> */}
             <Route path="/travelogs/:id" element={<Detaillog />}></Route>
