@@ -98,12 +98,12 @@ export default function Task() {
       width: 500,
       render: (_, { title, _id }) => <a onClick={() => navigate(`${_id}`)}>{title}</a>,
     },
-    {
-      title: "最后修改时间",
-      dataIndex: "uploadDate",
-      ellipsis: true,
-      render: (_, { uploadDate }) => convertUTCToBeijingTime(uploadDate),
-    },
+    // {
+    //   title: "上传时间",
+    //   dataIndex: "uploadDate",
+    //   ellipsis: true,
+    //   render: (_, { uploadDate }) => convertUTCToBeijingTime(uploadDate),
+    // },
     {
       title: "创建时间",
       dataIndex: "createDate",

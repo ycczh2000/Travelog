@@ -76,6 +76,7 @@ adminUserSchema.statics.audit = async function (userId, travelogId, auditStatus,
       return { success: false, message: "游记不存在" }
     }
     travelog.auditDate = Date.now()
+    travelog.uploadDate = Date.now()
     travelog.auditorId = userId
     switch (auditStatus) {
       case "approved":
