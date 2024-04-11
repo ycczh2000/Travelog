@@ -33,7 +33,6 @@ const PreviewPage = () => {
   const editingData = combinedData.editingData;
   // console.log('文件列表:', fileList, '编辑数据:', editingData);
   const [liked, setLiked] = React.useState(false)
-  const [followed, setFollowed] = React.useState(false)
   const [title, setTitle] = useState("游记标题")
   const [content, setContent] = useState("游记内容")
   const [city, setCity] = useState([])
@@ -122,7 +121,7 @@ const PreviewPage = () => {
       </button>
 
       <SwiperN bannerList={bannerList} />
-      <Details detailInfo={detailInfo} followed={followed} />
+      <Details detailInfo={detailInfo} />
       <WaterMark
           fontColor="rgba(0, 0, 0, 0.08)"
           content={userName + '预览页'}
