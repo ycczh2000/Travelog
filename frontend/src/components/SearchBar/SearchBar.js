@@ -16,11 +16,10 @@ import { HomeContext } from "../../Context/HomeContext"
 import {HotSearches, searchArray, hotSearchWords, fireSearchWords, hotTravelogs} from '../../config/mockData'
 
 const SearchBarComponent = () => {
-    const { searchTerm, setSearchTerm, searchMode, setSearchMode } = useContext(HomeContext);
+    const { searchTerm, setSearchTerm, searchMode, setSearchMode,visible, setVisible,
+        modevisible, setModeVisible,seacrchPageVisible, setSeacrchPageVisible } = useContext(HomeContext);
     console.log('searchMode:', searchMode)
     const [searchInput, setSearchInput] = useState('');
-    const [visible, setVisible] = useState(false);
-    const [seacrchPageVisible, setSeacrchPageVisible] = useState(false);
 
     const options = [
         {
@@ -60,6 +59,7 @@ const SearchBarComponent = () => {
 
     const handleClickSearchBar = () => {// 点击搜索框时，展开搜索页视图
         // console.log('点击搜索框')
+        setVisible(false)
         setSeacrchPageVisible(true)
     }
     useEffect(() => {
@@ -96,15 +96,15 @@ const SearchBarComponent = () => {
                     whiteSpace: 'nowrap'//禁止换行
                 }}
                     onClick={() => {
-                        setVisible(true)
+                        setModeVisible(true)
                     }}>
                     {searchMode === 'title' ? '笔记' : (searchMode === 'user' ? '用户' : '笔记')}
                 </button>
                 <Cascader
                     options={options}
-                    visible={visible}
+                    visible={modevisible}
                     onClose={() => {
-                        setVisible(false)
+                        setModeVisible(false)
                     }}
                     // value={options}
                     onConfirm={(val) => {

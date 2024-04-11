@@ -2,13 +2,13 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-05 16:18:15
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-11 01:45:50
+ * @LastEditTime: 2024-04-11 20:25:52
  * @FilePath: \frontend\src\pages\Detaillog\Detaillog.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import React, { useState, useEffect, createContext, useContext } from "react"
 import { LeftOutline } from "antd-mobile-icons"
-import { FloatingBubble, Toast,WaterMark } from "antd-mobile"
+import { FloatingBubble, Toast,WaterMark,Button } from "antd-mobile"
 import { HeartOutline, HeartFill } from "antd-mobile-icons"
 import { CiPaperplane } from "react-icons/ci";
 import { useLocation, useParams } from "react-router-dom"
@@ -33,7 +33,6 @@ const PreviewPage = () => {
   const editingData = combinedData.editingData;
   // console.log('文件列表:', fileList, '编辑数据:', editingData);
   const [liked, setLiked] = React.useState(false)
-  const [followed, setFollowed] = React.useState(false)
   const [title, setTitle] = useState("游记标题")
   const [content, setContent] = useState("游记内容")
   const [city, setCity] = useState([])
@@ -51,9 +50,8 @@ const PreviewPage = () => {
   ])
   const [detailInfo, setDetailInfo] = useState({
     authorUID: "123456789",
-    userAvatar: "https://zos.alipayobjects.com/rmsportal/AiyWuByWklrrUDlFignR.png",
     username: "用户名",
-    lastEditTime: "2024-04-05 16:18:15",
+    createDate: "2024-04-05 16:18:15",
   })
   const [commentInfo, setCommentInfo] = useState({
     comments: [
@@ -78,7 +76,7 @@ const PreviewPage = () => {
       ...detailInfo,
       userAvatar: editingData.userAvatar,
       username: userName,
-      lastEditTime: '正在实时预览'
+      createDate: '正在实时预览'
     })
     setTripInfo({
       tripWay: editingData.tripWay,
@@ -123,9 +121,9 @@ const PreviewPage = () => {
       </button>
 
       <SwiperN bannerList={bannerList} />
-      <Details detailInfo={detailInfo} followed={followed} />
+      <Details detailInfo={detailInfo} />
       <WaterMark
-          fontColor="rgba(0, 0, 0, 0.05)"
+          fontColor="rgba(0, 0, 0, 0.08)"
           content={userName + '预览页'}
           gapX={12}
           gapY={24}
@@ -133,6 +131,18 @@ const PreviewPage = () => {
         />
       <UserInfo title={title} content={content} city={city} />
       <Content tripInfo={tripInfo} />
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: "1rem", margin: "1rem" }}>
+        {tripInfo.tripRate >= 2 && ( // 只有当rate大于2时才一键fork
+          <Button block size='small' color='primary' fill='outline' style={{ borderRadius: "20px" }}>
+            一键fork
+          </Button>
+        )}
+        {tripInfo.tripRate < 2 && ( // 只有当rate于2时显示一键避雷
+          <Button block size='small' color='danger' fill='outline' style={{ borderRadius: "20px" }}>
+            一键避雷
+          </Button>
+        )}
+      </div>
       <Comment commentInfo={commentInfo} />
       <FloatingBubble
         style={{

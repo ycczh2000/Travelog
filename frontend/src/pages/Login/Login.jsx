@@ -11,40 +11,53 @@ export default function Login() {
 
   useEffect(() => {
     const checkAutoLogin = async () => {
-      if (localStorage.getItem("token")) {
-        const result = await $login()
-        if (result.success) {
-          // console.log("token:",result.data.userId,result.data.username)
-          localStorage.setItem("UID", result.data.userId)
-          localStorage.setItem("userName", result.data.username)
-          setUID(result.data.userId)
-          setUserName(result.data.username)
-          Toast.show("自动登录成功")
-          window.location.href = "/home"
+      try {
+        if (localStorage.getItem("token")) {
+          const result = await $login()
+          if (result.success) {
+            localStorage.setItem("UID", result.data.userId)
+            localStorage.setItem("userName", result.data.username)
+            setUID(result.data.userId)
+            setUserName(result.data.username)
+            Toast.show("自动登录成功")
+            window.location.href = "/home"
+          } else {
+            Toast.show("自动登录失败：" + result.error)
+          }
         }
+      } catch (e) {
+        console.error("自动登录出错：", e)
+        Toast.show("自动登录出错：" + e.message)
       }
     }
     checkAutoLogin()
   }, [])
+  
 
   const onFinishHandle = async () => {
-    const values = form.getFieldsValue()
-    const result = await $login(values)
-    console.log(result)
-    if (result.success) {
-      result.data.token && localStorage.setItem("token", result.data.token)
-      Toast.show(result.message)
-      // console.log("token:",result.data.userId,result.data.username)
-      localStorage.setItem("UID", result.data.userId)
-      localStorage.setItem("userName", result.data.username)
-      setUID(result.data.userId)
-      setUserName(result.data.username)
-      console.log(UID, userName)
-      window.location.href = "/home"
-    } else {
-      Toast.show(result.message)
+    try {
+      const values = form.getFieldsValue()
+      const result = await $login(values)
+      console.log(result)
+      if (result.success) {
+        result.data.token && localStorage.setItem("token", result.data.token)
+        Toast.show(result.message)
+        // console.log("token:",result.data.userId,result.data.username)
+        localStorage.setItem("UID", result.data.userId)
+        localStorage.setItem("userName", result.data.username)
+        setUID(result.data.userId)
+        setUserName(result.data.username)
+        console.log(UID, userName)
+        window.location.href = "/home"
+      } else {
+        Toast.show(result.message)
+      }
+    } catch (error) {
+      console.error("登录出错：", error)
+      Toast.show("登录出错：" + error.message)
     }
   }
+  
 
   return (
     <>

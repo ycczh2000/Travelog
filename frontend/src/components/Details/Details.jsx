@@ -2,11 +2,11 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-05 16:17:38
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-10 02:10:12
+ * @LastEditTime: 2024-04-11 20:48:31
  * @FilePath: \frontend\src\components\Details\Details.jsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import React, { useContext } from 'react';
+import React, { useContext,useEffect } from 'react';
 import { Button, Toast } from 'antd-mobile'
 import "./Details.css"
 import { UserContext } from "../../Context/UserContext"
@@ -15,6 +15,16 @@ const Details = ({ detailInfo }) => {
   const [followed, setFollowed] = React.useState(false);
   const { userName } = useContext(UserContext)//自己账户的用户名
   // console.log('detailInfo:',detailInfo)
+  useEffect(() => {
+    const cachedFollowingList = JSON.parse(localStorage.getItem('cachedFollowingList'));
+    // 检查本地缓存中是否有值为 username 的数据
+    if (cachedFollowingList && cachedFollowingList.includes(detailInfo.username)) {
+      setFollowed(true);
+      // 执行相应的操作
+    } else {
+      setFollowed(false);
+    }
+  }, [detailInfo.username]);
   const handleFollowed = () => {
     if (userName === detailInfo.username) {
       Toast.show({
@@ -34,7 +44,7 @@ const Details = ({ detailInfo }) => {
         // 向后端发送取消关注的请求
         Toast.show({
           icon: 'success',
-          content: '关注成功',
+          content: '取消关注成功',
         })
       }
     } else {
@@ -46,7 +56,7 @@ const Details = ({ detailInfo }) => {
       // 向后端发送关注的请求
       Toast.show({
         icon: 'success',
-        content: '取消关注成功',
+        content: '关注成功',
       })
     };
 
@@ -56,7 +66,7 @@ const Details = ({ detailInfo }) => {
       <img className="imager" src={`http://localhost:8000/getAvatar/${detailInfo.username}`} alt="用户头像" />
       <div className="info">
         <h3>{detailInfo.username}</h3>
-        <p>最后编辑日期:{detailInfo.lastEditTime ? detailInfo.lastEditTime : '未知'}</p>
+        <p>{detailInfo.createDate ? detailInfo.createDate : '未知'}</p>
       </div>
       <Button
         className="button1"
