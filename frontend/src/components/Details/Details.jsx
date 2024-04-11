@@ -34,7 +34,7 @@ const Details = ({ detailInfo }) => {
         // 向后端发送取消关注的请求
         Toast.show({
           icon: 'success',
-          content: '关注成功',
+          content: '取消关注成功',
         })
       }
     } else {
@@ -46,7 +46,7 @@ const Details = ({ detailInfo }) => {
       // 向后端发送关注的请求
       Toast.show({
         icon: 'success',
-        content: '取消关注成功',
+        content: '关注成功',
       })
     };
 
@@ -56,7 +56,7 @@ const Details = ({ detailInfo }) => {
       <img className="imager" src={`http://localhost:8000/getAvatar/${detailInfo.username}`} alt="用户头像" />
       <div className="info">
         <h3>{detailInfo.username}</h3>
-        <p>最后编辑日期:{detailInfo.lastEditTime ? detailInfo.lastEditTime : '未知'}</p>
+        <p>笔记创建日期:{detailInfo.lastEditTime ? detailInfo.lastEditTime : '未知'}</p>
       </div>
       <Button
         className="button1"
