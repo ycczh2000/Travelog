@@ -2,17 +2,17 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-11 21:45:32
+ * @LastEditTime: 2024-04-11 22:15:33
  * @FilePath: \Travelog\frontend\src\pages\Home\Home.jsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 // src/pages/Home.js
-import React, { createContext, useEffect, useState } from 'react';
+import React from 'react';
 import SearchBarComponent from '../../components/SearchBar/SearchBar';
-import LocalRecommendation from '../../components/LocalRecommendation/LocalRecommendation';
+// import LocalRecommendation from '../../components/LocalRecommendation/LocalRecommendation';
 import FilterBar from '../../components/FilterBar/FilterBar';
 import WaterfallLayout from '../../components/WaterfallLayout/WaterfallLayout';
-import { FloatingBubble, Dialog } from 'antd-mobile'
+import { FloatingBubble} from 'antd-mobile'
 import { IoMdRocket } from "react-icons/io";
 import {HomeContextProvider} from "../../Context/HomeContext"
 

@@ -5,14 +5,6 @@ import {HomeContext} from "../../Context/HomeContext"
 
 const FilterData = () => {
     const {  sorter, setSorter, city, setCity, selectedFilters, setSelectedFilters } = useContext(HomeContext);
-    // const [resetKey, setResetKey] = useState(0); // 用于触发组件重新渲染的状态
-    // const [selectedFilters, setSelectedFilters] = useState({
-    //     tripWay: null,
-    //     tripNum: null,
-    //     tripDate: null,
-    //     tripBudget: null,
-    //     tripRate: 0,
-    // });
 
     const handleReset = () => {
         console.log('重置按钮点击');
@@ -74,10 +66,7 @@ const FilterData = () => {
                             ...prevFilters,
                             tripNum: arr.length > 0 ? arr : null
                         }));
-                        // console.log(arr, extend.items);
-                        // console.log(selectedFilters);
                     }}
-                // disabled={resetClicked}
                 />
             </div>
             <div style={{ marginBottom: '20px' }}>
@@ -97,10 +86,7 @@ const FilterData = () => {
                             ...prevFilters,
                             tripDate: arr.length > 0 ? arr : null
                         }));
-                        // console.log(arr, extend.items);
-                        // console.log(selectedFilters);
                     }}
-                // disabled={resetClicked}
                 />
             </div>
             <div style={{ marginBottom: '20px' }}>
@@ -120,10 +106,7 @@ const FilterData = () => {
                             ...prevFilters,
                             tripBudget: arr.length > 0 ? arr : null
                         }));
-                        // console.log(arr, extend.items);
-                        // console.log(selectedFilters);
                     }}
-                // disabled={resetClicked}
                 />
             </div>
             <div style={{ marginBottom: '20px' }}>
@@ -135,8 +118,6 @@ const FilterData = () => {
                             ...prevFilters,
                             tripRate: val > 0 ? val : null
                         }));
-                        // console.log(val);
-                        // console.log(selectedFilters);
                     }}
                      />
             </div>

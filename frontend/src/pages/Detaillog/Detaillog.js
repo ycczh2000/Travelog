@@ -2,11 +2,11 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-05 16:18:15
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-11 19:52:14
+ * @LastEditTime: 2024-04-11 22:07:49
  * @FilePath: \frontend\src\pages\Detaillog\Detaillog.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import React, { useState, useEffect, createContext, useContext } from "react"
+import React, { useState, useEffect} from "react"
 import { LeftOutline } from "antd-mobile-icons"
 import { FloatingBubble, Popup, Button } from "antd-mobile"
 import { HeartOutline, HeartFill } from "antd-mobile-icons"
@@ -24,12 +24,6 @@ import { baseURL } from "../../config/config"
 const Detaillog = () => {
   const { id } = useParams()
   const location = useLocation()
-  // const queryParams = new URLSearchParams(location.search);
-  // console.log("logID:", logID)
-  // const title = queryParams.get('title');
-  // const content = queryParams.get('content');
-  // const city = queryParams.get('city')?.split(',');
-  // const tripInfo = JSON.parse(queryParams.get('tempTripInfo'));
   const [shareVisible, setShareVisible] = React.useState(false)
   const [liked, setLiked] = React.useState(false)
   const [followed, setFollowed] = React.useState(false)

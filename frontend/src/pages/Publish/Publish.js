@@ -10,11 +10,11 @@
 
 import React, { useState, useRef, useEffect } from "react"
 import "./Publish.css"
-import ImageUpload, { getFileList } from "../../components/ImageUpload/ImageUpload"
-import { useParams,useNavigate } from "react-router-dom"
+import ImageUpload from "../../components/ImageUpload/ImageUpload"
+import { useParams, useNavigate } from "react-router-dom"
 import Editing from "../../components/Editing/Editing"
 import { LeftOutline } from "antd-mobile-icons"
-import { Button, Modal, Toast, Dialog } from "antd-mobile"
+import { Button, Toast, Dialog } from "antd-mobile"
 import { DownlandOutline, EyeOutline } from "antd-mobile-icons"
 import { sendTraveLogToServer } from "../../api/userApi"
 import {
@@ -146,9 +146,6 @@ const Publish = () => {
       return
     }
     const result1 = await $updateEditTravelog({ editData: editingData, editId: editId, status: status })
-    // const result = await $publishEditTravelog({ editId: editId })
-    // if (result1.status === 'success') {
-    // 如果第一个请求成功，则发送第二个请求，并等待结果
     const result2 = await $publishEditTravelog({ editId: editId })
     console.log("handlePublishClick2 result2:", result2)
     // }
@@ -162,8 +159,6 @@ const Publish = () => {
     } else {
       Toast.show({ content: "发布失败", position: "bottom" })
     }
-    // const result = await $publishEditTravelog({ editId: editId })
-    // console.log("handlePublishClick2 result:", result)
   }
 
   const handleUpdateClick = async () => {
@@ -182,31 +177,31 @@ const Publish = () => {
       })
       return
     }
-    try{
-    let timer;
-    const timeoutPromise = new Promise((resolve, reject) => {
-      timer = setTimeout(() => {
-        reject(new Error("连接超时"));
-      }, 5000); // 设置超时时间，为 5 秒
-    });
-    const result1 = await $updateEditTravelog({ editData: editingData, editId: editId, status: status });
-    if (!result1.success) {
-      throw new Error("在服务端发送笔记前保存失败");
+    try {
+      let timer;
+      const timeoutPromise = new Promise((resolve, reject) => {
+        timer = setTimeout(() => {
+          reject(new Error("连接超时"));
+        }, 5000); // 设置超时时间，为 5 秒
+      });
+      const result1 = await $updateEditTravelog({ editData: editingData, editId: editId, status: status });
+      if (!result1.success) {
+        throw new Error("在服务端发送笔记前保存失败");
+      }
+      const result = await $updateTargetTravelog({ editId: editId })
+      if (!result.success) {
+        throw new Error("在服务端发送笔记失败");
+      }
+      if (result.success) {
+        clearTimeout(timer);
+        setTimeout(() => {
+          window.location.href = `/mytravelog`
+        }, 1000)
+      }
     }
-    const result = await $updateTargetTravelog({ editId: editId })
-    if(!result.success){
-      throw new Error("在服务端发送笔记失败");
-    }
-    if (result.success) {
-      clearTimeout(timer);
-      setTimeout(() => {
-        window.location.href = `/mytravelog`
-      }, 1000)
-    }
-  }
     catch (error) {
       console.error("Error:", error);
-      Toast.show({ content: {error}, position: "bottom" })
+      Toast.show({ content: { error }, position: "bottom" })
       return;
     }
   }
@@ -237,12 +232,11 @@ const Publish = () => {
     window.history.go(-1) // 返回上一页面
   }
 
-  const handlePreviewClick =async () => {
+  const handlePreviewClick = async () => {
     await handleSaveDraftClick()
     const Data = editingRef.current.getEditingData()
-    editingData.rate=Data.rate
+    editingData.rate = Data.rate
     console.log("handlePreviewClick", editingData)
-    // const result1 = await $updateEditTravelog({ editData: editingData, editId: editId, status: status });//在预览前，先保存
     const combinedData = {
       fileList: fileList,
       editingData: editingData
@@ -252,7 +246,6 @@ const Publish = () => {
   return (
     <div style={{ margin: "10px" }}>
       {" "}
-      {/* 添加外边距 */}
       <div>
         <Button style={{ background: "transparent", border: "none" }} onClick={handleGoBack}>
           <LeftOutline />

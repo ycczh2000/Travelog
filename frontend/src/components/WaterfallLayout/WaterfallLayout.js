@@ -121,12 +121,12 @@ const WaterfallLayout = () => {
       newData = shuffleArray(newData)
     } else if (sorter == 1) {
       console.log("is 2")
-      // 根据 rate 降序排序
-      newData.sort((a, b) => b.rate - a.rate)
-    } else if (sorter == 2) {
-      console.log("is 3")
       // 根据 rate 升序排序
       newData.sort((a, b) => a.rate - b.rate)
+    } else if (sorter == 2) {
+      console.log("is 3")
+      // 根据 rate 降序排序
+      newData.sort((a, b) => b.rate - a.rate)
     }
     // 更新 data 状态
     console.log("old data:", data)
@@ -139,13 +139,9 @@ const WaterfallLayout = () => {
     let currentIndex = array.length,
       temporaryValue,
       randomIndex
-    // 当数组中仍有元素待洗牌时...
     while (0 !== currentIndex) {
-      // 随机选取一个剩余元素...
       randomIndex = Math.floor(Math.random() * currentIndex)
       currentIndex -= 1
-
-      // 并将其与当前元素交换位置。
       temporaryValue = array[currentIndex]
       array[currentIndex] = array[randomIndex]
       array[randomIndex] = temporaryValue

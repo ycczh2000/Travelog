@@ -6,13 +6,12 @@
  * @FilePath: \frontend\src\components\FilterBar\FilterBar.jsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import React, {  useContext,useState, useRef } from 'react';
+import React, {  useContext, useRef } from 'react';
 import './FilterBar.css';
 import { Dropdown, CascaderView,Popup } from 'antd-mobile'
 import { ArrowDownCircleOutline, DownOutline } from 'antd-mobile-icons'
 import {HomeContext} from "../../Context/HomeContext"
 
-// import { DropdownRef } from 'antd-mobile/es/components/dropdown'
 import { locations, travelogSorters } from '../../config/options'
 import FilterData from '../FilterData/FilterData';
 
@@ -44,8 +43,8 @@ const FilterBar = () => {
                     key='sorter'
                     title={
                         sorter === '0' ? '推荐排序' :
-                            sorter === '1' ? '评分降序' :
-                                sorter === '2' ? '评分升序' :
+                            sorter === '1' ? '评分升序' :
+                                sorter === '2' ? '评分降序' :
                                     '排序方式'
                     }
                     arrow={<ArrowDownCircleOutline />}

@@ -1,9 +1,9 @@
 import React, { useState } from "react"
 
-import { ImageUploader, Space, Toast, Dialog, Button, Image } from "antd-mobile"
+import { ImageUploader, Button, Image } from "antd-mobile"
 import { PictureOutline } from "antd-mobile-icons"
 import styles from "./AvatarUpload.module.scss"
-import { $uploadAvatar, $getAvatar } from "../../api/userApi"
+import { $uploadAvatar} from "../../api/userApi"
 import { baseURL } from "../../config/config"
 //纯测试组件，用于测试头像与图片上传功能
 export default function AvatarUpload() {
