@@ -2,13 +2,13 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-05 16:18:15
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-11 01:45:50
+ * @LastEditTime: 2024-04-11 18:42:25
  * @FilePath: \frontend\src\pages\Detaillog\Detaillog.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import React, { useState, useEffect, createContext, useContext } from "react"
 import { LeftOutline } from "antd-mobile-icons"
-import { FloatingBubble, Toast,WaterMark } from "antd-mobile"
+import { FloatingBubble, Toast,WaterMark,Button } from "antd-mobile"
 import { HeartOutline, HeartFill } from "antd-mobile-icons"
 import { CiPaperplane } from "react-icons/ci";
 import { useLocation, useParams } from "react-router-dom"
@@ -133,6 +133,18 @@ const PreviewPage = () => {
         />
       <UserInfo title={title} content={content} city={city} />
       <Content tripInfo={tripInfo} />
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: "1rem", margin: "1rem" }}>
+        {tripInfo.tripRate >= 2 && ( // 只有当rate大于2时才一键fork
+          <Button block size='small' color='primary' fill='outline' style={{ borderRadius: "20px" }}>
+            一键fork
+          </Button>
+        )}
+        {tripInfo.tripRate < 2 && ( // 只有当rate于2时显示一键避雷
+          <Button block size='small' color='danger' fill='outline' style={{ borderRadius: "20px" }}>
+            一键避雷
+          </Button>
+        )}
+      </div>
       <Comment commentInfo={commentInfo} />
       <FloatingBubble
         style={{

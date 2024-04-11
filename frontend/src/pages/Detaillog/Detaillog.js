@@ -2,13 +2,13 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-05 16:18:15
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-11 00:46:47
+ * @LastEditTime: 2024-04-11 18:38:30
  * @FilePath: \frontend\src\pages\Detaillog\Detaillog.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import React, { useState, useEffect, createContext, useContext } from "react"
 import { LeftOutline } from "antd-mobile-icons"
-import { FloatingBubble, Popup } from "antd-mobile"
+import { FloatingBubble, Popup, Button } from "antd-mobile"
 import { HeartOutline, HeartFill } from "antd-mobile-icons"
 import { CiPaperplane } from "react-icons/ci";
 import { useLocation, useParams } from "react-router-dom"
@@ -71,7 +71,7 @@ const Detaillog = () => {
     const fetchData = async () => {
       // 发送fetch请求，获取其他数据
       try {
-        if(!id)
+        if (!id)
           return
         const travelog = await $getTravelogsByID(id) // 使用 ID 调用 API 获取游记信息
         console.log("travelog:", travelog)
@@ -103,7 +103,7 @@ const Detaillog = () => {
   }, [])
 
   useEffect(() => {
-    if(!id)//id为空，说明并不是由服务端发送的数据，而是本地预览
+    if (!id)//id为空，说明并不是由服务端发送的数据，而是本地预览
       return
     // 检查 localStorage喜欢列表中是否存在为 {id} 的值
     let cachedLikedList = JSON.parse(localStorage.getItem("cachedLikedList"))
@@ -119,7 +119,7 @@ const Detaillog = () => {
 
   const handleLiked = event => {
     event.stopPropagation() // 阻止事件冒泡，防止触发父组件的 onClick,用于防止点击点赞时跳转到详情页
-    if(!id)//id为空，说明并不是由服务端发送的数据，而是本地预览
+    if (!id)//id为空，说明并不是由服务端发送的数据，而是本地预览
       return
     if (liked) {
       // 如果已经点赞，则取消点赞
@@ -184,11 +184,23 @@ const Detaillog = () => {
         }}>
         <CiPaperplane style={{ fontSize: "1.8rem" }} />
       </button>
-      <SwiperN bannerList={bannerList} />
-      <Details detailInfo={detailInfo} followed={followed} />
-      <UserInfo title={title} content={content} city={city} />
-      <Content tripInfo={tripInfo} />
-      <Comment commentInfo={commentInfo} />
+      <SwiperN bannerList={bannerList} />      {/* 走马灯图片 */}
+      <Details detailInfo={detailInfo} followed={followed} />      {/* 作者信息 */}
+      <UserInfo title={title} content={content} city={city} />     {/* 标题,正文,旅行地点 */}
+      <Content tripInfo={tripInfo} />   {/* 旅行信息 */}
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: "1rem", margin: "1rem" }}>
+        {tripInfo.tripRate >= 2 && ( // 只有当rate大于2时才一键fork
+          <Button block size='small' color='primary' fill='outline' style={{ borderRadius: "20px" }}>
+            一键fork
+          </Button>
+        )}
+          {tripInfo.tripRate < 2 && ( // 只有当rate于2时显示一键避雷
+          <Button block size='small' color='danger' fill='outline' style={{ borderRadius: "20px" }}>
+            一键避雷
+          </Button>
+        )}
+      </div>
+      <Comment commentInfo={commentInfo} />   {/* 评论区 */}
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
         <Share
           url={`http://localhost:3000/${id}`}
@@ -219,10 +231,10 @@ const Detaillog = () => {
         }}
         bodyStyle={{ height: '40vh' }}
       >
-        <div style={{marginTop:'50px', display: "flex", justifyContent: "center", alignItems: "center", fontSize: "1.2rem", fontWeight: "bold", color: "black", textTransform: "uppercase" }}>
+        <div style={{ marginTop: '50px', display: "flex", justifyContent: "center", alignItems: "center", fontSize: "1.2rem", fontWeight: "bold", color: "black", textTransform: "uppercase" }}>
           {title}</div>
-        <Details detailInfo={detailInfo}/>
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: "1rem"}}>
+        <Details detailInfo={detailInfo} />
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: "1rem" }}>
           <Share
             url={`http://localhost:3000/${id}`}
             title={`分享生活点滴`}
