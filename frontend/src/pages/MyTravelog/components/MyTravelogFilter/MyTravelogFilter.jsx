@@ -2,18 +2,16 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-08 20:00:33
+ * @LastEditTime: 2024-04-11 22:08:43
  * @FilePath: \frontend\src\pages\MyTravelog\components\MyTravelogFilter\MyTravelogFilter.jsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import React, { useState, useContext } from "react"
-import { Dropdown, Radio, Space } from "antd-mobile"
+import React, {useContext } from "react"
+import { Dropdown, Radio} from "antd-mobile"
 import styles from "./MyTravelogFilter.module.scss"
 import { UserSpaceContent } from "../../UserSpaceContent"
 export default function MyTravelogHeader() {
   const { filter, setFilter, sorter, setSorter } = useContext(UserSpaceContent)
-  // const [filter, setFilter] = useState("all")
-  // const [sorter, setSorter] = useState("new")
   const handleFilterChange = (value) => {
     setFilter(value)
   }

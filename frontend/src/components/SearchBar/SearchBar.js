@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-10 20:24:50
+ * @LastEditTime: 2024-04-11 22:04:25
  * @FilePath: \frontend\src\components\SearchBar\SearchBar.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -53,12 +53,11 @@ const SearchBarComponent = () => {
         }, 5000); // 每5秒切换一次 placeholder
 
         return () => {
-            clearInterval(intervalId); // 清除定时器
+            clearInterval(intervalId);
         };
     }, []);
 
     const handleClickSearchBar = () => {// 点击搜索框时，展开搜索页视图
-        // console.log('点击搜索框')
         setVisible(false)
         setSeacrchPageVisible(true)
     }
@@ -72,7 +71,6 @@ const SearchBarComponent = () => {
             /* 背景图片路径 */
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            // filter: 'blur(5px) brightness(0.7)', /* 添加毛玻璃特效 */
         }}>
             <div className="search-bar-header">
                 <button className="transparent-button left-button" style={{
@@ -93,7 +91,7 @@ const SearchBarComponent = () => {
                     marginLeft: '0.06rem',
                     color: '#fff',
                     letterSpacing: '0.05em',
-                    whiteSpace: 'nowrap'//禁止换行
+                    whiteSpace: 'nowrap'
                 }}
                     onClick={() => {
                         setModeVisible(true)
@@ -113,8 +111,8 @@ const SearchBarComponent = () => {
                     onSelect={(val, extend) => {
                         console.log('onSelect', val, extend.items)
                     }}
-                />
-                {/* 返回按钮 */}
+                />{/* 分享按钮 */}
+                
                 <SearchBar
                     /* 由于react渲染机制问题，每次搜索框placeholder变化时，都会报出Warning: Encountered two children with the same key
                     这个警告暂时无法解决
@@ -129,9 +127,6 @@ const SearchBarComponent = () => {
                     onChange={(value) => {
                         setSearchInput(value)//只修改搜索输入，实际搜索词按搜索按钮后更新
                     }}
-                    // onBlur={() => {
-                    //     setSeacrchPageVisible(false);   
-                    // }}
                     onClear={() => {
                         setSearchInput('');
                         setSearchTerm('');// 清除搜索词和搜索输入
@@ -144,7 +139,7 @@ const SearchBarComponent = () => {
                             setSeacrchPageVisible(false);
                         } else {
                             setSearchInput(searchArray[placeholderIndex]);
-                            setSearchTerm(searchArray[placeholderIndex]); // 清除搜索词和搜索输入
+                            setSearchTerm(searchArray[placeholderIndex]); 
                             setSeacrchPageVisible(false);
                         }
                     }}
@@ -158,7 +153,7 @@ const SearchBarComponent = () => {
                         marginLeft: '0.06rem',
                         color: '#fff',
                         letterSpacing: '0.05em',
-                        whiteSpace: 'nowrap'//禁止换行 
+                        whiteSpace: 'nowrap'
                     }}
                     onClick={() => {
                         if (searchInput !== '') {
@@ -168,14 +163,13 @@ const SearchBarComponent = () => {
                             setSearchTerm(searchArray[placeholderIndex]);
                             setSearchInput(searchArray[placeholderIndex]);
                         }
-                        // console.log(searchTerm, searchInput);
                     }}
                 >
                     搜索
                 </button>{/* 搜索按钮 */}
             </div>
             <div className="hot-searches-container">
-                {searchTerm === '' && ( // 使用条件语句判断是否显示热搜标签
+                {searchTerm === '' && ( // 判断是否显示热搜标签(当处于搜索状态时，隐藏热搜标签)
                     <div className="hot-searches">
                         <div className="hot-searches-title">当前热搜：
                             <div className="hot-searches-tags">
@@ -260,7 +254,7 @@ const SearchBarComponent = () => {
                     </div>
                     <hr style={{ margin: '20px 0' }} />
                     <div className="ranking">
-                        {/* 这里是排行榜内容 */}
+                        {/* 排行榜内容 */}
                         <List header='旅行笔记热搜排行榜'>
                             {hotTravelogs.map((travelog, index) => (
                                 <List.Item key={travelog.id} style={{fontSize:'14px'}} onClick={() => {

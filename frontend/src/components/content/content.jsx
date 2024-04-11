@@ -7,18 +7,11 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import React from 'react';  
-import { Rate,Card} from 'antd-mobile'
+import { Rate} from 'antd-mobile'
 import './content.css'; 
   
 const Content = ({tripInfo}) => { 
   console.log("content:",tripInfo)
-  // const tripInfo ={
-  //   tripWay: null,
-  //   tripNum: null,
-  //   tripDate: null,
-  //   tripBudget: null,
-  //   tripRate: 0,
-  // };
   return (
     <div className="contentWrapper">
       <div className="headerRow">
@@ -36,7 +29,7 @@ const Content = ({tripInfo}) => {
       <h4>旅行体验</h4>
       <div style={{ display: 'flex', justifyContent: 'center' }}>
         {tripInfo && tripInfo.tripRate != undefined ? (
-          <Rate allowHalf defaultValue={tripInfo.tripRate} />
+          <Rate allowHalf readOnly defaultValue={tripInfo.tripRate} />
         ) : (
           <p>该游记未提供评价</p>
         )}

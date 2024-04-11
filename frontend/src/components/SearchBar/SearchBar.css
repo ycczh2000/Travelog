@@ -79,13 +79,9 @@
 
 .hot-search-words {
     display: flex;
-    flex-wrap: wrap; /* 按钮自动换行 */
+    flex-wrap: wrap;
 }
 
 .hot-search-words Button {
     margin: 5px;
-}
-
-.ranking {
-    /* 这里是排行榜的样式 */
 }

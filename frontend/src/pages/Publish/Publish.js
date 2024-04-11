@@ -132,9 +132,6 @@ const Publish = () => {
       return
     }
     const result1 = await $updateEditTravelog({ editData: editingData, editId: editId, status: status })
-    // const result = await $publishEditTravelog({ editId: editId })
-    // if (result1.status === 'success') {
-    // 如果第一个请求成功，则发送第二个请求，并等待结果
     const result2 = await $publishEditTravelog({ editId: editId })
     console.log("$updateEditTravelog result2:", result2)
     console.log("$publishEditTravelog:", result1)
@@ -216,7 +213,7 @@ const Publish = () => {
   }
 
   const handleGoBack = () => {
-    window.history.go(-1) // 返回上一页面
+    window.history.go(-1)
   }
 
   const handlePreviewClick = async () => {

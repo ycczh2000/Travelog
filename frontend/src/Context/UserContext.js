@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-07 00:11:31
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-10 00:43:37
+ * @LastEditTime: 2024-04-11 21:35:25
  * @FilePath: \frontend\src\Context\UserContext.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -17,8 +17,8 @@ export const UserContextProvider = ({ children }) => {
   const [userName, setUserName] = useState('');
   const [likedList, setLikedList] = useState([]);
   const [followingList, setFollowingList] = useState([]);
-  const [historyList, setHistoryList] = useState([]);// 历史记录状态
-  // 在组件挂载时从缓存中读取初始值
+  const [historyList, setHistoryList] = useState([]);// TODO历史记录状态(未完成功能)
+
   useEffect(() => {
     const cachedUID = localStorage.getItem('UID');
     const cachedUserName = localStorage.getItem('userName');
@@ -48,7 +48,7 @@ export const UserContextProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('UID', UID);
     localStorage.setItem('userName', userName);
-  }, [UID, userName]); // 这里传入 UID 和 userName 作为依赖，当它们发生变化时保存到缓存
+  }, [UID, userName]);
 
   return (
     <UserContext.Provider value={{ UID, setUID, userName, setUserName}}>

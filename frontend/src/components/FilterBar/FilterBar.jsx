@@ -2,17 +2,16 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-11 20:10:29
+ * @LastEditTime: 2024-04-11 21:47:45
  * @FilePath: \frontend\src\components\FilterBar\FilterBar.jsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import React, {  useContext,useState, useRef } from 'react';
+import React, {  useContext, useRef } from 'react';
 import './FilterBar.css';
 import { Dropdown, CascaderView,Popup } from 'antd-mobile'
 import { ArrowDownCircleOutline, DownOutline } from 'antd-mobile-icons'
 import {HomeContext} from "../../Context/HomeContext"
 
-// import { DropdownRef } from 'antd-mobile/es/components/dropdown'
 import { locations, travelogSorters } from '../../config/options'
 import FilterData from '../FilterData/FilterData';
 
@@ -20,15 +19,6 @@ import FilterData from '../FilterData/FilterData';
 const FilterBar = () => {
     const { sorter, setSorter, city, setCity, selectedFilters, setSelectedFilters,visible, setVisible,
         modevisible, setModeVisible,seacrchPageVisible, setSeacrchPageVisible } = useContext(HomeContext);
-    // const [sorter, setSorter] = useState('0');
-    // const [city, setCity] = useState()
-    // const [selectedFilters, setSelectedFilters] = useState({
-    //     tripWay: null,
-    //     tripNum: null,
-    //     tripDate: null,
-    //     tripBudget: null,
-    //     tripRate: 0,
-    // });
 
     const ref = useRef(null)
     return (
@@ -53,8 +43,8 @@ const FilterBar = () => {
                     key='sorter'
                     title={
                         sorter === '0' ? '推荐排序' :
-                            sorter === '1' ? '评分降序' :
-                                sorter === '2' ? '评分升序' :
+                            sorter === '1' ? '评分升序' :
+                                sorter === '2' ? '评分降序' :
                                     '排序方式'
                     }
                     arrow={<ArrowDownCircleOutline />}
@@ -84,7 +74,7 @@ const FilterBar = () => {
                             <div
                                 style={{ width: '100%', height: '30px', borderRadius: '15px 0 0 15px', background: 'white', textAlign: 'center', lineHeight: '30px', cursor: 'pointer', border: '1px solid #ccc' }}
                                 onClick={() => {
-                                    setCity(''); // 设置城市为空值
+                                    setCity([]); // 设置城市为空值
                                     console.log('重置按钮点击');
                                     ref.current?.close()
                                 }}

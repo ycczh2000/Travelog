@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, onChange, forwardRef, useImperativeHandle } from "react"
 import "./Editing.css"
-import { Card, Dropdown, Toast, Button, Radio, Space, Tag, Checkbox, Cascader, Rate } from "antd-mobile"
-import { ArrowDownCircleOutline, DownOutline } from "antd-mobile-icons"
+import { Card, Dropdown, Toast, Button, Radio, Space, Checkbox, Cascader, Rate } from "antd-mobile"
+import { DownOutline } from "antd-mobile-icons"
 import { options } from "./cityData"
 
 const Editing = forwardRef((props, ref) => {
@@ -32,7 +32,6 @@ const Editing = forwardRef((props, ref) => {
       setIsPublic(isPublic || true)
     }
     handleChangeRate(props.editingData.rate||props.editingData.tripRate||5)
-    console.log('rate:',rate)
   }, [props.editingData])
 
   useImperativeHandle(ref, () => ({
@@ -100,16 +99,12 @@ const Editing = forwardRef((props, ref) => {
   const handleAddTopicClick = () => {
     setContent(content + "#")
     const textarea = document.getElementById("contentTextarea")
-    // textarea.focus();
-    // textarea.setSelectionRange(content.length + 1, content.length + 1);
   }
 
   // 添加@用户按钮点击事件
   const handleMentionUserClick = () => {
     setContent(content + "@")
     const textarea = document.getElementById("contentTextarea")
-    // textarea.focus();
-    // textarea.setSelectionRange(content.length + 1, content.length + 1);
   }
   // 勾选是否公开函数
   const handlePublicChange = () => {
@@ -268,7 +263,7 @@ const Editing = forwardRef((props, ref) => {
       {/* 正文输入区 */}
       <div style={{ margin: "5px", marginTop: "0px" }}>
         <textarea
-          ref={textareaRef} // 引用
+          ref={textareaRef} 
           value={content}
           onChange={handleContentChange}
           placeholder="添加正文"

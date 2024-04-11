@@ -1,6 +1,6 @@
 // 这里用于存放网页项目中用到的选项
 //editing组件引用的cityData不知道为什么从这导入会报错，所以更改locations时请同时更改components/editing/cityData.ts
-//editing页使用的下拉单选组件组件并不依赖这里的数值提供，所有更改tripXXs时请同时更改components/editing/editing.js下的对应Radio
+//editing页使用的下拉单选组件组件,并不依赖这里的数值提供，所有更改tripXXs时请同时更改components/editing/editing.js下的对应Radio
 export const locations = [
     {
       label: '浙江',

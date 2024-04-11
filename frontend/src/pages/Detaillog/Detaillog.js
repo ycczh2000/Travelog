@@ -2,11 +2,11 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-05 16:18:15
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-11 19:52:14
+ * @LastEditTime: 2024-04-11 22:07:49
  * @FilePath: \frontend\src\pages\Detaillog\Detaillog.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import React, { useState, useEffect, createContext, useContext } from "react"
+import React, { useState, useEffect} from "react"
 import { LeftOutline } from "antd-mobile-icons"
 import { FloatingBubble, Popup, Button } from "antd-mobile"
 import { HeartOutline, HeartFill } from "antd-mobile-icons"
@@ -24,12 +24,6 @@ import { baseURL } from "../../config/config"
 const Detaillog = () => {
   const { id } = useParams()
   const location = useLocation()
-  // const queryParams = new URLSearchParams(location.search);
-  // console.log("logID:", logID)
-  // const title = queryParams.get('title');
-  // const content = queryParams.get('content');
-  // const city = queryParams.get('city')?.split(',');
-  // const tripInfo = JSON.parse(queryParams.get('tempTripInfo'));
   const [shareVisible, setShareVisible] = React.useState(false)
   const [liked, setLiked] = React.useState(false)
   const [followed, setFollowed] = React.useState(false)
@@ -105,13 +99,11 @@ const Detaillog = () => {
     if (!id)//id为空，说明并不是由服务端发送的数据，而是本地预览
       return
     // 检查 localStorage喜欢列表中是否存在为 {id} 的值
-    let cachedLikedList = JSON.parse(localStorage.getItem("cachedLikedList"))
-    if (!cachedLikedList) {
-      // 如果缓存列表不存在，则创建一个空数组并保存到 localStorage 中
-      cachedLikedList = []
-      localStorage.setItem("cachedLikedList", JSON.stringify(cachedLikedList))
-    } else if (cachedLikedList.includes(id)) {
-      // 如果缓存列表存在，并且包含当前 id，则设置 liked 为 true
+    let likedList = JSON.parse(localStorage.getItem("likedList"))
+    if (!likedList) {
+      likedList = []
+      localStorage.setItem("likedList", JSON.stringify(likedList))
+    } else if (likedList.includes(id)) {
       setLiked(true)
     }
   }, [id])
@@ -123,24 +115,22 @@ const Detaillog = () => {
     if (liked) {
       // 如果已经点赞，则取消点赞
       setLiked(false)
-      const cachedLikedList = JSON.parse(localStorage.getItem("cachedLikedList"))
-      if (cachedLikedList) {
-        // 找到相同 id 处，并删除该项
-        const updatedList = cachedLikedList.filter(itemId => itemId !== id)
-        localStorage.setItem("cachedLikedList", JSON.stringify(updatedList))
+      const likedList = JSON.parse(localStorage.getItem("likedList"))
+      if (likedList) {
+        const updatedList = likedList.filter(itemId => itemId !== id)
+        localStorage.setItem("likedList", JSON.stringify(updatedList))
         // 向后端发送取消点赞的请求
       }
     } else {
       // 如果尚未点赞，则点赞
       setLiked(true)
-      const cachedLikedList = JSON.parse(localStorage.getItem("cachedLikedList")) || []
-      // 将 id 添加到 cachedLikedList 中
-      localStorage.setItem("cachedLikedList", JSON.stringify([...cachedLikedList, id]))
+      const likedList = JSON.parse(localStorage.getItem("likedList")) || []
+      localStorage.setItem("likedList", JSON.stringify([...likedList, id]))
       // 向后端发送点赞的请求
     }
   }
   const handleGoBack = () => {
-    window.history.go(-1) // 返回上一页面
+    window.history.go(-1)
   }
   const handleShare = () => {
     setShareVisible(true)

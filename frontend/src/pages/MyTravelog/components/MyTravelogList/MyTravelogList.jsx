@@ -1,3 +1,11 @@
+/*
+ * @Author: Sueyuki 2574397962@qq.com
+ * @Date: 2024-04-02 19:17:09
+ * @LastEditors: Sueyuki 2574397962@qq.com
+ * @LastEditTime: 2024-04-11 22:09:43
+ * @FilePath: \frontend\src\pages\MyTravelog\components\MyTravelogList\MyTravelogList.jsx
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 import React from "react"
 import { useState, useContext,useEffect } from "react"
 import { UserSpaceContent } from "../../UserSpaceContent"
@@ -28,16 +36,13 @@ export default function MyTravelogList(props) {
   };
   
   }
-  const handleGoDetail = () => {
-    console.log("handleGoDetail")
-    // window.location.href = `/travelogs/${e}`
-  }
+
   return (
     <div className={styles.MyTravelog}>
       {myTravelogList.map(item => {
         // 如果 filter 为 'all'，或者 item.status 与 filter 匹配，则渲染 MyTravelogItem
         if (filter === 'all' || item.status === filter) {
-          return <MyTravelogItem key={item.id} item={item} deleteTravelog={deleteTravelog} onClick={handleGoDetail}/>;
+          return <MyTravelogItem key={item.id} item={item} deleteTravelog={deleteTravelog}/>;
         }
         // 如果不符合筛选条件，则不渲染 MyTravelogItem
         return null;

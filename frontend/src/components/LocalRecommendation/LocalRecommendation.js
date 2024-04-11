@@ -2,13 +2,13 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-03-24 17:45:39
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-11 02:31:54
+ * @LastEditTime: 2024-04-11 22:00:14
  * @FilePath: \ultrawork\src\components\LocalRecommendation\LocalRecommendation.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 // src/components/LocalRecommendation.js
 import React,{useContext} from 'react';
-import './LocalRecommendation.css'; // 自定义样式
+import './LocalRecommendation.css'; 
 import { HomeContext } from "../../Context/HomeContext"
 import { recommendations } from '../../config/mockData';
 const LocalRecommendation = () => {

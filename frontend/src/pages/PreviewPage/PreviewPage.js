@@ -2,15 +2,14 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-05 16:18:15
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-11 20:25:52
+ * @LastEditTime: 2024-04-11 22:17:00
  * @FilePath: \frontend\src\pages\Detaillog\Detaillog.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
-import React, { useState, useEffect, createContext, useContext } from "react"
+import React, { useState, useEffect,useContext } from "react"
 import { LeftOutline } from "antd-mobile-icons"
 import { FloatingBubble, Toast,WaterMark,Button } from "antd-mobile"
 import { HeartOutline, HeartFill } from "antd-mobile-icons"
-import { CiPaperplane } from "react-icons/ci";
 import { useLocation, useParams } from "react-router-dom"
 import SwiperN from "../../components/swiper/swiper"
 import UserInfo from "../../components/UserInfo/UserInfo"
@@ -19,7 +18,8 @@ import Content from "../../components/content/content"
 import Comment from "../../components/comment/comment"
 import { UserContext } from "../../Context/UserContext"
 import { $getTravelogsByID } from "../../api/travelogApi"
-import Share from "social-share-react"
+// import { CiPaperplane } from "react-icons/ci";//预览页不出现分享功能
+// import Share from "social-share-react"
 import { baseURL } from "../../config/config"
 
 const PreviewPage = () => {
@@ -68,7 +68,6 @@ const PreviewPage = () => {
 
   useEffect(() => {
     setBannerList(editingData.images.map(image => `${baseURL}images/${image}`));
-    // console.log(bannerList)
     setTitle(editingData.title)
     setContent(editingData.content)
     setCity(editingData.Location)
@@ -96,7 +95,7 @@ const PreviewPage = () => {
   }
 
   const handleGoBack = () => {
-    window.history.go(-1) // 返回上一页面
+    window.history.go(-1)
   }
 
   return (
