@@ -75,6 +75,7 @@ adminUserSchema.statics.audit = async function (userId, travelogId, auditStatus,
     if (!travelog) {
       return { success: false, message: "游记不存在" }
     }
+    console.log("auditStatus", auditStatus)
     travelog.auditDate = Date.now()
     travelog.uploadDate = Date.now()
     travelog.auditorId = userId
@@ -85,6 +86,7 @@ adminUserSchema.statics.audit = async function (userId, travelogId, auditStatus,
       case "rejected":
         travelog.rejectReason = reason
         travelog.status = "rejected"
+        break
       case "pending":
         travelog.status = "pending"
         break
