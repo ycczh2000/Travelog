@@ -104,11 +104,18 @@ export default function Task() {
       render: (_, { title, _id }) => <a onClick={() => navigate(`${_id}`)}>{title}</a>,
     },
     {
+      title: "最后修改时间",
+      dataIndex: "uploadDate",
+      ellipsis: true,
+      render: (_, { uploadDate }) => convertUTCToBeijingTime(uploadDate),
+    },
+    {
       title: "创建时间",
       dataIndex: "createDate",
       ellipsis: true,
       render: (_, { createDate }) => convertUTCToBeijingTime(createDate),
     },
+
     // .slice(0, 10)
     { title: "发布人", dataIndex: "authorUsername", ellipsis: true },
     { title: "审核人", dataIndex: "auditorUsername", ellipsis: true },

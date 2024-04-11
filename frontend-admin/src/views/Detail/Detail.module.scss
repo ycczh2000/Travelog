@@ -58,15 +58,13 @@
     max-width: 1000px;
     margin-bottom: 20px;
     .auditButtonArea {
-      min-width: 30vw;
+      display: flex;
     }
-    // .backButtonArea {
-    //   display: flex;
-    //   justify-content: flex-end;
-    //   min-width: 30vw;
-    // }
+    .backButtonArea {
+      display: flex;
+    }
     .btn {
-      margin: 0 5px;
+      margin: 0 8px;
       border-radius: 5px;
     }
     .tag {
@@ -77,6 +75,7 @@
       font-size: 14px;
       font-family: arial;
       padding: 7px;
+      font-weight: 500;
     }
   }
 }

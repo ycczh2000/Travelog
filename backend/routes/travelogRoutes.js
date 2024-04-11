@@ -286,6 +286,7 @@ router.get("/travelogs/:id", async (req, res) => {
   const id = req.params?.id
   const result = await Travelog.getTravelogById(id)
   res.json(result)
+  console.log("/travelogs/:id", result)
 })
 
 //获取某个用户的所有游记

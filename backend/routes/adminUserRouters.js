@@ -65,6 +65,7 @@ const auditorFields = {
   _id: 1,
   title: 1,
   createDate: 1,
+  uploadDate: 1,
   status: 1,
 }
 
@@ -144,23 +145,34 @@ router.get("/travelogs", async (req, res) => {
       $project: projectFields,
     },
     {
-      $sort: { createDate: -1 },
+      $sort: { uploadDate: -1 },
     },
   ])
 
   res.json(result)
 })
 
+router.get("/travelog/next", async (req, res) => {
+  if (!req.userId) {
+    return res.status(401).send("未登录")
+  }
+  const result = await Travelog.findOne({ status: "pending" })
+  if (!result) {
+    return res.json({ success: true, message: "已经全部审核完成了" })
+  } else {
+    res.json({ success: true, data: result._id })
+  }
+})
+
 router.get("/travelogs/:id", async (req, res) => {
   if (!req.userId) {
     return res.status(401).send("未登录")
   }
-  console.log("/travelogs/:id")
-  const result = await Travelog.findById(req.params.id).catch(err => {
-    res.status(404).send("游记不存在")
-  })
+  const result = await Travelog.findById(req.params.id).catch(() =>
+    res.json({ success: false, message: "不存在的游记" })
+  )
   if (!result) {
-    return res.status(404).send("游记不存在")
+    return res.json({ success: false, message: "不存在的游记" })
   } else {
     res.json({ success: true, data: result })
   }

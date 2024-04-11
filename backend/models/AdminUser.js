@@ -84,6 +84,8 @@ adminUserSchema.statics.audit = async function (userId, travelogId, auditStatus,
       case "rejected":
         travelog.rejectReason = reason
         travelog.status = "rejected"
+      case "pending":
+        travelog.status = "pending"
         break
     }
 

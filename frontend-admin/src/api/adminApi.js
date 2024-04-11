@@ -25,10 +25,16 @@ export const $deleteTravelog = async id => {
 
 export const $travelog = async id => {
   const { data } = await axios.get(`admin/travelogs/${id}`)
+  console.log("$travelog", data)
   return data
 }
 
 export const $auditTravelog = async (id, params) => {
   const { data } = await axios.put(`admin/travelogs/${id}`, params)
+  return data
+}
+
+export const $getNextTravelog = async () => {
+  const { data } = await axios.get("admin/travelog/next")
   return data
 }

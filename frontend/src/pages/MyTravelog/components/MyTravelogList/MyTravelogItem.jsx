@@ -15,17 +15,17 @@ import { $deleteTravelog } from "../../../../api/travelogApi"
 // import "./MyTravelogItem.scss"
 import { baseURL } from "../../../../config/config"
 
-const extractReasonAndDetails = (input) => {
-  const regex = /"reason":"([^"]+).*?"details":"([^"]+)/;
-  const match = input.match(regex);
+const extractReasonAndDetails = input => {
+  const regex = /"reason":"([^"]+).*?"details":"([^"]+)/
+  const match = input.match(regex)
   if (match) {
-    const reason = match[1];
-    const details = match[2];
-    return { reason, details };
+    const reason = match[1]
+    const details = match[2]
+    return { reason, details }
   } else {
-    return { reason: null, details: null };
+    return { reason: null, details: null }
   }
-};
+}
 
 const statusStyles = {
   pending: { color: "primary", fill: "outline" },
@@ -67,11 +67,21 @@ export default function MyTravelogItem(props) {
     }
   }
 
-  //  window.location.href = `/`
-  
+  //从我的游记进入详情页
+  const handleTopClick = () => {
+    if (status === "approved") {
+      window.location.href = `/travelogs/${_id}`
+    } else {
+      Toast.show({
+        content: "未通过的游记只能进入编辑页预览",
+        position: "center",
+      })
+    }
+  }
+
   return (
     <div className={styles.myTravelogItem}>
-      <div className={styles.top}>
+      <div className={styles.top} onClick={handleTopClick}>
         <Image
           className={styles.myTravelogImg}
           src={`${baseURL}images/` + images[0]}
@@ -95,19 +105,26 @@ export default function MyTravelogItem(props) {
             {statusTexts[status]}
           </Tag>
           {status === "rejected" ? (
-            <div style={{ color: "red", fontSize: "1rem", padding: "0.3rem" }}
+            <div
+              style={{ color: "red", fontSize: "1rem", padding: "0.3rem" }}
               onClick={() => {
                 Dialog.show({
                   content: (
                     <div>
                       <Space direction="vertical">
-                        <div style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                        <div style={{ fontSize: "1.2rem", fontWeight: "bold", marginBottom: "0.5rem" }}>
                           {extractReasonAndDetails(rejectReason).reason}
                         </div>
-                        <div style={{
-                          fontSize: '1rem', lineHeight: '1.4', maxHeight: '4.2rem', overflow: 'hidden',
-                          textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: '1rem'
-                        }}>
+                        <div
+                          style={{
+                            fontSize: "1rem",
+                            lineHeight: "1.4",
+                            maxHeight: "4.2rem",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            marginBottom: "1rem",
+                          }}>
                           {extractReasonAndDetails(rejectReason).details}
                         </div>
                       </Space>
@@ -117,15 +134,15 @@ export default function MyTravelogItem(props) {
                   actions: [
                     [
                       {
-                        key: 'edit',
-                        text: '编辑',
+                        key: "edit",
+                        text: "编辑",
                         bold: true,
                         danger: true,
-                        onClick: () => (window.location.href = `/update/${_id}`)
+                        onClick: () => (window.location.href = `/update/${_id}`),
                       },
                       {
-                        key: 'cancel',
-                        text: '取消',
+                        key: "cancel",
+                        text: "取消",
                       },
                     ],
                   ],

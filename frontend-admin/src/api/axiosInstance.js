@@ -2,7 +2,7 @@ import axios from "axios"
 import { baseURL } from "../config/config"
 const Instance = axios.create({
   baseURL: baseURL,
-  timeout: 2000,
+  timeout: 10000,
 })
 
 Instance.interceptors.request.use(
