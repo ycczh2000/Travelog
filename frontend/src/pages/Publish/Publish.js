@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-03-27 18:42:58
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-11 19:19:09
+ * @LastEditTime: 2024-04-11 21:08:19
  * @FilePath: \frontend\src\pages\Publish\Publish.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -168,13 +168,18 @@ const Publish = () => {
 
   const handleUpdateClick = async () => {
     const editingData = editingRef.current.getEditingData()
-
     if (editingData.title.length < 1 || editingData.title.length > 20) {
-      alert("Title length should be between 1 and 20 characters.") // 使用alert弹出消息提示
+      Toast.show({
+        icon: 'fail',
+        content: '标题应该在1到20个字符之间',
+      })
       return
     }
     if (editingData.content.length < 1) {
-      alert("Title length should be at least 1 character.") // 使用alert弹出消息提示
+      Toast.show({
+        icon: 'fail',
+        content: '正文至少有一个字',
+      })
       return
     }
     try{
