@@ -5,7 +5,7 @@ const UserInfo = ({ title, content, city }) => {
   return (
     <div className="contain1">
       <div className="title">
-        <h2>{title}</h2>
+        <h2 style={{marginTop:'0'}}>{title}</h2>
       </div>
       <div style={{
         marginTop: '-20px',
