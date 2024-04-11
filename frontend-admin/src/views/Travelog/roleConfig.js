@@ -1,6 +1,6 @@
 const roleConfig = {
-  admin: ["title", "createDate", "auditorUsername", "authorUsername", "status", "operate"],
-  auditor: ["title", "createDate", "status", "operate"],
+  admin: ["title", "uploadDate", "createDate", "auditorUsername", "authorUsername", "status", "operate"],
+  auditor: ["title", "uploadDate", "createDate", "status", "operate"],
 }
 
 export default roleConfig

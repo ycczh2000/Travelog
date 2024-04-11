@@ -174,13 +174,15 @@ export default function Detail() {
             }}>
             拒绝
           </Button>
-          <Button
-            className={styles.btn}
-            key="pending"
-            type="primary"
-            onClick={() => handleAudit({ auditStatus: AuditStatus.PENDING })}>
-            重置
-          </Button>
+          {userInfo?.role === "admin" ? (
+            <Button
+              className={styles.btn}
+              key="pending"
+              type="primary"
+              onClick={() => handleAudit({ auditStatus: AuditStatus.PENDING })}>
+              重置
+            </Button>
+          ) : null}
         </div>
         <div className={styles.auditState}>
           {AuditTag[audit] ? (

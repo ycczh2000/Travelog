@@ -145,7 +145,7 @@ router.get("/travelogs", async (req, res) => {
       $project: projectFields,
     },
     {
-      $sort: { createDate: -1 },
+      $sort: { uploadDate: -1 },
     },
   ])
 
