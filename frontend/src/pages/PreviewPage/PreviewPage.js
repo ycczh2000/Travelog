@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-05 16:18:15
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-11 18:42:25
+ * @LastEditTime: 2024-04-11 19:38:35
  * @FilePath: \frontend\src\pages\Detaillog\Detaillog.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -51,7 +51,6 @@ const PreviewPage = () => {
   ])
   const [detailInfo, setDetailInfo] = useState({
     authorUID: "123456789",
-    userAvatar: "https://zos.alipayobjects.com/rmsportal/AiyWuByWklrrUDlFignR.png",
     username: "用户名",
     lastEditTime: "2024-04-05 16:18:15",
   })

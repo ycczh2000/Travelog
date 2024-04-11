@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-05 16:18:15
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-11 18:38:30
+ * @LastEditTime: 2024-04-11 19:52:14
  * @FilePath: \frontend\src\pages\Detaillog\Detaillog.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -71,8 +71,6 @@ const Detaillog = () => {
     const fetchData = async () => {
       // 发送fetch请求，获取其他数据
       try {
-        if (!id)
-          return
         const travelog = await $getTravelogsByID(id) // 使用 ID 调用 API 获取游记信息
         console.log("travelog:", travelog)
         // 设置获取到的数据

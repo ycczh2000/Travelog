@@ -5,6 +5,7 @@ import { ArrowDownCircleOutline, DownOutline } from "antd-mobile-icons"
 import { options } from "./cityData"
 
 const Editing = forwardRef((props, ref) => {
+  console.log(props)
   const [title, setTitle] = useState(props.editingData.title ? props.editingData.title : "") // 标题内容
   const [content, setContent] = useState(props.editingData.content ? props.editingData.content : "") // 正文内容
   const [tripWay, setTripWay] = useState(props.tripWay ? props.tripWay : "") // 出游方式
@@ -12,24 +13,26 @@ const Editing = forwardRef((props, ref) => {
   const [tripDate, setTripDate] = useState(props.editingData.tripDate ? props.editingData.tripDate : "") // 出游时间
   const [tripBudget, setTripBudget] = useState(props.editingData.tripBudget ? props.editingData.tripBudget : "") // 预算
   const [city, setCity] = useState(null) //旅行城市
-  const [rate, setRate] = useState(5) //评分
+  const [rate, setRate] = useState(props.editingData.rate?props.editingData.rate:props.editingData.tripRate?props.editingData.tripRate:5) //评分
+
   const [isPublic, setIsPublic] = useState(props.editingData.isPublic ? props.editingData.isPublic : true) // 用于追踪内容是否公开发布的状态
   const maxTitleLength = 20 // 标题最大长度
   const maxContentLength = 2000 // 正文最大长度
-
   useEffect(() => {
     if (props.editingData) {
-      const { title, content, tripWay, tripNum, tripDate, tripBudget, city, isPublic } = props.editingData
+      const { title, content, tripWay, tripNum, tripDate, tripBudget, city, isPublic,rate,tripRate } = props.editingData
       setTitle(title || "")
       setContent(content || "")
       setTripWay(tripWay || "")
       setTripNum(tripNum || "")
       setTripDate(tripDate || "")
       setTripBudget(tripBudget || "")
-      setRate(rate || 5)
+      setRate(rate?rate:tripRate?tripRate:5)
       setCity(city || null)
       setIsPublic(isPublic || true)
     }
+    handleChangeRate(props.editingData.rate||props.editingData.tripRate||5)
+    console.log('rate:',rate)
   }, [props.editingData])
 
   useImperativeHandle(ref, () => ({
@@ -259,7 +262,7 @@ const Editing = forwardRef((props, ref) => {
           </Dropdown.Item>
         </Dropdown>
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <Rate allowHalf defaultValue={5} onChange={handleChangeRate} />
+          <Rate allowHalf value={rate} onChange={handleChangeRate} />
         </div>
       </Card>
       {/* 正文输入区 */}
