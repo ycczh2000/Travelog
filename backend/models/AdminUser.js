@@ -68,13 +68,13 @@ adminUserSchema.statics.loginByToken = async function (userID) {
   }
 }
 
+// 审核
 adminUserSchema.statics.audit = async function (userId, travelogId, auditStatus, reason = "") {
   try {
     const travelog = await Travelog.findById(travelogId)
     if (!travelog) {
       return { success: false, message: "游记不存在" }
     }
-    // 修改游记状态
     travelog.auditDate = Date.now()
     travelog.auditorId = userId
     switch (auditStatus) {
@@ -90,13 +90,14 @@ adminUserSchema.statics.audit = async function (userId, travelogId, auditStatus,
     }
 
     await travelog.save()
-    return { success: true, message: "审核成功" }
+    return { success: true, message: "成功修改审核状态" }
   } catch (err) {
     console.log("DB ERROR adminUserSchema.statics.audit:", err)
     return { success: false, message: "服务器出错，审核失败" }
   }
 }
 
+//逻辑删除
 adminUserSchema.statics.delete = async function (userId, travelogId) {
   try {
     const travelog = await Travelog.findById(travelogId)

@@ -5,8 +5,8 @@ const jwt = require("jsonwebtoken")
 const Travelog = require("../models/Travelog")
 const User = require("../models/User")
 let secret = "fawgf1awi7owa35"
+//PC端审核页面相关接口
 
-//和管理审核相关的接口
 router.post("/register", async (req, res) => {
   const { username, password, role } = req.body
   const result = await AdminUser.createUser(username, password, role)
@@ -134,7 +134,7 @@ router.get("/travelogs", async (req, res) => {
       },
     },
     {
-      $unwind: { path: "$auditorInfo", preserveNullAndEmptyArrays: true }, // 设置为true，否则auditorInfo为空时不会返回数据
+      $unwind: { path: "$auditorInfo", preserveNullAndEmptyArrays: true },
     },
     {
       $addFields: {
@@ -168,13 +168,14 @@ router.get("/travelogs/:id", async (req, res) => {
   if (!req.userId) {
     return res.status(401).send("未登录")
   }
-  const result = await Travelog.findById(req.params.id).catch(() =>
-    res.json({ success: false, message: "不存在的游记" })
-  )
-  if (!result) {
-    return res.json({ success: false, message: "不存在的游记" })
-  } else {
+  try {
+    const result = await Travelog.findById(req.params.id)
+    if (!result) {
+      return res.json({ success: false, message: "不存在的游记" })
+    }
     res.json({ success: true, data: result })
+  } catch (error) {
+    return res.json({ success: false, message: "不存在的游记" })
   }
 })
 

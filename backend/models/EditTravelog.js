@@ -8,9 +8,9 @@ const editTravelogSchema = new mongoose.Schema({
 
   title: { type: String, default: "" },
   content: { type: String, default: "" },
-  images: { type: [String], default: [] }, //图片路径
+  images: { type: [String], default: [] },
   tags: [String],
-  Location: { type: Object, default: "" }, //地点 待细化
+  Location: { type: [String], default: [] },
   tripWay: { type: String, default: "" },
   tripNum: { type: String, default: "" },
   tripDate: { type: String, default: "" },
@@ -21,16 +21,15 @@ const editTravelogSchema = new mongoose.Schema({
   createDate: { type: Date, default: Date.now },
   uploadDate: { type: Date },
 
-  deleted: { type: Boolean, default: false }, //逻辑删除
+  deleted: { type: Boolean, default: false },
   status: {
     type: String,
-    enum: ["updating", "editing", "draft", "published"], //published:测试用
+    enum: ["updating", "editing"],
     default: "editing",
   },
 })
 
 //每个用户只有一个状态为editing的待发布游记和一个状态为updating待更新游记，保存已编辑的信息
-
 //1.创建一个新的状态为editing的待发布游记，并删除之前的
 editTravelogSchema.statics.createEditTravelog = async (userId, targetTravelogId = null) => {
   try {
@@ -180,7 +179,6 @@ editTravelogSchema.statics.updateExistTravelog = async (userId, editId) => {
     if (!updatedTravelog) {
       return { success: false, message: "更新失败", data: {} }
     } else {
-      // edit.status = "published"
       await EditTravelog.deleteOne({ _id: editId, authorId: userId, status: "updating" })
       return { success: true, message: "更新成功", data: updatedTravelog }
     }
@@ -232,7 +230,7 @@ editTravelogSchema.statics.deleteImage = async (userId, index, status) => {
     }
     console.log("travelog.images", travelog.images)
     console.log("index", index)
-    const imageName = travelog.images[index] //给expess删除文件
+    const imageName = travelog.images[index] //这个字段返回给expess用于删除文件
     // 使用数组方法删除指定索引的图片
     if (index >= 0 && index < travelog.images.length) {
       travelog.images.splice(index, 1)
@@ -279,19 +277,6 @@ editTravelogSchema.statics.getEditTravelog = async (userId, status = "editing") 
     return { success: false, message: "获取失败", data: {} }
   }
 }
-
-// //6.存到草稿箱 返回bool 不做了
-// editTravelogSchema.statics.saveDraftTravelog = async (userId, editId) => {
-//   try {
-//     const edit = await EditTravelog.findOne({ _id: editId, authorId: userId, status: "editing" })
-//     edit.status = "draft"
-//     await edit.save()
-//     return { success: true, message: "保存成功", data: {} }
-//   } catch (err) {
-//     console.log("DB ERROR saveDraftTravelog:", err)
-//     return { success: false, message: "保存失败", data: {} }
-//   }
-// }
 
 const EditTravelog = mongoose.model("EditTravelog", editTravelogSchema)
 module.exports = EditTravelog

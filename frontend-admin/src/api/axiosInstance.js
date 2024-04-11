@@ -23,8 +23,6 @@ Instance.interceptors.response.use(
     return response
   },
   function (error) {
-    // if (error.code === "ECONNABORTED" || error.message.includes("timeout")) {
-    //   return Promise.reject({ data: { success: false, description: "请求超时，请稍后再试" } })
     if (error.response && error.response.status === 401) {
       localStorage.removeItem("admintoken")
       alert("登录状态过期，请重新登录")
@@ -35,7 +33,6 @@ Instance.interceptors.response.use(
       alert("没有该权限，请重新登录")
       window.location.href = "/login"
     }
-
     return Promise.reject(error)
   }
 )

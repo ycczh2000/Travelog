@@ -1,11 +1,3 @@
-/*
- * @Author: Sueyuki 2574397962@qq.com
- * @Date: 2024-04-02 19:17:09
- * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-07 19:43:44
- * @FilePath: \backend\routes\travelogRoutes.js
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- */
 const express = require("express")
 const router = express.Router()
 const Travelog = require("../models/Travelog")
@@ -15,38 +7,11 @@ const fs = require("fs")
 const path = require("path")
 const mongoose = require("mongoose")
 const ObjectId = mongoose.Types.ObjectId
+//与游记相关的接口
 
-//游记上传v1 废弃
-// router.post("/travelogs", imgUpload.array("image"), async (req, res, next) => {
-//   const userId = req.userId
-
-//   const { title, content, tags } = req.body
-//   const imgInfo = JSON.parse(req.body.imgInfo)
-//   const files = req.files
-//   const imgInfoValue = JSON.parse(imgInfo.value)
-//   const orderedImgName = imgInfoValue.map(originalname => {
-//     return files.find(f => f.originalname === originalname)?.filename
-//   })
-
-//   const result = await Travelog.createTravelog(userId, {
-//     title: title || "这是一个标题",
-//     content: content || "\u200B",
-//     Location: city || [], // 地点，todo
-//     tripWay: tripWay || "\u200B",
-//     tripNum: tripNum || "\u200B",
-//     tripDate: tripDate || "\u200B",
-//     tripBudget: tripBudget || "\u200B",
-//     rate: rate || 5,
-//     // tags: JSON.parse(tags),
-//     images: orderedImgName,
-//     status: "approved",
-//   })
-//   console.log("successfully created a new travelog?", result)
-//   res.json(result)
-// })
 //###################游记上传相关###################
 //游记上传v2 逐张上传
-//1.创建一个状态为editing的新编辑游记
+//1.创建新游记 创建一个状态为editing的新编辑游记
 router.post("/travelogs/edit", async (req, res) => {
   const userId = req.userId
   if (!userId) {
@@ -58,7 +23,7 @@ router.post("/travelogs/edit", async (req, res) => {
   res.json(result)
 })
 
-//1.2 创建一个状态为updating，通过targetTravelogId指向某个已发布游记的编辑游记
+//1.2 编辑游记 创建一个状态为updating，通过targetTravelogId指向某个已发布游记的编辑游记
 router.post("/travelogs/updating", async (req, res) => {
   const userId = req.userId
   if (!userId) {
@@ -83,7 +48,7 @@ router.put("/travelogs/edit", async (req, res) => {
   res.json(result)
 })
 
-//3.1 发布新游记-不存在原游记
+//3.1 发布新游记 - 不存在原游记
 router.post("/travelogs/edit/publish", async (req, res) => {
   const userId = req.userId
   if (!userId) {
@@ -95,7 +60,7 @@ router.post("/travelogs/edit/publish", async (req, res) => {
   res.json(result)
 })
 
-//3.2 更新游记-原游记存在
+//3.2 更新游记 - 原游记存在
 router.put("/travelogs/edit/update", async (req, res) => {
   const userId = req.userId
   if (!userId) {
@@ -118,21 +83,18 @@ router.get("/travelogs/edit/images/:status", async (req, res) => {
 })
 
 //4.上传或更新第i张图片
-//存储到某个目录./uploads下 返回值为文件名
+//存储到某个目录./uploads下 返回值为新的文件名
 router.post("/travelogs/edit/uploadimg", travelogImgUpload.single("image"), async (req, res) => {
   const userId = req.userId
   if (!userId) {
     return res.status(401).send("未登录")
   }
-  //上传失败，需要前端处理
   if (!req.file) {
     return res.status(400).json({ message: "没有图片上传" })
   }
   const { index, status, editId } = req.body
-  // const fileName = new mongoose.Types.ObjectId().toString()
   const fileExtension = path.extname(req.file.originalname)
-  const imgName = `${editId}_${index}${fileExtension}`
-  // console.log("req.file", imgName)
+  const imgName = `${editId}_${index}${fileExtension}` //实现覆盖
   const filePath = path.join(__dirname, "../uploads", imgName)
   try {
     fs.writeFileSync(filePath, req.file.buffer)
@@ -151,12 +113,12 @@ router.delete("/travelogs/edit/deleteimg", async (req, res) => {
   }
   const { index, status } = req.query
   console.log("req.params", index)
-  const result = await EditTravelog.deleteImage(userId, index, status)
+  const result = await EditTravelog.deleteImage(userId, index, status) //从数据库删除图片
   res.json(result)
   try {
     const { imageName } = result
     const filePath = path.join(__dirname, "../uploads", imageName)
-    fs.unlinkSync(filePath)
+    fs.unlinkSync(filePath) //从磁盘删除文件
   } catch (err) {
     console.log('router.delete("/travelogs/edit/deleteimg) ERR', err)
   }
@@ -174,7 +136,7 @@ router.get("/travelogs/editid/:status", async (req, res) => {
   res.json(result)
 })
 
-//7.获取正在编辑的游记
+//7.获取正在编辑的游记 返回详细信息
 router.get("/travelogs/edit/:status", async (req, res) => {
   const userId = req.userId
   if (!userId) {
@@ -185,18 +147,7 @@ router.get("/travelogs/edit/:status", async (req, res) => {
   res.json(result)
 })
 
-//8.存到草稿箱
-router.put("/travelogs/edit/savedraft", async (req, res) => {
-  const userId = req.userId
-  if (!userId) {
-    return res.status(401).send("未登录")
-  }
-  const { editId } = req.body
-  const result = await EditTravelog.saveDraftTravelog(userId, editId)
-  res.json(result)
-})
-
-//###################获取游记相关#####################
+//###################游记查询相关#####################
 //1.查询所有游记
 router.get("/travelogs", async (req, res) => {
   const { title, tripBudget, tripNum, tripWay, tripDate } = req.query
@@ -220,7 +171,6 @@ router.get("/travelogs", async (req, res) => {
   query.deleted = false
   query.status = "approved"
   console.log("req.query", req.query)
-  // Travelog.find({title:titleReg,tripWay:})
   const result = await Travelog.aggregate([
     { $match: query },
     {
@@ -243,9 +193,6 @@ router.get("/travelogs", async (req, res) => {
         images: { $slice: ["$images", 3] },
       },
     },
-    // // 添加分页 分页参数
-    // { $skip: skip },
-    // { $limit: parseInt(pageSize) },
     {
       $project: {
         id: "$_id",
@@ -289,7 +236,7 @@ router.get("/travelogs/:id", async (req, res) => {
   console.log("/travelogs/:id", result)
 })
 
-//获取某个用户的所有游记
+//获取某个其它用户的所有游记
 router.get("/users/:username/travelogs", async (req, res) => {
   const username = req.params?.username
   const result = await Travelog.getTravelogsByUsername(username)

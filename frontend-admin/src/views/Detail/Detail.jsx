@@ -5,7 +5,7 @@ import { $travelog } from "../../api/adminApi"
 import { Image } from "antd"
 import { Button, Modal, Form, Input, Radio, Space, Tag } from "antd"
 import { $deleteTravelog, $auditTravelog, $getNextTravelog } from "../../api/adminApi"
-import { ExclamationCircleFilled, ExclamationCircleOutlined } from "@ant-design/icons"
+import { ExclamationCircleFilled } from "@ant-design/icons"
 import MyNotification from "../../components/MyNotification/MyNotification"
 import styles from "./Detail.module.scss"
 import { baseURL } from "../../config/config"
@@ -28,16 +28,6 @@ const AuditTag = {
   pending: { text: "待审核", color: "orange" },
 }
 
-const modelFormItemLayout = {
-  labelCol: {
-    span: 5,
-  },
-  wrapperCol: {
-    span: 15,
-    offset: 1,
-  },
-}
-
 export default function Detail() {
   const [loading, setLoading] = useState(loadingStatus.LOADING)
   let [notiMsg, setNotiMsg] = useState({ type: "", description: "" })
@@ -46,7 +36,7 @@ export default function Detail() {
   const [rejectform] = Form.useForm()
   const { title, images, tags, content, status } = travelog
   const { userInfo, setUserInfo } = useContext(AuthContext)
-  const [audit, setAudit] = useState(status)
+  const [audit, setAudit] = useState(status) //当前游记的审核状态，审核后会更新
   let { id } = useParams()
   let navigate = useNavigate()
   useEffect(() => {
@@ -137,8 +127,6 @@ export default function Detail() {
 
   return (
     <div className={styles.page}>
-      {/* <ExclamationCircleOutlined style={{ fontSize: "16px", color: "#08c" }} /> */}
-
       <div className={styles.travelog}>
         <h1 className={styles.title}>{title}</h1>
         <ul className={styles.tags}>

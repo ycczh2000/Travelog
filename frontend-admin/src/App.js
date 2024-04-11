@@ -1,11 +1,11 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
-
 import AppLayout from "./views/AppLayout/AppLayout"
 import Login from "./views/Login/Login"
 import Travelog from "./views/Travelog/Travelog"
 import Register from "./views/Register/Register"
 import Detail from "./views/Detail/Detail"
 import AuthProvider from "./context/AuthProvider"
+
 function App() {
   return (
     <>

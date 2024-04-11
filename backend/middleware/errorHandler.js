@@ -1,6 +1,7 @@
-//错误捕获中间件
 const multer = require("multer")
 const jwt = require("jsonwebtoken")
+
+//错误捕获中间件
 function errorHandler(err, req, res, next) {
   console.log(err)
   if (err instanceof multer.MulterError) {

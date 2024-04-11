@@ -1,15 +1,13 @@
-import React, { useState, useRef, useEffect, useContext } from "react"
+import React, { useState, useEffect, useContext } from "react"
 import { AuthContext } from "../../context/AuthProvider"
 import { Table, Button, Form, Input, Modal, Select, Tag, Space } from "antd"
-import { useLocation, Navigate, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import MyNotification from "../../components/MyNotification/MyNotification"
 import { ExclamationCircleFilled } from "@ant-design/icons"
 import { $travelogs, $deleteTravelog } from "../../api/adminApi"
 import styles from "./Travelog.module.scss"
-import { DatePicker } from "antd"
 import { convertUTCToBeijingTime } from "../../utils/utils"
 import roleConfig from "./roleConfig"
-const { RangePicker } = DatePicker
 const { Option } = Select
 const { confirm } = Modal
 const formItemLayout = {
@@ -28,13 +26,10 @@ export default function Task() {
   const [form] = Form.useForm()
   const navigate = useNavigate()
   const { userInfo, setUserInfo } = useContext(AuthContext)
-  // <header>用户名{userInfo.username}</header>
-  // <h1>权限{userInfo.role}</h1>
   useEffect(() => {
     loadTravelogs()
   }, [])
 
-  //点击删除或审核按钮
   const handleOperateClick = (id, operate) => {
     console.log(id)
     switch (operate) {
@@ -115,8 +110,6 @@ export default function Task() {
       ellipsis: true,
       render: (_, { createDate }) => convertUTCToBeijingTime(createDate),
     },
-
-    // .slice(0, 10)
     { title: "发布人", dataIndex: "authorUsername", ellipsis: true },
     { title: "审核人", dataIndex: "auditorUsername", ellipsis: true },
     {
@@ -186,13 +179,6 @@ export default function Task() {
               <Option value="rejected">未通过</Option>
             </Select>
           </Form.Item>
-          {/* <Form.Item
-            {...formItemLayout}
-            style={{ width: "30%", marginTop: "10px" }}
-            label={"创建时间"}
-            name={"createDate"}>
-            <RangePicker />
-          </Form.Item> */}
         </Form>
         <div className={styles.buttonArea}>
           <Button

@@ -2,14 +2,14 @@ import axios from "./axiosInstance"
 
 export const $login = async params => {
   const { data } = await axios.post("admin/login", params)
-  console.log("respond: ", data)
+  console.log("$login respond: ", data)
   return data
 }
 
 export const $register = async params => {
   const { username, password, role } = params
   const { data } = await axios.post("admin/register", { username, password, role })
-  console.log("respond: ", data)
+  console.log("$register respond: ", data)
   return data
 }
 

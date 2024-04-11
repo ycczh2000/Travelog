@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react"
-import { useNavigate, Link } from "react-router-dom"
+import React, { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import "./Register.scss"
 import { Button, Form, Input, Select } from "antd"
 import { $register } from "../../api/adminApi"

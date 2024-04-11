@@ -8,7 +8,6 @@ const { confirm } = Modal
 const { Header, Sider, Content } = Layout
 export default function AppLayout() {
   const navigate = useNavigate()
-
   const items = [
     {
       label: "首页",
