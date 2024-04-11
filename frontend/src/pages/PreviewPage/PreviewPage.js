@@ -52,7 +52,7 @@ const PreviewPage = () => {
   const [detailInfo, setDetailInfo] = useState({
     authorUID: "123456789",
     username: "用户名",
-    lastEditTime: "2024-04-05 16:18:15",
+    createDate: "2024-04-05 16:18:15",
   })
   const [commentInfo, setCommentInfo] = useState({
     comments: [
@@ -77,7 +77,7 @@ const PreviewPage = () => {
       ...detailInfo,
       userAvatar: editingData.userAvatar,
       username: userName,
-      lastEditTime: '正在实时预览'
+      createDate: '正在实时预览'
     })
     setTripInfo({
       tripWay: editingData.tripWay,

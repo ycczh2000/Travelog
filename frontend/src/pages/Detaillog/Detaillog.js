@@ -52,7 +52,7 @@ const Detaillog = () => {
     authorUID: "123456789",
     userAvatar: "https://zos.alipayobjects.com/rmsportal/AiyWuByWklrrUDlFignR.png",
     username: "用户名",
-    lastEditTime: "2024-04-05 16:18:15",
+    createDate: "2024-04-05 16:18:15",
   })
   const [commentInfo, setCommentInfo] = useState({
     comments: [
@@ -77,6 +77,7 @@ const Detaillog = () => {
         setTitle(travelog.data.title)
         setContent(travelog.data.content)
         setCity(travelog.data.Location ? travelog.data.Location : [])
+
         setTripInfo({
           tripNum: travelog.data.tripNum,
           tripDate: travelog.data.tripDate,
@@ -90,7 +91,7 @@ const Detaillog = () => {
         setDetailInfo({
           authorUID: travelog.data.authorId,
           username: travelog.data.username,
-          lastEditTime: "2024-04-05 16:18:15",
+          createDate: travelog.data.createDate,
         })
       } catch (error) {
         console.error("Error fetching data:", error)

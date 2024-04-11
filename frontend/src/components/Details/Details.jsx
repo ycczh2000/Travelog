@@ -56,7 +56,7 @@ const Details = ({ detailInfo }) => {
       <img className="imager" src={`http://localhost:8000/getAvatar/${detailInfo.username}`} alt="用户头像" />
       <div className="info">
         <h3>{detailInfo.username}</h3>
-        <p>笔记创建日期:{detailInfo.lastEditTime ? detailInfo.lastEditTime : '未知'}</p>
+        <p>笔记创建日期:{detailInfo.createDate ? detailInfo.createDate : '未知'}</p>
       </div>
       <Button
         className="button1"
