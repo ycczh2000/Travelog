@@ -138,6 +138,9 @@ const Editing = forwardRef((props, ref) => {
                   <Radio block value="">
                     默认
                   </Radio>
+                  <Radio block value="骑行游">
+                    骑行游
+                  </Radio>
                   <Radio block value="自驾游">
                     自驾游
                   </Radio>
@@ -149,6 +152,9 @@ const Editing = forwardRef((props, ref) => {
                   </Radio>
                   <Radio block value="组团游">
                     组团游
+                  </Radio>
+                  <Radio block value="邮轮游">
+                    邮轮游
                   </Radio>
                 </Space>
               </Radio.Group>
@@ -305,7 +311,7 @@ const Editing = forwardRef((props, ref) => {
           @ 用户
         </Button>
       </div>
-      
+
       <div style={{ float: "right" }}>
         <Checkbox
           defaultChecked

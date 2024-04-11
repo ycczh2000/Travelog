@@ -12,6 +12,7 @@ import UserSpace from "./pages/UserSpace/UserSpace"
 import UserTravelogs from "./pages/UserTravelogs/UserTravelogs"
 import Publish from "./pages/Publish/Publish"
 import Detaillog from "./pages/Detaillog/Detaillog"
+import PreviewPage from "./pages/PreviewPage/PreviewPage"
 
 import { UserContextProvider } from "./Context/UserContext"
 
@@ -37,6 +38,7 @@ function App() {
             <Route path="/login" element={<Login />}></Route>
             <Route path="/" element={<Login />}></Route>
             <Route path="/register" element={<Register />}></Route>
+            <Route path="/previewpage/:data" element={<PreviewPage />}></Route>
           </Routes>
         </div>
         <ConditionalFooter />

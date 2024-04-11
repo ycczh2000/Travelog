@@ -14,9 +14,11 @@ function ConditionalFooter() {
   const location = useLocation();
   const hideFooterOnPaths = ["/", "/register", "/publish", "/login", "/publish/", "/travelogs"];
 
-  const shouldHideFooter = hideFooterOnPaths.includes(location.pathname) || 
+const shouldHideFooter = hideFooterOnPaths.includes(location.pathname) || 
+                          location.pathname.match(/^\/previewpage\/.*/) ||
                           location.pathname.match(/^\/travelogs\/[^/]+$/) ||
                           location.pathname.match(/^\/update\/[a-f\d]{24}$/);
+
 
   return shouldHideFooter ? null : <Footer />;
 }

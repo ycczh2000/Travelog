@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-05 14:54:15
+ * @LastEditTime: 2024-04-11 02:05:50
  * @FilePath: \frontend\src\components\FilterBar\FilterBar.jsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -13,7 +13,7 @@ import { ArrowDownCircleOutline, DownOutline } from 'antd-mobile-icons'
 import {HomeContext} from "../../Context/HomeContext"
 
 // import { DropdownRef } from 'antd-mobile/es/components/dropdown'
-import { options, Sorters } from './data'
+import { locations, travelogSorters } from '../../config/options'
 import FilterData from '../FilterData/FilterData';
 
 
@@ -33,6 +33,7 @@ const FilterBar = () => {
     return (
         <div>
             <Popup
+            
               visible={visible}
               onMaskClick={() => {
                 console.log(selectedFilters)
@@ -43,7 +44,9 @@ const FilterBar = () => {
               borderButtonRightRadius: '8px',
               minHeight: '40vh', }}
             >
+                <div style={{overflowY: 'scroll', height: '100vh',}}>
               <FilterData/>
+              </div>
             </Popup>
             <Dropdown ref={ref} arrow={<DownOutline />}>
                 <Dropdown.Item
@@ -57,7 +60,7 @@ const FilterBar = () => {
                     arrow={<ArrowDownCircleOutline />}
                 >
                     <CascaderView
-                        options={Sorters}
+                        options={travelogSorters}
                         value={[sorter]}
                         onChange={(val, extend) => {
                             setSorter(val[0]);
@@ -69,7 +72,7 @@ const FilterBar = () => {
                 </Dropdown.Item>
                 <Dropdown.Item key='city' title={city&&city.length>0 ? city : '选择城市'} style={{ width: '100px', color: city&&city.length>0  ? 'blue' : 'inherit' }}>
                     <CascaderView
-                        options={options}
+                        options={locations}
                         value={city}
                         onChange={(val, extend) => {
                             setCity(val);

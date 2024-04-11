@@ -107,6 +107,7 @@ travelogSchema.statics.getTravelogById = async function (travelogId) {
           username: 1,
           likesCount: { $size: "$likes" },
           uploadDate: 1,
+
         },
       },
     ]).exec()
@@ -150,6 +151,7 @@ travelogSchema.statics.getMyTravelogById = async function (userId, travelogId) {
           tripDate: 1,
           tripBudget: 1,
           isPublic: 1,
+          status: 1,
           rate: 1,
           createDate: 1,
           username: 1,

@@ -2,17 +2,31 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-10 02:37:22
+ * @LastEditTime: 2024-04-11 00:06:22
  * @FilePath: \frontend\src\pages\MyTravelog\components\MyTravelogList\MyTravelogItem.jsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 import React from "react"
-import { Image, Button, Tag } from "antd-mobile"
+import { Image, Button, Tag, Dialog } from "antd-mobile"
 import styles from "./MyTravelogItem.module.scss"
 import { ExclamationCircleOutline, HeartFill } from "antd-mobile-icons"
 import { Modal, Space, Toast, Divider } from "antd-mobile"
 import { $deleteTravelog } from "../../../../api/travelogApi"
+// import "./MyTravelogItem.scss"
 import { baseURL } from "../../../../config/config"
+
+const extractReasonAndDetails = (input) => {
+  const regex = /"reason":"([^"]+).*?"details":"([^"]+)/;
+  const match = input.match(regex);
+  if (match) {
+    const reason = match[1];
+    const details = match[2];
+    return { reason, details };
+  } else {
+    return { reason: null, details: null };
+  }
+};
+
 const statusStyles = {
   pending: { color: "primary", fill: "outline" },
   approved: { color: "#87d068", fill: "outline" },
@@ -52,11 +66,9 @@ export default function MyTravelogItem(props) {
       // Toast.show({ content: '点击了取消', position: 'bottom' })
     }
   }
-  // const handleGoDetail = (e) => {
-  //   console.log("handleGoDetail",e)
-  //   // window.location.href = `/travelogs/${e}`
-  // }
+
   //  window.location.href = `/`
+  
   return (
     <div className={styles.myTravelogItem}>
       <div className={styles.top}>
@@ -83,9 +95,44 @@ export default function MyTravelogItem(props) {
             {statusTexts[status]}
           </Tag>
           {status === "rejected" ? (
-            <div>
+            <div style={{ color: "red", fontSize: "1rem", padding: "0.3rem" }}
+              onClick={() => {
+                Dialog.show({
+                  content: (
+                    <div>
+                      <Space direction="vertical">
+                        <div style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                          {extractReasonAndDetails(rejectReason).reason}
+                        </div>
+                        <div style={{
+                          fontSize: '1rem', lineHeight: '1.4', maxHeight: '4.2rem', overflow: 'hidden',
+                          textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: '1rem'
+                        }}>
+                          {extractReasonAndDetails(rejectReason).details}
+                        </div>
+                      </Space>
+                    </div>
+                  ),
+                  closeOnAction: true,
+                  actions: [
+                    [
+                      {
+                        key: 'edit',
+                        text: '编辑',
+                        bold: true,
+                        danger: true,
+                        onClick: () => (window.location.href = `/update/${_id}`)
+                      },
+                      {
+                        key: 'cancel',
+                        text: '取消',
+                      },
+                    ],
+                  ],
+                })
+              }}>
               <ExclamationCircleOutline />
-              查看原因
+              {extractReasonAndDetails(rejectReason).reason ? extractReasonAndDetails(rejectReason).reason : ""}
             </div>
           ) : null}
         </div>
