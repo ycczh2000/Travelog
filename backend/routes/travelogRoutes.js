@@ -6,6 +6,7 @@ const { imgUpload, travelogImgUpload } = require("../middleware/imgUpload")
 const fs = require("fs")
 const path = require("path")
 const mongoose = require("mongoose")
+const User = require("../models/User")
 const ObjectId = mongoose.Types.ObjectId
 //与游记相关的接口
 
@@ -71,7 +72,7 @@ router.put("/travelogs/edit/update", async (req, res) => {
   res.json(result)
 })
 
-//4.0 获取图片列表 data: ["image1.png", "image2.jpg", ...]
+//4.0 获取图片列表 data: ["image1.png", "image2.jpg", ...] status为editing或updating
 router.get("/travelogs/edit/images/:status", async (req, res) => {
   const userId = req.userId
   if (!userId) {
@@ -150,8 +151,19 @@ router.get("/travelogs/edit/:status", async (req, res) => {
 //###################游记查询相关#####################
 //1.查询所有游记
 router.get("/travelogs", async (req, res) => {
-  const { title, tripBudget, tripNum, tripWay, tripDate } = req.query
+  console.log("/travelogs", req.query)
+  const { title, tripBudget, tripNum, tripWay, tripDate, username } = req.query
   const query = {}
+
+  if (username) {
+    const author = await User.findOne({ username: username }, "_id")
+    if (!author) {
+      return res.json([])
+    }
+    query.authorId = author._id
+  }
+  console.log("query", query)
+
   if (title) {
     const titleReg = new RegExp(title)
     query.title = { $regex: titleReg }
