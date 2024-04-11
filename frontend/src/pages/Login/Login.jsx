@@ -5,7 +5,10 @@ import { CalendarOutline } from "antd-mobile-icons"
 import { Link } from "react-router-dom"
 import { $login } from "../../api/userApi"
 import { UserContext } from "../../Context/UserContext"
+import { useNavigate } from "react-router-dom"
+
 export default function Login() {
+  let navigate = useNavigate()
   const { UID, setUID, userName, setUserName } = useContext(UserContext)
   const [form] = Form.useForm()
 
@@ -32,7 +35,6 @@ export default function Login() {
     }
     checkAutoLogin()
   }, [])
-  
 
   const onFinishHandle = async () => {
     try {
@@ -57,7 +59,6 @@ export default function Login() {
       Toast.show("登录出错：" + error.message)
     }
   }
-  
 
   return (
     <>
@@ -75,16 +76,16 @@ export default function Login() {
           })
         }
         footer={
-          // <Button block type="submit" onClick={onSubmit} color="primary" size="large">
           <>
             <Button className={styles.loginButton} block type="submit">
               登录
             </Button>
+            <Button className={styles.toHomeButton} block onClick={() => navigate("/home")}>
+              进入首页
+            </Button>
             <Link to="/register">注册</Link>
           </>
         }>
-        {/* <Form.Header>水平布局表单</Form.Header> */}
-        {/* 登录可能不需要那么多验证 */}
         <Form.Item
           noStyle
           name="username"
@@ -105,7 +106,6 @@ export default function Login() {
             { max: 16, message: "密码长度不能超过16个字符" },
             { min: 6, message: "密码长度不能少于6个字符" },
             { required: true, message: "请输入密码" },
-            { pattern: /^[A-Za-z0-9!@#$%^&*]+$/, message: "密码只能包含字母、数字和特定符号(!@#$%^&*)" },
           ]}>
           <Input type="password" className={styles.input} placeholder="请输入密码" />
         </Form.Item>

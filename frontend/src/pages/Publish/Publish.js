@@ -1,22 +1,11 @@
-/*
- * @Author: Sueyuki 2574397962@qq.com
- * @Date: 2024-03-27 18:42:58
- * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-11 21:08:19
- * @FilePath: \frontend\src\pages\Publish\Publish.js
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- */
-// Publish.js
-
 import React, { useState, useRef, useEffect } from "react"
 import "./Publish.css"
-import ImageUpload, { getFileList } from "../../components/ImageUpload/ImageUpload"
-import { useParams,useNavigate } from "react-router-dom"
+import ImageUpload from "../../components/ImageUpload/ImageUpload"
+import { useParams, useNavigate } from "react-router-dom"
 import Editing from "../../components/Editing/Editing"
 import { LeftOutline } from "antd-mobile-icons"
-import { Button, Modal, Toast, Dialog } from "antd-mobile"
+import { Button, Toast, Dialog } from "antd-mobile"
 import { DownlandOutline, EyeOutline } from "antd-mobile-icons"
-import { sendTraveLogToServer } from "../../api/userApi"
 import {
   $createEditTravelog,
   $createUpdateTravelog,
@@ -25,7 +14,6 @@ import {
   $getEditTravelog,
   $publishEditTravelog,
   $updateTargetTravelog,
-  $getImageList,
 } from "../../api/travelogApi"
 
 const Publish = () => {
@@ -33,12 +21,10 @@ const Publish = () => {
   const [editingData, setEditingData] = useState({})
   const imageUploadRef = useRef(null)
   const editingRef = useRef(null)
-  //EditTravelogs表中的id
-  const [editId, setEditId] = useState("")
-  //要修改的已申请发布游记的id，空值代表创建新游记
-  const { targetTravelogId } = useParams()
+  const [editId, setEditId] = useState("") //EditTravelogs表中的id
+  const { targetTravelogId } = useParams() //要修改的已申请发布游记的id，空值代表创建新游记
   const status = targetTravelogId === undefined ? "editing" : "updating"
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   //v2弹出窗口让用户选择加载之前编辑的内容，或是重新创建新的编辑状态游记
   //1.从/publish进入 选择是否加载之前的待发布内容
@@ -122,17 +108,17 @@ const Publish = () => {
     }
   }, [])
 
-  //定时器，每10秒自动保存草稿
-  // useEffect(() => {
-  //   const intervalId = setInterval(async () => {
-  //     const editingDataNow = editingRef.current.getEditingData()
-  //     await $updateEditTravelog({ editData: editingDataNow, editId: editId,status:status })
-  //   }, 10000)
+  // 定时器，每20秒自动保存草稿
+  useEffect(() => {
+    const intervalId = setInterval(async () => {
+      const editingDataNow = editingRef.current.getEditingData()
+      await $updateEditTravelog({ editData: editingDataNow, editId: editId, status: status })
+    }, 20000)
 
-  //   return () => {
-  //     clearInterval(intervalId)
-  //   }
-  // }, [editId])
+    return () => {
+      clearInterval(intervalId)
+    }
+  }, [editId])
 
   const handlePublishClick = async () => {
     const editingData = editingRef.current.getEditingData()
@@ -150,9 +136,8 @@ const Publish = () => {
     // if (result1.status === 'success') {
     // 如果第一个请求成功，则发送第二个请求，并等待结果
     const result2 = await $publishEditTravelog({ editId: editId })
-    console.log("handlePublishClick2 result2:", result2)
-    // }
-    console.log("handlePublishClick2 result1:", result1)
+    console.log("$updateEditTravelog result2:", result2)
+    console.log("$publishEditTravelog:", result1)
     if (result2.success === true) {
       Toast.show({ content: "发布成功", position: "bottom" })
       //在定时器结束前再次点击发布按钮会出bug
@@ -162,52 +147,49 @@ const Publish = () => {
     } else {
       Toast.show({ content: "发布失败", position: "bottom" })
     }
-    // const result = await $publishEditTravelog({ editId: editId })
-    // console.log("handlePublishClick2 result:", result)
   }
 
   const handleUpdateClick = async () => {
     const editingData = editingRef.current.getEditingData()
     if (editingData.title.length < 1 || editingData.title.length > 20) {
       Toast.show({
-        icon: 'fail',
-        content: '标题应该在1到20个字符之间',
+        icon: "fail",
+        content: "标题应该在1到20个字符之间",
       })
       return
     }
     if (editingData.content.length < 1) {
       Toast.show({
-        icon: 'fail',
-        content: '正文至少有一个字',
+        icon: "fail",
+        content: "正文至少有一个字",
       })
       return
     }
-    try{
-    let timer;
-    const timeoutPromise = new Promise((resolve, reject) => {
-      timer = setTimeout(() => {
-        reject(new Error("连接超时"));
-      }, 5000); // 设置超时时间，为 5 秒
-    });
-    const result1 = await $updateEditTravelog({ editData: editingData, editId: editId, status: status });
-    if (!result1.success) {
-      throw new Error("在服务端发送笔记前保存失败");
-    }
-    const result = await $updateTargetTravelog({ editId: editId })
-    if(!result.success){
-      throw new Error("在服务端发送笔记失败");
-    }
-    if (result.success) {
-      clearTimeout(timer);
-      setTimeout(() => {
-        window.location.href = `/mytravelog`
-      }, 1000)
-    }
-  }
-    catch (error) {
-      console.error("Error:", error);
-      Toast.show({ content: {error}, position: "bottom" })
-      return;
+    try {
+      let timer
+      const timeoutPromise = new Promise((resolve, reject) => {
+        timer = setTimeout(() => {
+          reject(new Error("连接超时"))
+        }, 5000) // 设置超时时间，为 5 秒
+      })
+      const result1 = await $updateEditTravelog({ editData: editingData, editId: editId, status: status })
+      if (!result1.success) {
+        throw new Error("在服务端发送笔记前保存失败")
+      }
+      const result = await $updateTargetTravelog({ editId: editId })
+      if (!result.success) {
+        throw new Error("在服务端发送笔记失败")
+      }
+      if (result.success) {
+        clearTimeout(timer)
+        setTimeout(() => {
+          window.location.href = `/mytravelog`
+        }, 1000)
+      }
+    } catch (error) {
+      console.error("Error:", error)
+      Toast.show({ content: { error }, position: "bottom" })
+      return
     }
   }
 
@@ -237,22 +219,19 @@ const Publish = () => {
     window.history.go(-1) // 返回上一页面
   }
 
-  const handlePreviewClick =async () => {
+  const handlePreviewClick = async () => {
     await handleSaveDraftClick()
     const Data = editingRef.current.getEditingData()
-    editingData.rate=Data.rate
+    editingData.rate = Data.rate
     console.log("handlePreviewClick", editingData)
-    // const result1 = await $updateEditTravelog({ editData: editingData, editId: editId, status: status });//在预览前，先保存
     const combinedData = {
       fileList: fileList,
-      editingData: editingData
-    };
-    navigate(`/previewpage/${encodeURIComponent(JSON.stringify(combinedData))}`);
+      editingData: editingData,
+    }
+    navigate(`/previewpage/${encodeURIComponent(JSON.stringify(combinedData))}`)
   }
   return (
     <div style={{ margin: "10px" }}>
-      {" "}
-      {/* 添加外边距 */}
       <div>
         <Button style={{ background: "transparent", border: "none" }} onClick={handleGoBack}>
           <LeftOutline />

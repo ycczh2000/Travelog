@@ -6,7 +6,6 @@ import MyTravelog from "./pages/MyTravelog/MyTravelog"
 
 import Login from "./pages/Login/Login"
 import Register from "./pages/Register/Register"
-import AvatarUpload from "./pages/AvatarUpload/AvatarUpload"
 import ConditionalFooter from "./ConditionalFooter"
 import UserSpace from "./pages/UserSpace/UserSpace"
 import UserTravelogs from "./pages/UserTravelogs/UserTravelogs"
@@ -22,11 +21,7 @@ function App() {
       <UserContextProvider>
         <div className="app-container">
           <Routes>
-            {/* <CacheSwitch>
-            <CacheRoute exact path="/" component={Home} />
-          </CacheSwitch> */}
             <Route path="/home" element={<Home />}></Route>
-            {/* <Route path="/travelogs/:id" element={<Detaillog />}></Route> */}
             <Route path="/travelogs/:id" element={<Detaillog />}></Route>
             <Route path="/space/:username" element={<UserSpace />}>
               <Route path="travelog" element={<UserTravelogs />}></Route>
@@ -34,7 +29,6 @@ function App() {
             <Route path="/mytravelog" element={<MyTravelog />}></Route>
             <Route path="/publish" element={<Publish />}></Route>
             <Route path="/update/:targetTravelogId" element={<Publish />}></Route>
-            <Route path="/avatarupload" element={<AvatarUpload />}></Route>
             <Route path="/login" element={<Login />}></Route>
             <Route path="/" element={<Login />}></Route>
             <Route path="/register" element={<Register />}></Route>

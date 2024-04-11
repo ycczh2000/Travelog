@@ -44,7 +44,15 @@
   text-align: center;
 }
 
-// --color	文字颜色	var(--adm-color-text)
-// --font-size	字号	17px
-// --placeholder-color	placeholder 文字颜色	var(--adm-color-light)
-// --text-align	文字对齐方式	left
+.toHomeButton {
+  width: 15rem;
+  background-color: #ffd510;
+  color: #000;
+  height: 2rem;
+  border-radius: 1rem;
+  margin: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
