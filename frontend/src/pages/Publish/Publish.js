@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-03-27 18:42:58
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-11 21:08:19
+ * @LastEditTime: 2024-04-11 22:19:17
  * @FilePath: \frontend\src\pages\Publish\Publish.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -229,7 +229,7 @@ const Publish = () => {
   }
 
   const handleGoBack = () => {
-    window.history.go(-1) // 返回上一页面
+    window.history.go(-1) 
   }
 
   const handlePreviewClick = async () => {

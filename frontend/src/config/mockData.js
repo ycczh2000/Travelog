@@ -7,6 +7,8 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 //此处保存模拟数据流，全部用于推荐功能
+//id为实际服务器上的，所以如果不修改此处的id，则不会与服务器上的数据流进行匹配，导致打开空页面
+//由于只是模拟，推荐的笔记实际上是同一个，所有打开的页面一样是正常的
 export const HotSearches = ["热搜词1", "热搜词2", "热搜词3"];
 export const searchArray = ['', '上海大学', '顾村公园', '钱伟长图书馆'];
 export const hotSearchWords = ['热搜词1', '热搜词2', '热搜词3', '热搜词4', '热搜词5', '热搜词6', '热搜词7', '热搜词8'];
