@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-10 22:38:45
+ * @LastEditTime: 2024-04-16 23:46:09
  * @FilePath: \frontend\src\components\WaterfallLayout\WaterfallLayout.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -86,7 +86,8 @@ const WaterfallLayout = () => {
   const masonryRef = useRef(null)
 
   useEffect(() => {
-    console.log("data changed")
+    console.log("data changed");
+
     if (masonryRef.current) {
       const masonry = new Masonry(masonryRef.current, {
         itemSelector: ".waterfall-item",
@@ -94,12 +95,26 @@ const WaterfallLayout = () => {
         gutter: ".waterfall-gutter",
         percentPosition: true,
         horizontalOrder: false, // 禁用水平排序
-      })
+      });
       // 更新瀑布流布局
-      masonry.layout()
-    }
-  }, [data])
+      masonry.layout();
+      // 在页面加载后的0.5秒内每隔0.25秒更新一次布局，以解决加载时瀑布流存在的问题
+      const timer = setTimeout(() => {
+        const interval = setInterval(() => {
+          masonry.layout();
+        }, 250);
 
+        // 1秒后清除interval
+        setTimeout(() => {
+          clearInterval(interval);
+        }, 500);
+      }, 500);
+
+      // 清除timer
+      return () => clearTimeout(timer);
+    }
+  }, [data]);
+  
   useEffect(() => {
     //sorter 发生变化时触发 handleSortData 函数
     console.log("sorter changed", sorter, city, selectedFilters, searchTerm)
