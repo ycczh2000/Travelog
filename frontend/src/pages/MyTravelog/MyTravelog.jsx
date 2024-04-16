@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect} from "react"
 import MyTravelogList from "./components/MyTravelogList/MyTravelogList"
 import MyTravelogHeader from "./components/MyTravelogHeader/MyTravelogHeader"
 import MyTravelogFilter from "./components/MyTravelogFilter/MyTravelogFilter"
@@ -11,7 +11,7 @@ import "./MyTravelog.css"
 import { $getMyTravelogs, $deleteTravelog } from "../../api/travelogApi"
 import AvatarEditor from "react-avatar-editor"
 import { $uploadAvatar, $getAvatar } from "../../api/userApi"
-import baseURL from '../../config/config'
+import {baseURL} from '../../config/config'
 
 export default function MyTravelog() {
   const MoMo = 'https://img1.baidu.com/it/u=1389873612,485301600&fm=253&app=120&size=w931&n=0&f=JPEG&fmt=auto?sec=1712682000&t=ff2af80b5ee2888d42c58c2aff22a8d3'
@@ -21,7 +21,9 @@ export default function MyTravelog() {
   console.log(userName, UID)
   const [myTravelogList, setMyTravelogList] = useState([])
   const [totop, setTotop] = useState(true)
-  const [avatarUrl, setAvatarUrl] = useState(`{baseURL}getAvatar/${userName}` || MoMo);
+  const initialAvatarUrl = baseURL + 'getAvatar/' + userName;
+  const [avatarUrl, setAvatarUrl] = useState(initialAvatarUrl );
+  console.log('avatarUrl:',initialAvatarUrl ,avatarUrl)
   // 用于存放用户头像的URL(从服务器获取)
   const [visible, setVisible] = useState(false) //标志上传头像的弹出组件是否弹出
   const [avatarFile, setAvatarFile] = useState('')// 用于存储用户选择的头像文件(本地待上传的)
@@ -35,11 +37,18 @@ export default function MyTravelog() {
     localStorage.removeItem('likedList');
     localStorage.removeItem('followingList');
     localStorage.removeItem('historyList');
+    localStorage.removeItem('historyList');
+    localStorage.removeItem('selected');
     setUID('');
     setUserName('');
     alert('退出成功');
     window.location.href = "/";
   };
+  
+  useEffect(() => {
+    // 监听userName变化，更新avatarUrl
+    setAvatarUrl(`${baseURL}getAvatar/${userName}`);
+  }, [baseURL, userName]);
 
   const handleFileInputChange = (event) => {
     const file = event.target.files[0];
@@ -152,7 +161,8 @@ export default function MyTravelog() {
 
   useEffect(() => {
     loadingData()
-    setAvatarUrl(`{baseURL}getAvatar/${userName}`);
+    // setAvatarUrl(`${baseURL}getAvatar/${userName}`);
+    console.log('avatarUrl:',avatarUrl)
   }, [])
 
   //删除方法 传入id 返回bool 之后只从前端移除myTravelogList中对应项，不用重新请求、加载数据
