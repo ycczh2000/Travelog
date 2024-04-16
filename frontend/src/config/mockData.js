@@ -40,13 +40,13 @@ export  const recommendations = [
         label: "超值"
     },
     {
-        id: '6615217f2568b8d59d05a1d8',
+        id: '661556cfa9879f1482323604',
         title: "购物推荐",
         image: "https://img0.baidu.com/it/u=2263858049,459404824&fm=253&fmt=auto&app=138&f=JPEG?w=607&h=420",
         label: "特价"
     },
     {
-        id: '6615217f2568b8d59d05a1d8',
+        id: '661556cfa9879f1482323604',
         title: "购物推荐",
         image: "https://img0.baidu.com/it/u=2263858049,459404824&fm=253&fmt=auto&app=138&f=JPEG?w=607&h=420",
         label: "限时"
