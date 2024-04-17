@@ -41,8 +41,8 @@ export const $updateTargetTravelog = async params => {
 //4.0 获取图片列表
 //{message: "获取成功",success: true, data: ["image1.png", "image1.jpg", ...] }
 //{message: "找不到图片列表", success: false, data: {}}
-export const $getImageList = async status => {
-  const { data } = await axios.get(`/travelogs/edit/images/${status}`)
+export const $getImageList = async editId => {
+  const { data } = await axios.get(`/travelogs/edit/images/${editId}`)
   return data
 }
 
@@ -60,8 +60,8 @@ export const $uploadImage = async params => {
 
 //5.删除第i张图片
 export const $deleteImage = async params => {
-  const { index, status } = params
-  const { data } = await axios.delete("/travelogs/edit/deleteimg", { params: { index, status } })
+  const { index, status, editId } = params
+  const { data } = await axios.delete("/travelogs/edit/deleteimg", { params: { index, status, editId } })
   return data
 }
 
@@ -82,22 +82,21 @@ export const $getEditTravelog = async status => {
 export const $getTravelogs = async (city, selectedFilters, searchTerm, searchMode) => {
   let params = {
     city,
-    selectedFilters
-  };
+    selectedFilters,
+  }
 
   if (searchMode === "user") {
-    params.username = searchTerm;
+    params.username = searchTerm
   } else {
-    params.title = searchTerm;
+    params.title = searchTerm
   }
   console.log("params:", params)
   const { data } = await axios.get("/travelogs", {
-    params: params
-  });
+    params: params,
+  })
 
-  return data;
-};
-
+  return data
+}
 
 //9.获取特定id游记 共有
 export const $getTravelogsByID = async id => {

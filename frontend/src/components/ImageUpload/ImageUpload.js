@@ -12,7 +12,7 @@ const ImageUpload = forwardRef((props, ref) => {
   const [imageViewerData, setImageViewerData] = useState({ image: "", index: 0 })
   //重新加载图片url列表，并在fileList数组中附上index，供删除，更新方法使用
   async function reloadImages() {
-    const result = await $getImageList(status)
+    const result = await $getImageList(editId)
     console.log("result", result)
     //图片名称数组
     const imageNames = result.data

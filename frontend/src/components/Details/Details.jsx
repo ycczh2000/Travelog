@@ -11,6 +11,7 @@ import { Button, Toast } from "antd-mobile"
 import "./Details.css"
 import { UserContext } from "../../Context/UserContext"
 import { baseURL } from "../../config/config"
+import { convertUTCToBeijingTimeWithSecond } from "../../utils/utils"
 const Details = ({ detailInfo }) => {
   const [followed, setFollowed] = React.useState(false)
   const { userName } = useContext(UserContext) //自己账户的用户名,N是大写的，区别于作者名的username
@@ -61,7 +62,7 @@ const Details = ({ detailInfo }) => {
       <img className="imager" src={`${baseURL}getAvatar/${detailInfo.username}`} alt="用户头像" />
       <div className="info">
         <h3>{detailInfo.username}</h3>
-        <p>{detailInfo.createDate ? detailInfo.createDate : "未知"}</p>
+        <p>{detailInfo.createDate ? convertUTCToBeijingTimeWithSecond(detailInfo.createDate) : "未知"}</p>
       </div>
       <Button
         className="button1"

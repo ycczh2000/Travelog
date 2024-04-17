@@ -2,10 +2,10 @@
 
 # dependencies
 /node_modules
+/uploads
 /.pnp
 .pnp.js
-uploads
-.buffer_load.js
+
 # testing
 /coverage
 

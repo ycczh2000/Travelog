@@ -13,6 +13,7 @@ import { ExclamationCircleOutline, HeartFill } from "antd-mobile-icons"
 import { Modal, Space, Toast } from "antd-mobile"
 import { $deleteTravelog } from "../../../../api/travelogApi"
 // import "./MyTravelogItem.scss"
+import { convertUTCToBeijingTimeWithSecond } from "../../../../utils/utils"
 import { baseURL } from "../../../../config/config"
 
 const extractReasonAndDetails = input => {
@@ -42,7 +43,7 @@ const statusTexts = {
 export default function MyTravelogItem(props) {
   //content返回长度需要限制
   const { item } = props
-  const { _id, title, content, status, likesCount, images, viewsCount, rejectReason, createDate } = item
+  const { _id, title, content, status, likesCount, images, viewsCount, rejectReason, uploadDate, auditDate } = item
   //props用到的方法
   const { deleteTravelog } = props
   console.log("item", item)
@@ -59,7 +60,6 @@ export default function MyTravelogItem(props) {
         console.error("删除失败", error)
       }
     } else {
- 
     }
   }
 
@@ -92,12 +92,29 @@ export default function MyTravelogItem(props) {
             {<HeartFill fontSize="18px" color="#FF0000" />}
             {likesCount}
           </div>
-          <div className={styles.MyTravelogDate}>创建日期{createDate}</div>
+          <div className={styles.MyTravelogDate}>发布时间{convertUTCToBeijingTimeWithSecond(uploadDate)}</div>
         </div>
       </div>
       <div className={styles.bottom}>
         <div className={styles.auditResult}>
-          <Tag style={{ fontSize: "1rem", padding: "0.3rem" }} {...statusStyles[status]}>
+          <Tag
+            onClick={() => {
+              console.log(status === "pending" ? "无" : convertUTCToBeijingTimeWithSecond(auditDate))
+              Dialog.show({
+                content:
+                  status === "pending" ? "还未审核" : "审核时间: " + convertUTCToBeijingTimeWithSecond(auditDate),
+                closeOnMaskClick: true,
+                closeOnAction: true,
+                actions: [
+                  {
+                    key: "confirm",
+                    text: "确定",
+                  },
+                ],
+              })
+            }}
+            style={{ fontSize: "1rem", padding: "0.3rem" }}
+            {...statusStyles[status]}>
             {statusTexts[status]}
           </Tag>
           {status === "rejected" ? (

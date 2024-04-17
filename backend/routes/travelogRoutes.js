@@ -73,13 +73,13 @@ router.put("/travelogs/edit/update", async (req, res) => {
 })
 
 //4.0 获取图片列表 data: ["image1.png", "image2.jpg", ...] status为editing或updating
-router.get("/travelogs/edit/images/:status", async (req, res) => {
+router.get("/travelogs/edit/images/:editId", async (req, res) => {
   const userId = req.userId
   if (!userId) {
     return res.status(401).send("未登录")
   }
-  const { status } = req.params
-  const result = await EditTravelog.getImages(userId, status)
+  const { editId } = req.params
+  const result = await EditTravelog.getImages(userId, editId)
   res.json(result)
 })
 
@@ -99,7 +99,7 @@ router.post("/travelogs/edit/uploadimg", travelogImgUpload.single("image"), asyn
   const filePath = path.join(__dirname, "../uploads", imgName)
   try {
     fs.writeFileSync(filePath, req.file.buffer)
-    const result = await EditTravelog.uploadImage(userId, imgName, index, status)
+    const result = await EditTravelog.uploadImage(userId, imgName, index, status, editId)
     return res.status(200).json(result)
   } catch (err) {
     return res.status(500).json({ message: "保存失败" })
@@ -112,9 +112,9 @@ router.delete("/travelogs/edit/deleteimg", async (req, res) => {
   if (!userId) {
     return res.status(401).send("未登录")
   }
-  const { index, status } = req.query
+  const { index, status, editId } = req.query
   console.log("req.params", index)
-  const result = await EditTravelog.deleteImage(userId, index, status) //从数据库删除图片
+  const result = await EditTravelog.deleteImage(userId, index, status, editId) //从数据库删除图片
   res.json(result)
   try {
     const { imageName } = result

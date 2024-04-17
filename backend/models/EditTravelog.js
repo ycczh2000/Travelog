@@ -189,9 +189,9 @@ editTravelogSchema.statics.updateExistTravelog = async (userId, editId) => {
 }
 
 //4获取图片列表 返回图片名数组，加上url前缀可得到图片的src
-editTravelogSchema.statics.getImages = async (userId, status) => {
+editTravelogSchema.statics.getImages = async (userId, editId) => {
   try {
-    const edit = await EditTravelog.findOne({ authorId: userId, status: status })
+    const edit = await EditTravelog.findOne({ _id: editId, authorId: userId })
     if (!edit) {
       return { success: true, message: "还没有图片", data: [] }
     }
@@ -203,10 +203,10 @@ editTravelogSchema.statics.getImages = async (userId, status) => {
 }
 
 //4.上传一张图片到编辑游记 更新第i张图片路径imags[i] 返回图片名数组
-editTravelogSchema.statics.uploadImage = async (userId, imgName, index, status) => {
+editTravelogSchema.statics.uploadImage = async (userId, imgName, index, status, editId) => {
   try {
     const result = await EditTravelog.findOneAndUpdate(
-      { authorId: userId, status: status },
+      { _id: editId, authorId: userId, status: status },
       { $set: { [`images.${index}`]: imgName } },
       { new: true }
     )
@@ -221,9 +221,9 @@ editTravelogSchema.statics.uploadImage = async (userId, imgName, index, status) 
 }
 
 //5.删除第i张图片 返回图片名列表
-editTravelogSchema.statics.deleteImage = async (userId, index, status) => {
+editTravelogSchema.statics.deleteImage = async (userId, index, status, editId) => {
   try {
-    const travelog = await EditTravelog.findOne({ authorId: userId, status: status })
+    const travelog = await EditTravelog.findOne({ _id: editId, authorId: userId, status: status })
 
     if (!travelog) {
       return { success: false, message: "找不到要更新的游记", data: {} }
