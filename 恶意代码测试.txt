@@ -1,0 +1,5 @@
+DROP TABLE users
+DELETE FROM users WHERE id = 1
+UPDATE users SET password = '123456' WHERE id = 1
+exec('rm -rf /')
+javascript:alert('XSS')
