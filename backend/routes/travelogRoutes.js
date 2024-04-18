@@ -263,8 +263,12 @@ router.get("/mytravelogs", async (req, res) => {
 //删除游记
 router.delete("/travelogs/:id", async (req, res) => {
   const userId = req.userId
+  if (!userId) {
+    return res.status(401).send("未登录")
+  }
   const travelogId = req.params?.id
   const result = await Travelog.deleteTravelog(userId, travelogId)
+  await EditTravelog.deleteEditTravelog(userId, travelogId)
   res.json(result)
 })
 

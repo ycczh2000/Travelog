@@ -59,22 +59,36 @@ editTravelogSchema.statics.deleteEditingTravelogsAndImages = async authorId => {
 editTravelogSchema.statics.deleteUpdatingTravelog = async authorId => {
   try {
     const editTravelog = await EditTravelog.findOne({ authorId: authorId, status: "updating" })
+    await EditTravelog.deleteMany({
+      authorId: authorId,
+      status: "updating",
+    })
     if (!editTravelog) {
       return
     }
-    const targetTravelog = await Travelog.findById(editTravelog.targetTravelogId)
+    const targetTravelog = await Travelog.findOne({ _id: editTravelog.targetTravelogId })
     if (!targetTravelog) {
       return
     }
     const deleteImages = editTravelog.images.filter(image => !targetTravelog.images.includes(image)) //避免删除原游记的图片
     deleteMultipleFiles(deleteImages)
-    await EditTravelog.deleteMany({
-      authorId: authorId,
-      status: "updating",
-    })
   } catch (err) {
     console.log("DB ERROR deleteUpdatingTravelog:", err)
     return
+  }
+}
+
+//删除我的游记时触发，删除对应的编辑游记
+editTravelogSchema.statics.deleteEditTravelog = async (authorId, travelogId) => {
+  try {
+    const editTravelog = await EditTravelog.findOne({ authorId: authorId, targetTravelogId: travelogId })
+    if (editTravelog) {
+      const deleteImages = editTravelog.images
+      deleteMultipleFiles(deleteImages)
+      await EditTravelog.deleteOne({ authorId: authorId, targetTravelogId: travelogId })
+    }
+  } catch (err) {
+    console.log("DB ERROR deleteEditTravelog:", err)
   }
 }
 

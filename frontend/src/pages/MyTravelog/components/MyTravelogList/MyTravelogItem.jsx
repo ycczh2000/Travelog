@@ -1,17 +1,8 @@
-/*
- * @Author: Sueyuki 2574397962@qq.com
- * @Date: 2024-04-02 19:17:09
- * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-11 22:10:07
- * @FilePath: \frontend\src\pages\MyTravelog\components\MyTravelogList\MyTravelogItem.jsx
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- */
 import React from "react"
 import { Image, Button, Tag, Dialog } from "antd-mobile"
 import styles from "./MyTravelogItem.module.scss"
 import { ExclamationCircleOutline, HeartFill } from "antd-mobile-icons"
 import { Modal, Space, Toast } from "antd-mobile"
-import { $deleteTravelog } from "../../../../api/travelogApi"
 // import "./MyTravelogItem.scss"
 import { convertUTCToBeijingTimeWithSecond } from "../../../../utils/utils"
 import { baseURL } from "../../../../config/config"
