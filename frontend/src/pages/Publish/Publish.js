@@ -142,6 +142,7 @@ const Publish = () => {
   const handlePublishClick = async () => {
     setIsUploading(true)
     if (!verifyEditingData()) return
+    const editingData = editingRef.current.getEditingData()
     const result1 = await $updateEditTravelog({ editData: editingData, editId: editId, status: status })
     const result2 = await $publishEditTravelog({ editId: editId })
     if (result2.success === true) {
@@ -159,6 +160,7 @@ const Publish = () => {
   const handleUpdateClick = async () => {
     setIsUploading(true)
     if (!verifyEditingData()) return
+    const editingData = editingRef.current.getEditingData()
     try {
       const result1 = await $updateEditTravelog({ editData: editingData, editId: editId, status: status })
       if (!result1.success) {
@@ -178,6 +180,9 @@ const Publish = () => {
         })
         return
       } else if (result.success) {
+        Toast.show({
+          content: result.message || "更新成功",
+        })
         setTimeout(() => {
           setIsUploading(false)
           window.location.href = `/mytravelog`

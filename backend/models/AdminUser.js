@@ -77,7 +77,6 @@ adminUserSchema.statics.audit = async function (userId, travelogId, auditStatus,
     }
     console.log("auditStatus", auditStatus)
     travelog.auditDate = Date.now()
-    travelog.uploadDate = Date.now()
     travelog.auditorId = userId
     switch (auditStatus) {
       case "approved":

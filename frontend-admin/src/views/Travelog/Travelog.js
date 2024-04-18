@@ -98,18 +98,18 @@ export default function Task() {
       width: 500,
       render: (_, { title, _id }) => <a onClick={() => navigate(`${_id}`)}>{title}</a>,
     },
-    // {
-    //   title: "上传时间",
-    //   dataIndex: "uploadDate",
-    //   ellipsis: true,
-    //   render: (_, { uploadDate }) => convertUTCToBeijingTime(uploadDate),
-    // },
     {
-      title: "创建时间",
-      dataIndex: "createDate",
+      title: "上传时间",
+      dataIndex: "uploadDate",
       ellipsis: true,
-      render: (_, { createDate }) => convertUTCToBeijingTime(createDate),
+      render: (_, { uploadDate }) => convertUTCToBeijingTime(uploadDate),
     },
+    // {
+    //   title: "创建时间",
+    //   dataIndex: "createDate",
+    //   ellipsis: true,
+    //   render: (_, { createDate }) => convertUTCToBeijingTime(createDate),
+    // },
     { title: "发布人", dataIndex: "authorUsername", ellipsis: true },
     { title: "审核人", dataIndex: "auditorUsername", ellipsis: true },
     {
