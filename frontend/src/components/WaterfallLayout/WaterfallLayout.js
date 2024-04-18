@@ -2,12 +2,12 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-18 22:13:41
+ * @LastEditTime: 2024-04-18 23:55:24
  * @FilePath: \frontend\src\components\WaterfallLayout\WaterfallLayout.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 // src/components/WaterfallLayout.js
-import React, { useContext, useRef, useEffect, useState } from "react"
+import React, { useContext, useRef, useEffect, useState,useLayoutEffect } from "react"
 import Masonry from "masonry-layout"
 import InfCard from "../InfCard/InfCard"
 import "./WaterfallLayout.css"
@@ -91,9 +91,7 @@ const WaterfallLayout = () => {
   // 在组件加载时添加滚动事件监听器，并在组件卸载时移除监听器
   const masonryRef = useRef(null)
 
-  useEffect(() => {
-    console.log("data changed");
-
+  useLayoutEffect(() => {
     if (masonryRef.current) {
       const masonry = new Masonry(masonryRef.current, {
         itemSelector: ".waterfall-item",
@@ -102,8 +100,10 @@ const WaterfallLayout = () => {
         percentPosition: true,
         horizontalOrder: false, // 禁用水平排序
       });
+      
       // 更新瀑布流布局
       masonry.layout();
+
       // 在页面加载后的0.5秒内每隔0.25秒更新一次布局，以解决加载时瀑布流存在的问题
       const timer = setTimeout(() => {
         const interval = setInterval(() => {
