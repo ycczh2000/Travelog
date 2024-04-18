@@ -17,6 +17,7 @@ import {
 } from "../../api/travelogApi"
 
 const Publish = () => {
+  const [isUploading, setIsUploading] = useState(false)
   const [editingData, setEditingData] = useState({})
   const imageUploadRef = useRef(null)
   const editingRef = useRef(null)
@@ -90,9 +91,7 @@ const Publish = () => {
 
   const createNewUpdatingTravelog = async () => {
     const result = await $createUpdateTravelog({ targetTravelogId: targetTravelogId })
-    console.log("createEditTravelog", result)
     const newEditId = result.data?.newEdit?._id
-    console.log("createNewEditTravelog", newEditId)
     setEditId(newEditId)
     const newEditData = result.data?.newEdit
     setEditingData(newEditData)
@@ -119,79 +118,82 @@ const Publish = () => {
     }
   }, [editId])
 
-  const handlePublishClick = async () => {
+  const verifyEditingData = () => {
     const editingData = editingRef.current.getEditingData()
-    console.log("editingData", editingData)
+    const fileList = imageUploadRef.current.getFileList()
+    if (fileList.length < 1) {
+      setIsUploading(false)
+      Toast.show({ content: "至少需要一张图片" })
+      return false
+    }
     if (editingData.title.length < 1 || editingData.title.length > 20) {
+      setIsUploading(false)
       Toast.show({ content: "标题应该在1到20个字之间" })
-      return
+      return false
     }
     if (editingData.content.length < 1) {
+      setIsUploading(false)
       Toast.show({ content: "正文至少要有一个字" })
-      return
+      return false
     }
+    return true
+  }
+
+  const handlePublishClick = async () => {
+    setIsUploading(true)
+    if (!verifyEditingData()) return
     const result1 = await $updateEditTravelog({ editData: editingData, editId: editId, status: status })
     const result2 = await $publishEditTravelog({ editId: editId })
-    console.log("$updateEditTravelog result2:", result2)
-    console.log("$publishEditTravelog:", result1)
     if (result2.success === true) {
       Toast.show({ content: "发布成功", position: "bottom" })
-      //在定时器结束前再次点击发布按钮会出bug
       setTimeout(() => {
+        setIsUploading(false)
         window.history.go(-1) // 返回上一页面
       }, 1000)
     } else {
       Toast.show({ content: "发布失败", position: "bottom" })
+      setIsUploading(false)
     }
   }
 
   const handleUpdateClick = async () => {
-    const editingData = editingRef.current.getEditingData()
-    if (editingData.title.length < 1 || editingData.title.length > 20) {
-      Toast.show({
-        icon: "fail",
-        content: "标题应该在1到20个字符之间",
-      })
-      return
-    }
-    if (editingData.content.length < 1) {
-      Toast.show({
-        icon: "fail",
-        content: "正文至少有一个字",
-      })
-      return
-    }
+    setIsUploading(true)
+    if (!verifyEditingData()) return
     try {
-      let timer
-      const timeoutPromise = new Promise((resolve, reject) => {
-        timer = setTimeout(() => {
-          reject(new Error("连接超时"))
-        }, 5000) // 设置超时时间，为 5 秒
-      })
       const result1 = await $updateEditTravelog({ editData: editingData, editId: editId, status: status })
       if (!result1.success) {
-        throw new Error("在服务端发送笔记前保存失败")
+        setIsUploading(false)
+        Toast.show({
+          icon: "fail",
+          content: result1.message || "更新失败",
+        })
+        return
       }
       const result = await $updateTargetTravelog({ editId: editId })
       if (!result.success) {
-        throw new Error("在服务端发送笔记失败")
-      }
-      if (result.success) {
-        clearTimeout(timer)
+        setIsUploading(false)
+        Toast.show({
+          icon: "fail",
+          content: result.message || "更新失败",
+        })
+        return
+      } else if (result.success) {
         setTimeout(() => {
+          setIsUploading(false)
           window.location.href = `/mytravelog`
         }, 1000)
       }
     } catch (error) {
       console.error("Error:", error)
       Toast.show({ content: { error }, position: "bottom" })
+      setIsUploading(false)
       return
     }
   }
 
   const handleSaveDraftClick = async () => {
-    const fileList = imageUploadRef.current.getFileList()
     const editingData = editingRef.current.getEditingData()
+    if (!verifyEditingData()) return
     const result = await $updateEditTravelog({ editData: editingData, editId: editId, status: status })
     if (result.success) {
       Toast.show({
@@ -205,8 +207,6 @@ const Publish = () => {
         content: result.message,
         position: "center",
       })
-      console.log(editingData)
-      console.log(result)
       setEditingData(result.data)
     }
   }
@@ -249,12 +249,14 @@ const Publish = () => {
           {targetTravelogId ? (
             <Button
               onClick={handleUpdateClick}
+              disabled={isUploading}
               style={{ backgroundColor: "red", color: "white", borderRadius: "20px", flex: "1", marginLeft: "10px" }}>
               修改游记
             </Button>
           ) : (
             <Button
               onClick={handlePublishClick}
+              disabled={isUploading}
               style={{ backgroundColor: "red", color: "white", borderRadius: "20px", flex: "1", marginLeft: "10px" }}>
               发布游记
             </Button>
