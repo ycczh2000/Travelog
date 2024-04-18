@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-16 23:46:09
+ * @LastEditTime: 2024-04-18 22:13:41
  * @FilePath: \frontend\src\components\WaterfallLayout\WaterfallLayout.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -15,6 +15,7 @@ import { HomeContext } from "../../Context/HomeContext"
 import { $getTravelogs } from "../../api/travelogApi"
 import { DotLoading, ErrorBlock } from "antd-mobile"
 import { baseURL } from "../../config/config"
+import { tripBudgets } from "../../config/options"
 const WaterfallLayout = () => {
   const { sorter, city, selectedFilters, searchTerm, searchMode } = useContext(HomeContext)
   const [data, setData] = useState([])
@@ -30,7 +31,12 @@ const WaterfallLayout = () => {
   }, [searchTerm])
 
   const fetchData = async (sorter, city, selectedFilters, searchTerm = "", searchMode) => {
-    console.log("fetchData:", sorter, city, selectedFilters, searchTerm, searchMode)
+    let tripBudget=selectedFilters.tripBudget?selectedFilters.tripBudget[0]:''
+    let tripNum=selectedFilters.tripNum?selectedFilters.tripNum[0]:''
+    let tripWay=selectedFilters.tripWay?selectedFilters.tripWay[0]:''
+    let tripDate=selectedFilters.tripDate?selectedFilters.tripDate[0]:''
+    let tripRate=selectedFilters.tripRate?selectedFilters.tripRate:0
+    console.log("fetchData:", sorter, city,tripBudget,tripNum,tripWay,tripDate,tripRate, searchTerm, searchMode)
     // 如果正在加载数据，则直接返回，避免重复请求
     if (loading) return
     setDisconnect(false)
