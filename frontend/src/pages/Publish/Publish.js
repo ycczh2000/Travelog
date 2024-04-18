@@ -17,7 +17,6 @@ import {
 } from "../../api/travelogApi"
 
 const Publish = () => {
-  const [fileList, setFileList] = useState([])
   const [editingData, setEditingData] = useState({})
   const imageUploadRef = useRef(null)
   const editingRef = useRef(null)
@@ -122,13 +121,13 @@ const Publish = () => {
 
   const handlePublishClick = async () => {
     const editingData = editingRef.current.getEditingData()
-
+    console.log("editingData", editingData)
     if (editingData.title.length < 1 || editingData.title.length > 20) {
-      alert("Title length should be between 1 and 20 characters.") // 使用alert弹出消息提示
+      Toast.show({ content: "标题应该在1到20个字之间" })
       return
     }
     if (editingData.content.length < 1) {
-      alert("Title length should be at least 1 character.") // 使用alert弹出消息提示
+      Toast.show({ content: "正文至少要有一个字" })
       return
     }
     const result1 = await $updateEditTravelog({ editData: editingData, editId: editId, status: status })
@@ -217,6 +216,7 @@ const Publish = () => {
   }
 
   const handlePreviewClick = async () => {
+    const fileList = imageUploadRef.current.getFileList()
     await handleSaveDraftClick()
     const Data = editingRef.current.getEditingData()
     editingData.rate = Data.rate
@@ -235,7 +235,7 @@ const Publish = () => {
         </Button>
       </div>
       <div style={{ margin: "10px", marginTop: "0px" }}>
-        <ImageUpload ref={imageUploadRef} fileList={fileList} editId={editId} status={status} />
+        <ImageUpload ref={imageUploadRef} editId={editId} status={status} />
         <Editing ref={editingRef} editingData={editingData} />
       </div>
       <div style={{ position: "absolute", bottom: "10px", left: "0", right: "0" }}>

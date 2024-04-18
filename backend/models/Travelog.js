@@ -1,7 +1,7 @@
 const mongoose = require("mongoose")
 const User = require("./User")
 const ObjectId = mongoose.Schema.Types.ObjectId
-
+const { deleteFileAsync, deleteMultipleFiles } = require("../utils/utils")
 const travelogSchema = new mongoose.Schema({
   authorId: { type: ObjectId, ref: "User", required: true },
 
@@ -107,7 +107,6 @@ travelogSchema.statics.getTravelogById = async function (travelogId) {
           username: 1,
           likesCount: { $size: "$likes" },
           uploadDate: 1,
-
         },
       },
     ]).exec()
@@ -191,7 +190,14 @@ travelogSchema.statics.deleteTravelog = async function (authorId, travelogId) {
   try {
     //这里是防止与顶部的ObjectId冲突     优先先实现当前功能，之后再统一修改
     const ObjectId = mongoose.Types.ObjectId
-    await this.deleteOne({ _id: new ObjectId(travelogId), authorId, deleted: false }).exec()
+    const travelog = await this.findOne({ _id: new ObjectId(travelogId), authorId, deleted: false })
+    if (!travelog) {
+      return { success: false, message: "未找到游记或已被删除" }
+    }
+    if (travelog.images && travelog.images.length > 0) {
+      deleteMultipleFiles(travelog.images)
+    }
+    await travelog.deleteOne({ _id: travelog._id })
     return { success: true, message: "删除成功" }
   } catch (err) {
     console.log("DB ERROR travelogSchema.statics.deleteTravelog:", err)

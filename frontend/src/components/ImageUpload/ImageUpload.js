@@ -53,7 +53,7 @@ const ImageUpload = forwardRef((props, ref) => {
   }
   //删除第i张图片
   const handleDelete = async function (ImageUploadItem) {
-    const result = await $deleteImage({ index: ImageUploadItem.index, status: status })
+    const result = await $deleteImage({ index: ImageUploadItem.index, status: status, editId: editId })
     console.log("delete result", result)
   }
 

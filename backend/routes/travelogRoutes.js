@@ -8,6 +8,7 @@ const path = require("path")
 const mongoose = require("mongoose")
 const User = require("../models/User")
 const ObjectId = mongoose.Types.ObjectId
+const { deleteFileAsync } = require("../utils/utils")
 //与游记相关的接口
 
 //###################游记上传相关###################
@@ -61,7 +62,7 @@ router.post("/travelogs/edit/publish", async (req, res) => {
   res.json(result)
 })
 
-//3.2 更新游记 - 原游记存在
+//3.2 更新游记 - 原游记存在 实现删除图片
 router.put("/travelogs/edit/update", async (req, res) => {
   const userId = req.userId
   if (!userId) {
@@ -95,7 +96,8 @@ router.post("/travelogs/edit/uploadimg", travelogImgUpload.single("image"), asyn
   }
   const { index, status, editId } = req.body
   const fileExtension = path.extname(req.file.originalname)
-  const imgName = `${editId}_${index}${fileExtension}` //实现覆盖
+  const imageId = new ObjectId()
+  const imgName = `${imageId}${fileExtension}`
   const filePath = path.join(__dirname, "../uploads", imgName)
   try {
     fs.writeFileSync(filePath, req.file.buffer)
@@ -106,7 +108,7 @@ router.post("/travelogs/edit/uploadimg", travelogImgUpload.single("image"), asyn
   }
 })
 
-//5.删除第i张图片
+//5.删除第i张图片 磁盘删除写在model方法中
 router.delete("/travelogs/edit/deleteimg", async (req, res) => {
   const userId = req.userId
   if (!userId) {
@@ -114,15 +116,8 @@ router.delete("/travelogs/edit/deleteimg", async (req, res) => {
   }
   const { index, status, editId } = req.query
   console.log("req.params", index)
-  const result = await EditTravelog.deleteImage(userId, index, status, editId) //从数据库删除图片
+  const result = await EditTravelog.deleteImage(userId, index, status, editId)
   res.json(result)
-  try {
-    const { imageName } = result
-    const filePath = path.join(__dirname, "../uploads", imageName)
-    fs.unlinkSync(filePath) //从磁盘删除文件
-  } catch (err) {
-    console.log('router.delete("/travelogs/edit/deleteimg) ERR', err)
-  }
 })
 
 //6.查询是否有正在编辑的游记 返回editId和targetTravelogId

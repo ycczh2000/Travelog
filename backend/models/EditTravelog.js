@@ -1,6 +1,7 @@
 const mongoose = require("mongoose")
 const ObjectId = mongoose.Schema.Types.ObjectId
 const Travelog = require("./Travelog")
+const { deleteFileAsync, deleteMultipleFiles } = require("../utils/utils")
 
 const editTravelogSchema = new mongoose.Schema({
   authorId: { type: ObjectId, ref: "User", required: true },
@@ -29,11 +30,59 @@ const editTravelogSchema = new mongoose.Schema({
   },
 })
 
+editTravelogSchema.index({ authorId: 1, status: 1 }, { unique: true })
+
+//删除多余的待发布游记以及对应图片
+editTravelogSchema.statics.deleteEditingTravelogsAndImages = async authorId => {
+  try {
+    const ObjectId = mongoose.Types.ObjectId
+    const editTravelogs = await EditTravelog.find({ authorId: new ObjectId(authorId), status: "editing" })
+    if (!editTravelogs) {
+      return
+    }
+    const allImages = editTravelogs.reduce((acc, doc) => acc.concat(doc.images), [])
+    if (allImages.length > 0) {
+      deleteMultipleFiles(allImages)
+    }
+    await EditTravelog.deleteMany({
+      authorId: authorId,
+      status: "editing",
+    })
+    return
+  } catch (err) {
+    console.log("DB ERROR deleteEditTravelogsAndImages:", err)
+    return
+  }
+}
+
+//删除多余的的待更新游记以及对应图片
+editTravelogSchema.statics.deleteUpdatingTravelog = async authorId => {
+  try {
+    const editTravelog = await EditTravelog.findOne({ authorId: authorId, status: "updating" })
+    if (!editTravelog) {
+      return
+    }
+    const targetTravelog = await Travelog.findById(editTravelog.targetTravelogId)
+    if (!targetTravelog) {
+      return
+    }
+    const deleteImages = editTravelog.images.filter(image => !targetTravelog.images.includes(image)) //避免删除原游记的图片
+    deleteMultipleFiles(deleteImages)
+    await EditTravelog.deleteMany({
+      authorId: authorId,
+      status: "updating",
+    })
+  } catch (err) {
+    console.log("DB ERROR deleteUpdatingTravelog:", err)
+    return
+  }
+}
+
 //每个用户只有一个状态为editing的待发布游记和一个状态为updating待更新游记，保存已编辑的信息
 //1.创建一个新的状态为editing的待发布游记，并删除之前的
 editTravelogSchema.statics.createEditTravelog = async (userId, targetTravelogId = null) => {
   try {
-    await EditTravelog.deleteMany({ authorId: userId, status: "editing" })
+    await EditTravelog.deleteEditingTravelogsAndImages(userId)
     const newEditData = {
       authorId: userId,
       targetTravelogId: null,
@@ -50,7 +99,7 @@ editTravelogSchema.statics.createEditTravelog = async (userId, targetTravelogId 
 //1.2创建一个状态为updating待更新游记，targetTravelogId指向更新目标，并删除之前的
 editTravelogSchema.statics.createUpdateTravelog = async (userId, targetTravelogId) => {
   try {
-    await EditTravelog.deleteMany({ authorId: userId, status: "updating" })
+    await EditTravelog.deleteUpdatingTravelog(userId)
     const newEditData = {
       authorId: userId,
       targetTravelogId: targetTravelogId,
@@ -86,7 +135,7 @@ editTravelogSchema.statics.createUpdateTravelog = async (userId, targetTravelogI
   }
 }
 
-//2.更新当前编辑游记的状态
+//2.更新当前编辑游记的状态 只更新文本信息
 editTravelogSchema.statics.updataEditTravelog = async (userId, editId, editData, status) => {
   console.log("editData:", editData)
   try {
@@ -155,6 +204,8 @@ editTravelogSchema.statics.updateExistTravelog = async (userId, editId) => {
     if (!targetTravelog) {
       return { success: false, message: "要修改的游记不存在", data: {} }
     }
+    const deleteImages = targetTravelog.images.filter(image => !edit.images.includes(image))
+    deleteMultipleFiles(deleteImages)
     const updateDatas = {}
     const fieldsToCopy = [
       "title",
@@ -220,7 +271,7 @@ editTravelogSchema.statics.uploadImage = async (userId, imgName, index, status, 
   }
 }
 
-//5.删除第i张图片 返回图片名列表
+//5.删除第i张图片 返回图片名列表 status为editing时删除磁盘图片 status为updating时需要判断是否为原游记图片
 editTravelogSchema.statics.deleteImage = async (userId, index, status, editId) => {
   try {
     const travelog = await EditTravelog.findOne({ _id: editId, authorId: userId, status: status })
@@ -228,18 +279,28 @@ editTravelogSchema.statics.deleteImage = async (userId, index, status, editId) =
     if (!travelog) {
       return { success: false, message: "找不到要更新的游记", data: {} }
     }
-    console.log("travelog.images", travelog.images)
-    console.log("index", index)
-    const imageName = travelog.images[index] //这个字段返回给expess用于删除文件
-    // 使用数组方法删除指定索引的图片
+
+    //数据库删除图片
+    let imageName = ""
     if (index >= 0 && index < travelog.images.length) {
+      imageName = travelog.images[index]
       travelog.images.splice(index, 1)
     } else {
       return { success: false, message: "索引超出范围", data: {} }
     }
+    //磁盘删除图片
+    if (status === "editing") {
+      deleteFileAsync(imageName)
+    } else if (status === "updating") {
+      const targetTravelog = await Travelog.findById(travelog.targetTravelogId)
+      if (!(imageName in targetTravelog.images)) {
+        deleteFileAsync(imageName)
+      }
+    }
+
     const updatedTravelog = await travelog.save()
 
-    return { success: true, message: "删除成功", data: updatedTravelog.images, imageName: imageName }
+    return { success: true, message: "删除成功", data: updatedTravelog.images }
   } catch (err) {
     console.log("DB ERROR deleteImage:", err)
     return { success: false, message: "删除失败", data: {} }
