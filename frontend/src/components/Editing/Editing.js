@@ -5,6 +5,7 @@ import { DownOutline } from "antd-mobile-icons"
 import { options } from "./cityData"
 
 const Editing = forwardRef((props, ref) => {
+  // console.log("props", props)
   const [title, setTitle] = useState(props.editingData.title ? props.editingData.title : "") // 标题内容
   const [content, setContent] = useState(props.editingData.content ? props.editingData.content : "") // 正文内容
   const [tripWay, setTripWay] = useState(props.tripWay ? props.tripWay : "") // 出游方式

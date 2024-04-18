@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-05 16:17:38
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-11 22:47:29
+ * @LastEditTime: 2024-04-18 21:58:59
  * @FilePath: \frontend\src\components\swiper\swiper.jsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -20,7 +20,9 @@ const SwiperN = ({ bannerList }) => { // 使用解构赋值从传入的参数对
     </div>
     </Swiper.Item>
   ));
-
+  const handleCloseImg = () => {
+    setVisible(false);
+  }
   return (
     <div style={{ maxHeight: '20%' }}>
       <Swiper
@@ -30,6 +32,7 @@ const SwiperN = ({ bannerList }) => { // 使用解构赋值从传入的参数对
         {items}
       </Swiper>
       <Popup
+              showCloseButton
               visible={visible}
               onMaskClick={() => {
                 setVisible(false)
@@ -40,7 +43,7 @@ const SwiperN = ({ bannerList }) => { // 使用解构赋值从传入的参数对
                 minHeight: '60vh',
               }}
             >
-              <img src={bannerList[imgindex]} alt='' style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src={bannerList[imgindex]} alt=''  onClick={handleCloseImg} style={{overflowY: 'scroll', width: '100%', height: '100%', objectFit: 'cover' }} />
             </Popup>
     </div>
   );

@@ -225,11 +225,25 @@ const Publish = () => {
     await handleSaveDraftClick()
     const Data = editingRef.current.getEditingData()
     editingData.rate = Data.rate
-    console.log("handlePreviewClick", editingData)
+    editingData.content = Data.content
+    editingData.title = Data.title
+    editingData.tripBudget = Data.tripBudget
+    editingData.tripNum = Data.tripNum
+    editingData.tripDate = Data.tripDate
+    editingData.tripWay = Data.tripWay
+    console.log('########################',editingData.images,fileList)
+    const extractedNames = fileList.map(filePath => {
+      const parts = filePath.url.split('/');
+      const filename = parts[parts.length - 1];
+      return filename;
+    });
+    editingData.images=extractedNames
+    console.log('########################',editingData.images)
     const combinedData = {
       fileList: fileList,
       editingData: editingData,
     }
+    console.log("combinedData", combinedData)
     navigate(`/previewpage/${encodeURIComponent(JSON.stringify(combinedData))}`)
   }
   return (
