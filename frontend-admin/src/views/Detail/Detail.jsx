@@ -48,7 +48,7 @@ export default function Detail() {
       setLoading(loadingStatus.ERROR)
     })
     console.log("getTravelog", result)
-    if (result.success) {
+    if (result?.success) {
       setLoading(loadingStatus.SUCCESS)
       setTravelog(result.data)
       setAudit(result.data?.status)

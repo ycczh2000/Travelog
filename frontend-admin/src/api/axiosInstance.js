@@ -23,6 +23,9 @@ Instance.interceptors.response.use(
     return response
   },
   function (error) {
+    if (error.code === "ECONNABORTED" && error.message.includes("timeout")) {
+      alert("请求超时，请检查网络连接或稍后再试。")
+    }
     if (error.response && error.response.status === 401) {
       localStorage.removeItem("admintoken")
       alert("登录状态过期，请重新登录")
