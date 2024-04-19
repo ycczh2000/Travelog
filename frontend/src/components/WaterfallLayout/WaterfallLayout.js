@@ -2,7 +2,7 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-18 23:55:24
+ * @LastEditTime: 2024-04-19 09:01:49
  * @FilePath: \frontend\src\components\WaterfallLayout\WaterfallLayout.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -130,6 +130,7 @@ const WaterfallLayout = () => {
   // 当筛选条件改变时进行数据筛选
   useEffect(() => {
     console.log("selectedFilters changed", selectedFilters)
+    setData([])
     fetchData(sorter, city, selectedFilters, searchTerm, searchMode)
   }, [city, selectedFilters]) // 监听 city和selectedFilters 的变化，执行 fetchData
 

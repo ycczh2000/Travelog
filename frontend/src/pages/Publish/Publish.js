@@ -149,7 +149,7 @@ const Publish = () => {
       Toast.show({ content: "发布成功", position: "bottom" })
       setTimeout(() => {
         setIsUploading(false)
-        window.history.go(-1) // 返回上一页面
+        window.location.href = `/mytravelog`
       }, 1000)
     } else {
       Toast.show({ content: "发布失败", position: "bottom" })
@@ -231,14 +231,12 @@ const Publish = () => {
     editingData.tripNum = Data.tripNum
     editingData.tripDate = Data.tripDate
     editingData.tripWay = Data.tripWay
-    console.log('########################',editingData.images,fileList)
     const extractedNames = fileList.map(filePath => {
       const parts = filePath.url.split('/');
       const filename = parts[parts.length - 1];
       return filename;
     });
     editingData.images=extractedNames
-    console.log('########################',editingData.images)
     const combinedData = {
       fileList: fileList,
       editingData: editingData,

@@ -11,6 +11,7 @@ import ReactDOM from "react-dom/client"
 import "./index.css"
 import App from "./App"
 import reportWebVitals from "./reportWebVitals"
+import {AliveScope} from "react-activation";
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -32,11 +33,11 @@ class ErrorBoundary extends Component {
 }
 const root = ReactDOM.createRoot(document.getElementById("root"))
 root.render(
-  <React.StrictMode>
+  <AliveScope>
     <ErrorBoundary>
       <App />
     </ErrorBoundary>
-  </React.StrictMode>
+  </AliveScope>
 )
 
 // If you want to start measuring performance in your app, pass a function
