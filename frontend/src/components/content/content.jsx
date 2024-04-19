@@ -11,7 +11,7 @@ import { Rate} from 'antd-mobile'
 import './content.css'; 
   
 const Content = ({tripInfo}) => { 
-  console.log("content:",tripInfo)
+  // console.log("content:",tripInfo)
   return (
     <div className="contentWrapper">
       <div className="headerRow">

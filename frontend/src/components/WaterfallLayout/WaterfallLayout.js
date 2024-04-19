@@ -2,12 +2,12 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-16 23:46:09
+ * @LastEditTime: 2024-04-19 09:01:49
  * @FilePath: \frontend\src\components\WaterfallLayout\WaterfallLayout.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 // src/components/WaterfallLayout.js
-import React, { useContext, useRef, useEffect, useState } from "react"
+import React, { useContext, useRef, useEffect, useState,useLayoutEffect } from "react"
 import Masonry from "masonry-layout"
 import InfCard from "../InfCard/InfCard"
 import "./WaterfallLayout.css"
@@ -15,6 +15,7 @@ import { HomeContext } from "../../Context/HomeContext"
 import { $getTravelogs } from "../../api/travelogApi"
 import { DotLoading, ErrorBlock } from "antd-mobile"
 import { baseURL } from "../../config/config"
+import { tripBudgets } from "../../config/options"
 const WaterfallLayout = () => {
   const { sorter, city, selectedFilters, searchTerm, searchMode } = useContext(HomeContext)
   const [data, setData] = useState([])
@@ -30,7 +31,12 @@ const WaterfallLayout = () => {
   }, [searchTerm])
 
   const fetchData = async (sorter, city, selectedFilters, searchTerm = "", searchMode) => {
-    console.log("fetchData:", sorter, city, selectedFilters, searchTerm, searchMode)
+    let tripBudget=selectedFilters.tripBudget?selectedFilters.tripBudget[0]:''
+    let tripNum=selectedFilters.tripNum?selectedFilters.tripNum[0]:''
+    let tripWay=selectedFilters.tripWay?selectedFilters.tripWay[0]:''
+    let tripDate=selectedFilters.tripDate?selectedFilters.tripDate[0]:''
+    let tripRate=selectedFilters.tripRate?selectedFilters.tripRate:0
+    console.log("fetchData:", sorter, city,tripBudget,tripNum,tripWay,tripDate,tripRate, searchTerm, searchMode)
     // 如果正在加载数据，则直接返回，避免重复请求
     if (loading) return
     setDisconnect(false)
@@ -85,9 +91,7 @@ const WaterfallLayout = () => {
   // 在组件加载时添加滚动事件监听器，并在组件卸载时移除监听器
   const masonryRef = useRef(null)
 
-  useEffect(() => {
-    console.log("data changed");
-
+  useLayoutEffect(() => {
     if (masonryRef.current) {
       const masonry = new Masonry(masonryRef.current, {
         itemSelector: ".waterfall-item",
@@ -96,8 +100,10 @@ const WaterfallLayout = () => {
         percentPosition: true,
         horizontalOrder: false, // 禁用水平排序
       });
+      
       // 更新瀑布流布局
       masonry.layout();
+
       // 在页面加载后的0.5秒内每隔0.25秒更新一次布局，以解决加载时瀑布流存在的问题
       const timer = setTimeout(() => {
         const interval = setInterval(() => {
@@ -124,6 +130,7 @@ const WaterfallLayout = () => {
   // 当筛选条件改变时进行数据筛选
   useEffect(() => {
     console.log("selectedFilters changed", selectedFilters)
+    setData([])
     fetchData(sorter, city, selectedFilters, searchTerm, searchMode)
   }, [city, selectedFilters]) // 监听 city和selectedFilters 的变化，执行 fetchData
 

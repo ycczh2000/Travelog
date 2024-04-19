@@ -31,7 +31,7 @@ const FilterBar = () => {
               }}
               position='right'
               bodyStyle={{ width: '80vw',borderTopLeftRadius: '8px',
-              borderButtonRightRadius: '8px',
+              borderButtonRightRadius: '8px',overflowY: 'scroll',
               minHeight: '40vh', }}
             >
                 <div style={{overflowY: 'scroll', height: '100vh',}}>

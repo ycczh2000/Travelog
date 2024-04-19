@@ -14,7 +14,7 @@ const UserInfo = ({ title, content, city }) => {
       }}>
         {city && city.length > 0 ? city.join(', ') : ''}
       </div>
-      <div className="userInfo">
+      <div className="userInfo" style={{ whiteSpace: 'pre-line' }}>
         {content}
         {/* {testcontent} */}
       </div>

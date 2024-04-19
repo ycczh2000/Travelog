@@ -1,10 +1,11 @@
-import React, { useState, useRef, useEffect, onChange, forwardRef, useImperativeHandle } from "react"
+import React, { useState, useRef, useEffect,forwardRef, useImperativeHandle } from "react"
 import "./Editing.css"
 import { Card, Dropdown, Toast, Button, Radio, Space, Checkbox, Cascader, Rate } from "antd-mobile"
 import { DownOutline } from "antd-mobile-icons"
 import { options } from "./cityData"
 
 const Editing = forwardRef((props, ref) => {
+  // console.log("props", props)
   const [title, setTitle] = useState(props.editingData.title ? props.editingData.title : "") // 标题内容
   const [content, setContent] = useState(props.editingData.content ? props.editingData.content : "") // 正文内容
   const [tripWay, setTripWay] = useState(props.tripWay ? props.tripWay : "") // 出游方式
@@ -91,9 +92,6 @@ const Editing = forwardRef((props, ref) => {
   }
   const handleChangeRate = newRate => {
     setRate(newRate)
-    if (onChange) {
-      onChange(newRate)
-    }
   }
   // 计算剩余标题字数
   const remainingTitleCharacters = maxTitleLength - title.length

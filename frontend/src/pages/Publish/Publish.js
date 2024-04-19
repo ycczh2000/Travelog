@@ -149,7 +149,7 @@ const Publish = () => {
       Toast.show({ content: "发布成功", position: "bottom" })
       setTimeout(() => {
         setIsUploading(false)
-        window.history.go(-1) // 返回上一页面
+        window.location.href = `/mytravelog`
       }, 1000)
     } else {
       Toast.show({ content: "发布失败", position: "bottom" })
@@ -225,11 +225,23 @@ const Publish = () => {
     await handleSaveDraftClick()
     const Data = editingRef.current.getEditingData()
     editingData.rate = Data.rate
-    console.log("handlePreviewClick", editingData)
+    editingData.content = Data.content
+    editingData.title = Data.title
+    editingData.tripBudget = Data.tripBudget
+    editingData.tripNum = Data.tripNum
+    editingData.tripDate = Data.tripDate
+    editingData.tripWay = Data.tripWay
+    const extractedNames = fileList.map(filePath => {
+      const parts = filePath.url.split('/');
+      const filename = parts[parts.length - 1];
+      return filename;
+    });
+    editingData.images=extractedNames
     const combinedData = {
       fileList: fileList,
       editingData: editingData,
     }
+    console.log("combinedData", combinedData)
     navigate(`/previewpage/${encodeURIComponent(JSON.stringify(combinedData))}`)
   }
   return (

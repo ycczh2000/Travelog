@@ -2,22 +2,23 @@
  * @Author: Sueyuki 2574397962@qq.com
  * @Date: 2024-04-02 19:17:09
  * @LastEditors: Sueyuki 2574397962@qq.com
- * @LastEditTime: 2024-04-11 22:04:25
+ * @LastEditTime: 2024-04-19 07:50:03
  * @FilePath: \frontend\src\components\SearchBar\SearchBar.js
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 // src/components/SearchBar.js
 import React, { useContext, useState, useEffect } from 'react';
-import { SearchBar, Tag, Cascader, Popup, Button, List } from 'antd-mobile';
+import { SearchBar, Tag, Cascader, Popup, Button, List, Toast } from 'antd-mobile';
 import './SearchBar.css';
 import { LeftOutline, FireFill } from 'antd-mobile-icons'
 import LocalRecommendation from '../LocalRecommendation/LocalRecommendation';
 import { HomeContext } from "../../Context/HomeContext"
-import {HotSearches, searchArray, hotSearchWords, fireSearchWords, hotTravelogs} from '../../config/mockData'
+import { HotSearches, searchArray, hotSearchWords, fireSearchWords, hotTravelogs } from '../../config/mockData'
+import { maliciousPattern } from '../../config/config'
 
 const SearchBarComponent = () => {
-    const { searchTerm, setSearchTerm, searchMode, setSearchMode,visible, setVisible,
-        modevisible, setModeVisible,seacrchPageVisible, setSeacrchPageVisible } = useContext(HomeContext);
+    const { searchTerm, setSearchTerm, searchMode, setSearchMode, visible, setVisible,
+        modevisible, setModeVisible, seacrchPageVisible, setSeacrchPageVisible } = useContext(HomeContext);
     console.log('searchMode:', searchMode)
     const [searchInput, setSearchInput] = useState('');
 
@@ -30,9 +31,21 @@ const SearchBarComponent = () => {
             value: 'user',
         }]
     const handleHotSearchClick = (item) => {
-        setSearchTerm(item);
-        setSearchInput(item);
-        setSeacrchPageVisible(false);
+        if (maliciousPattern.test(item)) {
+            // 发现恶意代码
+            console.log("输入包含恶意代码！");
+            Toast.show({
+                icon: 'fail',
+                content: '输入包含恶意代码',
+            })
+        } else {
+            // 未发现恶意代码
+            setSearchTerm(item);
+            setSearchInput(item);
+            setSeacrchPageVisible(false);
+            // 执行正常的查询操作
+        }
+
     }
     const handleBack = () => {// 返回按钮事件,如果当前在搜索，则清除搜索词和搜索输入，否则返回上一页
         if (searchTerm !== '' || seacrchPageVisible) {
@@ -112,7 +125,7 @@ const SearchBarComponent = () => {
                         console.log('onSelect', val, extend.items)
                     }}
                 />{/* 分享按钮 */}
-                
+
                 <SearchBar
                     /* 由于react渲染机制问题，每次搜索框placeholder变化时，都会报出Warning: Encountered two children with the same key
                     这个警告暂时无法解决
@@ -139,7 +152,7 @@ const SearchBarComponent = () => {
                             setSeacrchPageVisible(false);
                         } else {
                             setSearchInput(searchArray[placeholderIndex]);
-                            setSearchTerm(searchArray[placeholderIndex]); 
+                            setSearchTerm(searchArray[placeholderIndex]);
                             setSeacrchPageVisible(false);
                         }
                     }}
@@ -157,11 +170,28 @@ const SearchBarComponent = () => {
                     }}
                     onClick={() => {
                         if (searchInput !== '') {
-                            setSearchTerm(searchInput);
+                            if (maliciousPattern.test(searchInput)) {
+                                // 发现恶意代码
+                                console.log("输入包含恶意代码！");
+                                Toast.show({
+                                    icon: 'fail',
+                                    content: '输入包含恶意代码',
+                                })
+                            }
+                            else { setSearchTerm(searchInput); }
                         }
                         else {
-                            setSearchTerm(searchArray[placeholderIndex]);
-                            setSearchInput(searchArray[placeholderIndex]);
+                            if (maliciousPattern.test(searchArray[placeholderIndex])) {
+                                // 发现恶意代码
+                                console.log("输入包含恶意代码！");
+                                Toast.show({
+                                    icon: 'fail',
+                                    content: '输入包含恶意代码',
+                                })
+                            } else {
+                                setSearchTerm(searchArray[placeholderIndex]);
+                                setSearchInput(searchArray[placeholderIndex]);
+                            }
                         }
                     }}
                 >
@@ -235,12 +265,12 @@ const SearchBarComponent = () => {
                         ))}
                         {hotSearchWords.map((word, index) => (
                             <Button
-                            onClick={() => {
-                                setSearchInput(word);
-                                setSearchTerm(word);
-                                setSeacrchPageVisible(false);
-                            }
-                            }
+                                onClick={() => {
+                                    setSearchInput(word);
+                                    setSearchTerm(word);
+                                    setSeacrchPageVisible(false);
+                                }
+                                }
                                 key={index}
                                 style={{
                                     backgroundColor: "#F9F5F6", color: "black", borderRadius: "20px", margin: "5px",
@@ -257,11 +287,11 @@ const SearchBarComponent = () => {
                         {/* 排行榜内容 */}
                         <List header='旅行笔记热搜排行榜'>
                             {hotTravelogs.map((travelog, index) => (
-                                <List.Item key={travelog.id} style={{fontSize:'14px'}} onClick={() => {
+                                <List.Item key={travelog.id} style={{ fontSize: '14px' }} onClick={() => {
                                     window.location.href = `/travelogs/${travelog.id}`
                                 }}>
-                                    {index+1}:
-                                    {index < 3 && <FireFill color='var(--adm-color-danger)'/>} {/* 添加额外图标 */}
+                                    {index + 1}:
+                                    {index < 3 && <FireFill color='var(--adm-color-danger)' />} {/* 添加额外图标 */}
                                     {travelog.title}
                                 </List.Item>
                             ))}
