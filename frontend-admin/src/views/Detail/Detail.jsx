@@ -113,6 +113,12 @@ export default function Detail() {
     })
   }
 
+  const isDisabled = () => {
+    if (userInfo?.role === "admin") return false
+    if (userInfo?.role === "auditor" && audit === AuditStatus.PENDING) return false
+    return true
+  }
+
   if (loading === loadingStatus.LOADING) {
     return <div>Loading...</div>
   }
@@ -147,6 +153,7 @@ export default function Detail() {
       <div className={styles.buttonArea}>
         <div className={styles.auditButtonArea}>
           <Button
+            disabled={isDisabled()}
             className={styles.btn}
             key="approved"
             type="primary"
@@ -154,6 +161,7 @@ export default function Detail() {
             通过
           </Button>
           <Button
+            disabled={isDisabled()}
             danger
             className={styles.btn}
             key="rejected"
