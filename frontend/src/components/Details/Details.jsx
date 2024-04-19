@@ -12,6 +12,7 @@ import "./Details.css"
 import { UserContext } from "../../Context/UserContext"
 import { baseURL } from "../../config/config"
 import { convertUTCToBeijingTimeWithSecond } from "../../utils/utils"
+import { defaultAvatar } from "../../config/config"
 const Details = ({ detailInfo }) => {
   const [followed, setFollowed] = React.useState(false)
   const { userName } = useContext(UserContext) //自己账户的用户名,N是大写的，区别于作者名的username
@@ -59,7 +60,13 @@ const Details = ({ detailInfo }) => {
   }
   return (
     <div className="contain2">
-      <img className="imager" src={`${baseURL}getAvatar/${detailInfo.username}`} alt="用户头像" />
+      <img
+        className="imager"
+        src={`${baseURL}getAvatar/${detailInfo.username}`}
+        onError={e => {
+          e.target.src = defaultAvatar
+        }}
+      />
       <div className="info">
         <h3>{detailInfo.username}</h3>
         <p>{detailInfo.createDate ? convertUTCToBeijingTimeWithSecond(detailInfo.createDate) : "未知"}</p>

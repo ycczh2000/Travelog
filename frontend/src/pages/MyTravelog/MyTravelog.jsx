@@ -12,7 +12,7 @@ import { $getMyTravelogs, $deleteTravelog } from "../../api/travelogApi"
 import AvatarEditor from "react-avatar-editor"
 import { $uploadAvatar, $getAvatar } from "../../api/userApi"
 import { baseURL } from "../../config/config"
-
+import { defaultAvatar } from "../../config/config"
 export default function MyTravelog() {
   const MoMo =
     "https://img1.baidu.com/it/u=1389873612,485301600&fm=253&app=120&size=w931&n=0&f=JPEG&fmt=auto?sec=1712682000&t=ff2af80b5ee2888d42c58c2aff22a8d3"
@@ -197,7 +197,12 @@ export default function MyTravelog() {
                 }}>
                 {changeAvatarComponent}
               </Popup>
-              <img src={avatarUrl} alt="User Avatar" />
+              <img
+                src={avatarUrl}
+                onError={e => {
+                  e.target.src = defaultAvatar
+                }}
+              />
             </div>
             <div className="user-details">
               <div className="username">{userName ? userName : "MOMO"}</div>
